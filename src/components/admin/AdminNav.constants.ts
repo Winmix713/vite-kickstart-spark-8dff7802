@@ -1,5 +1,5 @@
 import type { AdminNavItem } from "@/types/admin";
-import { LayoutDashboard, Users, Workflow, Database, Cpu, ShieldCheck, Activity, MessageSquare, Settings, Palette, Package } from "lucide-react";
+import { LayoutDashboard, Users, Workflow, Database, Cpu, ShieldCheck, Activity, Settings, Palette, Package } from "lucide-react";
 
 export const NAV_SECTIONS: Array<{
   label: string;

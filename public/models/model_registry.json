@@ -1,0 +1,72 @@
+{
+  "models": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "name": "baseline_scoreline_model",
+      "version": "2024.11.0",
+      "algorithm": "LightGBM",
+      "status": "active",
+      "registered_at": "2025-01-05T08:00:00.000Z",
+      "path": "models/baseline_scoreline_model.pkl",
+      "traffic_allocation": 90,
+      "description": "Champion scoreline model served to production traffic.",
+      "metrics": {
+        "accuracy": 0.91,
+        "precision": 0.9,
+        "recall": 0.92,
+        "f1_score": 0.91
+      }
+    },
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440001",
+      "name": "ensemble_candidate_model",
+      "version": "2025.01.1",
+      "algorithm": "StackedEnsemble",
+      "status": "candidate",
+      "registered_at": "2025-01-15T10:45:00.000Z",
+      "path": "models/ensemble_candidate_model.pkl",
+      "traffic_allocation": 10,
+      "description": "Offensive-biased ensemble currently receiving a limited portion of traffic.",
+      "metrics": {
+        "accuracy": 0.93,
+        "precision": 0.94,
+        "recall": 0.91,
+        "f1_score": 0.92
+      }
+    },
+    {
+      "id": "56b92dd4-3c2b-4b24-a93b-5999e12719b2",
+      "name": "logit_shadow_november",
+      "version": "2024.12.0",
+      "algorithm": "LogisticRegression",
+      "status": "shadow",
+      "registered_at": "2024-11-20T11:31:15.543Z",
+      "path": "models/LogisticRegression_20251120_113115.pkl",
+      "traffic_allocation": 0,
+      "description": "Shadow deployment capturing telemetry for November logit refresh.",
+      "metrics": {
+        "accuracy": 0.9,
+        "precision": 0.9,
+        "recall": 0.9,
+        "f1_score": 0.9
+      }
+    },
+    {
+      "id": "410f982c-d36a-4619-a32a-3d1f1ab92893",
+      "name": "baseline_retired_october",
+      "version": "2024.10.2",
+      "algorithm": "GradientBoosting",
+      "status": "retired",
+      "registered_at": "2024-10-01T09:15:00.000Z",
+      "path": "models/baseline_retired_october.pkl",
+      "traffic_allocation": 0,
+      "description": "Previous champion kept for rollback validation.",
+      "metrics": {
+        "accuracy": 0.88,
+        "precision": 0.87,
+        "recall": 0.86,
+        "f1_score": 0.87
+      }
+    }
+  ]
+}

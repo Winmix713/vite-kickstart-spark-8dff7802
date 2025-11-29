@@ -1,0 +1,73 @@
+name: CI – Build, Test & Lint
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build_test:
+    runs-on: ubuntu-latest
+    env:
+      CI: true
+    strategy:
+      matrix:
+        node-version: [20.x]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Type check
+        run: npm run type-check
+
+      - name: Unit tests
+        run: npm test -- --run
+
+      - name: Build for production
+        run: npm run build
+
+      - name: Smoke test preview
+        run: |
+          nohup npm run preview -- --port 4173 > preview.log 2>&1 &
+          for i in {1..30}; do
+            if curl -fsS http://127.0.0.1:4173 > /dev/null; then
+              echo "Preview is up"
+              break
+            fi
+            if [ $i -eq 30 ]; then
+              echo "Preview failed to start" && exit 1
+            fi
+            sleep 1
+          done
+          curl -fsS http://127.0.0.1:4173 || (echo "Preview not reachable" && exit 1)
+
+      - name: Upload build artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: production-build
+          path: dist/
+          if-no-files-found: error
+          retention-days: 7

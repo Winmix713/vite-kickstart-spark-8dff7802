@@ -1,0 +1,17 @@
+model_type: DecisionTree
+target_column: fulltime_result
+
+input_features:
+  - home_goals_avg
+  - away_goals_avg
+  - home_form
+  - away_form
+  - head_to_head
+  - possession_avg
+  - shots_on_target_avg
+  - corner_kicks_avg
+
+hyperparameters:
+  max_depth: 5
+  random_state: 42
+  min_samples_split: 2

@@ -1,0 +1,80 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: winmix-postgres
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-postgres}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - winmix-network
+
+  supabase:
+    image: supabase/supabase:latest
+    container_name: winmix-supabase
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-postgres}
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      JWT_SECRET: ${JWT_SECRET:-your-super-secret-jwt-token-with-at-least-32-characters-long}
+      JWT_EXPIRY: ${JWT_EXPIRY:-3600}
+      ANON_KEY: ${VITE_SUPABASE_ANON_KEY:-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndjbHV0emJvamF0cXR4d2x2dGFiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIxOTYzODQsImV4cCI6MjA3Nzc3MjM4NH0.GcFqrEtZhgEHq0ycfXPFwebBcUrOiO2LlOrLEWhkmnE}
+      SERVICE_ROLE_KEY: ${SUPABASE_SERVICE_ROLE_KEY:-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndjbHV0emJvamF0cXR4d2x2dGFiIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MjE5NjM4NCwiZXhwIjoyMDc3NzcyMzg0fQ.5YhI1X7gCsQ6l4vIZvYrJ8T4cP1M9jN6K8L3Q2R5W0A}
+      SUPABASE_URL: http://supabase:8000
+      SUPABASE_PUBLIC_URL: http://localhost:8000
+      ENABLE_EMAIL_SIGNUP: "true"
+      ENABLE_EMAIL_AUTOCONFIRM: "true"
+      DISABLE_MESSAGE_VALIDATION: "false"
+    ports:
+      - "8000:8000"
+      - "54321:8000"
+      - "54322:5432"
+    volumes:
+      - supabase_data:/var/lib/postgresql/data
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - winmix-network
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: winmix-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-admin@example.com}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:-admin}
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      - postgres
+    networks:
+      - winmix-network
+
+volumes:
+  postgres_data:
+  supabase_data:
+  pgadmin_data:
+
+networks:
+  winmix-network:
+    driver: bridge

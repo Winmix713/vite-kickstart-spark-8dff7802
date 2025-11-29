@@ -1,0 +1,1012 @@
+import React from 'react'
+import {
+  Search,
+  Trophy,
+  Bell,
+  User,
+  Calendar,
+  Activity,
+  Target,
+  Wifi,
+  ShieldCheck,
+  ChevronRight,
+  TrendingUp,
+  ArrowRight,
+  Check,
+  Cpu,
+  BarChart3,
+  Crown,
+  Heart,
+  Zap,
+  Star,
+  TrendingDown,
+} from 'lucide-react'
+function UnifiedHeader() {
+  return (
+    <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-black/80 backdrop-blur-2xl">
+      <div className="max-w-[1600px] mx-auto px-8 h-24 flex items-center justify-between">
+        {/* Logo Section */}
+        <a href="/" className="flex items-center gap-4 group cursor-pointer">
+          <div className="relative">
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-cyan-500 blur-xl opacity-50 group-hover:opacity-70 transition-opacity" />
+            <div className="relative z-10 w-12 h-12 rounded-xl bg-gradient-to-br from-blue-600 to-cyan-600 flex items-center justify-center shadow-lg shadow-blue-900/50">
+              <Trophy className="w-6 h-6 text-white" />
+            </div>
+          </div>
+          <div>
+            <span className="text-xl font-bold tracking-tight text-white block leading-none">
+              WINMIX
+            </span>
+            <span className="text-xs font-semibold tracking-wider text-cyan-400 uppercase">
+              TIPSTER PRO
+            </span>
+          </div>
+        </a>
+        {/* Navigation */}
+        <nav className="hidden lg:flex items-center gap-10 text-sm font-medium">
+          <a
+            href="#"
+            className="relative text-white hover:text-cyan-400 transition-colors group"
+          >
+            Live Matches
+            <span className="absolute -bottom-6 left-0 right-0 h-0.5 bg-gradient-to-r from-cyan-500 to-blue-500 scale-x-0 group-hover:scale-x-100 transition-transform" />
+          </a>
+          <a
+            href="#"
+            className="text-zinc-400 hover:text-white transition-colors"
+          >
+            AI Predictions
+          </a>
+          <a
+            href="#"
+            className="text-zinc-400 hover:text-white transition-colors"
+          >
+            Tipster League
+          </a>
+          <a
+            href="#"
+            className="flex items-center gap-1.5 text-zinc-400 hover:text-white transition-colors"
+          >
+            <Crown className="w-3.5 h-3.5 text-yellow-500" />
+            Premium
+          </a>
+        </nav>
+        {/* Actions */}
+        <div className="flex items-center gap-3">
+          <button className="p-2.5 hover:bg-white/10 rounded-xl text-zinc-400 hover:text-white transition-all">
+            <Search className="w-5 h-5" />
+          </button>
+          <button className="relative p-2.5 hover:bg-white/10 rounded-xl text-zinc-400 hover:text-white transition-all">
+            <div className="absolute top-2 right-2 w-2 h-2 bg-cyan-500 rounded-full border-2 border-black animate-pulse" />
+            <Bell className="w-5 h-5" />
+          </button>
+          <div className="flex items-center gap-3 pl-4 ml-2 border-l border-white/10">
+            <div className="hidden sm:block text-right">
+              <p className="text-sm font-semibold text-white">John Doe</p>
+              <p className="text-xs text-cyan-400 font-medium">Pro Member</p>
+            </div>
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 via-cyan-600 to-blue-600 border-2 border-white/20 flex items-center justify-center shadow-lg shadow-blue-900/30">
+              <User className="w-5 h-5 text-white" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+  )
+}
+function StadiumHero() {
+  return (
+    <div className="relative w-full aspect-[16/9] lg:aspect-[2.5/1] rounded-3xl border border-white/10 overflow-hidden group shadow-2xl shadow-black/50">
+      {/* Enhanced Background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-blue-950 to-cyan-950" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-blue-600/20 via-transparent to-transparent" />
+      <div className="absolute inset-0 bg-black/30 mix-blend-overlay" />
+      {/* Animated Grid */}
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.02)_1px,transparent_1px)] bg-[size:50px_50px] [mask-image:radial-gradient(ellipse_at_center,black,transparent_70%)]" />
+      {/* Watermark */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <h1 className="text-7xl md:text-9xl font-black text-white/[0.03] tracking-tighter select-none">
+          LIVE ARENA
+        </h1>
+      </div>
+      {/* Top Controls */}
+      <div className="absolute top-8 right-8 flex items-center gap-3 z-10">
+        <div className="flex bg-black/60 backdrop-blur-xl rounded-xl p-1.5 border border-white/10 shadow-lg">
+          <button className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-gradient-to-r from-cyan-600 to-blue-600 text-xs font-bold text-white shadow-lg shadow-cyan-900/30 hover:shadow-cyan-900/50 transition-all">
+            <Calendar className="w-4 h-4" />
+            Matches
+          </button>
+          <button className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-zinc-400 text-xs font-semibold hover:text-white hover:bg-white/5 transition-all">
+            <Activity className="w-4 h-4" />
+            Analysis
+          </button>
+        </div>
+      </div>
+      {/* Enhanced Floating Stats Card */}
+      <div className="absolute bottom-8 left-8 right-8 md:left-auto md:right-10 md:bottom-10 md:w-[500px] z-20">
+        <div className="bg-black/80 backdrop-blur-2xl border border-white/20 rounded-3xl p-7 shadow-2xl shadow-black/50">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 bg-gradient-to-br from-cyan-600 to-blue-600 rounded-xl shadow-lg shadow-cyan-900/30">
+                <Target className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-white">Live Analysis</h3>
+                <p className="text-xs text-zinc-400 font-medium">
+                  Real-time predictions
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
+              <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+              <span className="text-xs font-bold text-emerald-400">LIVE</span>
+            </div>
+          </div>
+          <div className="grid grid-cols-3 gap-4 mb-6">
+            <div className="text-center">
+              <p className="text-2xl font-bold text-white mb-1">94%</p>
+              <p className="text-xs text-zinc-500 font-medium">Accuracy</p>
+            </div>
+            <div className="text-center border-x border-white/10">
+              <p className="text-2xl font-bold text-cyan-400 mb-1">12</p>
+              <p className="text-xs text-zinc-500 font-medium">Active</p>
+            </div>
+            <div className="text-center">
+              <p className="text-2xl font-bold text-white mb-1">€2.4K</p>
+              <p className="text-xs text-zinc-500 font-medium">Today</p>
+            </div>
+          </div>
+          <div className="flex items-center justify-between pt-5 border-t border-white/10">
+            <div className="flex items-center gap-2.5 text-emerald-400">
+              <ShieldCheck className="w-5 h-5" />
+              <span className="text-sm font-semibold">Protected Betting</span>
+            </div>
+            <button className="flex items-center gap-2 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white text-sm font-bold px-6 py-3 rounded-xl transition-all shadow-lg shadow-cyan-900/30 hover:shadow-cyan-900/50 group">
+              Start Now
+              <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+function TeamTicker() {
+  const teams = [
+    {
+      code: 'MCI',
+      name: 'Manchester City',
+      points: 28,
+      trend: '+2',
+      color: 'from-blue-600 to-blue-800',
+    },
+    {
+      code: 'ARS',
+      name: 'Arsenal',
+      points: 26,
+      trend: '+1',
+      color: 'from-red-600 to-red-800',
+      active: true,
+    },
+    {
+      code: 'LIV',
+      name: 'Liverpool',
+      points: 25,
+      trend: '0',
+      color: 'from-red-700 to-red-900',
+    },
+    {
+      code: 'AVL',
+      name: 'Aston Villa',
+      points: 24,
+      trend: '-1',
+      color: 'from-purple-600 to-purple-800',
+    },
+  ]
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
+      {teams.map((team) => (
+        <div
+          key={team.code}
+          className={`
+            relative group rounded-2xl p-6 transition-all cursor-pointer border
+            ${team.active ? 'bg-gradient-to-br from-cyan-950/50 to-blue-950/50 border-cyan-500/30 shadow-lg shadow-cyan-900/20' : 'bg-zinc-900/30 border-white/10 hover:bg-zinc-900/50 hover:border-white/20'}
+          `}
+        >
+          {team.active && (
+            <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-blue-500/5 blur-2xl pointer-events-none rounded-2xl" />
+          )}
+          <div className="relative z-10 flex items-center gap-5">
+            <div
+              className={`
+                w-14 h-14 rounded-xl flex items-center justify-center text-xs font-black border-2 shadow-lg
+                ${team.active ? 'bg-gradient-to-br from-cyan-600 to-blue-600 text-white border-cyan-400/30 shadow-cyan-900/30' : 'bg-zinc-800/50 text-zinc-400 border-zinc-700/50'}
+              `}
+            >
+              {team.code}
+            </div>
+            <div className="flex-1">
+              <h4 className="text-base font-bold text-white mb-1">
+                {team.name}
+              </h4>
+              <div className="flex items-center gap-3">
+                <span className="text-sm font-bold text-white">
+                  {team.points} pts
+                </span>
+                <span
+                  className={`text-xs font-bold px-2 py-0.5 rounded ${team.trend.startsWith('+') ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : team.trend.startsWith('-') ? 'bg-red-500/10 text-red-400 border border-red-500/20' : 'bg-zinc-500/10 text-zinc-400 border border-zinc-500/20'}`}
+                >
+                  {team.trend}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+function StatsBento() {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {/* AI Confidence Card - Enhanced */}
+      <div className="relative overflow-hidden group rounded-3xl p-8 shadow-2xl bg-gradient-to-br from-cyan-600 via-blue-600 to-indigo-700">
+        {/* Enhanced decorative elements */}
+        <div className="absolute -right-16 -top-16 w-64 h-64 bg-white/20 rounded-full blur-3xl group-hover:bg-white/30 transition-all duration-700" />
+        <div className="absolute -left-16 -bottom-16 w-48 h-48 bg-blue-900/30 rounded-full blur-3xl" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-white/10 via-transparent to-transparent" />
+        <div className="relative z-10">
+          <div className="flex justify-between items-start mb-10">
+            <div>
+              <div className="inline-flex items-center gap-2 bg-white/20 border border-white/30 rounded-full px-4 py-2 backdrop-blur-md mb-4 shadow-lg">
+                <Zap className="w-4 h-4 text-white" />
+                <span className="text-xs uppercase font-black tracking-wider text-white">
+                  AI CONFIDENCE
+                </span>
+              </div>
+              <h2 className="text-6xl font-black text-white tracking-tighter mb-2">
+                784
+              </h2>
+              <p className="text-sm text-blue-50 font-semibold">
+                WinMix Index Score
+              </p>
+            </div>
+            <div className="flex bg-white/20 w-12 h-12 rounded-xl backdrop-blur-md items-center justify-center border border-white/30 hover:scale-110 transition-transform cursor-pointer shadow-lg">
+              <TrendingUp className="w-5 h-5 text-white" />
+            </div>
+          </div>
+          {/* Enhanced Chart */}
+          <div className="space-y-4">
+            <svg
+              className="w-full h-16 text-white"
+              viewBox="0 0 100 30"
+              preserveAspectRatio="none"
+            >
+              <defs>
+                <linearGradient id="gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor="white" stopOpacity="0.3" />
+                  <stop offset="100%" stopColor="white" stopOpacity="0" />
+                </linearGradient>
+              </defs>
+              <path
+                d="M0,25 C10,25 10,10 20,15 C30,20 30,5 40,10 C50,15 50,25 60,20 C70,15 70,5 80,10 C90,15 90,0 100,5 L100,30 L0,30 Z"
+                fill="url(#gradient)"
+              />
+              <path
+                d="M0,25 C10,25 10,10 20,15 C30,20 30,5 40,10 C50,15 50,25 60,20 C70,15 70,5 80,10 C90,15 90,0 100,5"
+                fill="none"
+                stroke="white"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+              />
+              <circle
+                cx="100"
+                cy="5"
+                r="4"
+                fill="white"
+                className="animate-pulse"
+              />
+            </svg>
+            <div className="flex justify-between items-center pt-4 border-t border-white/30">
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
+                <p className="text-sm font-bold text-white">
+                  +12 points this month
+                </p>
+              </div>
+              <ArrowRight className="w-4 h-4 text-white/80" />
+            </div>
+          </div>
+        </div>
+      </div>
+      {/* Weekly Performance - Refactored Light Design */}
+      <div className="bg-white rounded-[20px] border border-white shadow-[0px_34px_24px_-20px_rgba(141,157,173,0.3)] overflow-hidden">
+        {/* Header */}
+        <div className="flex items-center justify-between px-5 py-2 border-b border-[#2A3F5E]/30">
+          <h3 className="text-sm text-[#2A3F5E] font-normal">
+            Profile activity
+          </h3>
+          <div className="flex items-center gap-1">
+            <div className="w-0.5 h-0.5 rounded-full bg-[#2A3F5E]" />
+            <div className="w-0.5 h-0.5 rounded-full bg-[#2A3F5E]" />
+            <div className="w-0.5 h-0.5 rounded-full bg-[#2A3F5E]" />
+          </div>
+        </div>
+        {/* Stats Section */}
+        <div className="flex items-center justify-between px-5 py-6">
+          <div className="flex flex-col gap-3">
+            <h2 className="text-[36px] leading-[53px] font-medium text-black">
+              2.6k
+            </h2>
+            <p className="text-sm leading-4 text-[#2A3F5E] max-w-[131px]">
+              People watched your videos today
+            </p>
+          </div>
+          <div className="flex flex-col items-center gap-0.5">
+            <div className="flex items-center gap-1">
+              <span className="text-[15px] leading-4 font-medium text-[#2A3F5E] tracking-tight">
+                6.2%
+              </span>
+              <div className="w-[15px] h-[15px] flex items-center justify-center">
+                <TrendingUp className="w-3.5 h-3.5 text-[#41C75E]" />
+              </div>
+            </div>
+            <span className="text-[11px] leading-4 text-[#2A3F5E]/60">
+              vs last day
+            </span>
+          </div>
+        </div>
+        {/* Chart Section */}
+        <div className="px-5 pb-5 flex flex-col gap-5">
+          <div className="flex items-end justify-between gap-2 h-[181px]">
+            {[
+              {
+                day: 'M',
+                value: 68,
+                gradient: 'from-[#3EAEFF] to-[#6184FF]',
+              },
+              {
+                day: 'T',
+                value: 51,
+                gradient: 'from-[#FFB545] to-[#FFA451]',
+              },
+              {
+                day: 'W',
+                value: 80,
+                gradient: 'from-[#2ABDEC] to-[#5DC2ED]',
+              },
+              {
+                day: 'T',
+                value: 37,
+                gradient: 'from-[#F8795D] to-[#FFAB6F]',
+              },
+              {
+                day: 'F',
+                value: 62,
+                gradient: 'from-[#B38FFF] to-[#7761FF]',
+              },
+              {
+                day: 'S',
+                value: 34,
+                gradient: 'from-[#F8795D] to-[#FFAB6F]',
+              },
+              {
+                day: 'S',
+                value: 75,
+                gradient: 'from-[#3EAEFF] to-[#6184FF]',
+              },
+            ].map((item, i) => (
+              <div key={i} className="flex flex-col items-center gap-2 flex-1">
+                <div className="w-full relative group">
+                  <div
+                    className="w-full rounded-t-[13.6px] bg-[#2A3F5E]/13 transition-all"
+                    style={{
+                      height: '168px',
+                    }}
+                  />
+                  <div
+                    className={`absolute bottom-0 left-0 right-0 rounded-[13.6px] bg-gradient-to-t ${item.gradient} border border-white/20 transition-all duration-500 group-hover:opacity-90`}
+                    style={{
+                      height: `${item.value}%`,
+                    }}
+                  >
+                    <div className="absolute top-1 left-1 w-[7.25px] h-[7.25px] rounded-full bg-white/80 mix-blend-overlay" />
+                  </div>
+                </div>
+                <span className="text-[9px] leading-[13px] text-[#2A3F5E]/60 font-medium">
+                  {item.day}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+function ControlPanel() {
+  return (
+    <div className="flex flex-col space-y-5">
+      {/* Active Models - Enhanced */}
+      <div className="relative overflow-hidden rounded-2xl border border-indigo-500/20 bg-gradient-to-br from-indigo-950/50 via-purple-950/30 to-black/60 backdrop-blur-xl shadow-xl">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-600/10 via-transparent to-transparent" />
+        <div className="relative p-6">
+          <div className="flex justify-between items-start mb-5">
+            <div>
+              <h4 className="text-sm font-black text-white mb-1 uppercase tracking-wider">
+                Active Models
+              </h4>
+              <p className="text-xs text-zinc-500 font-medium">
+                AI prediction engines
+              </p>
+            </div>
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
+              <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+              <span className="text-xs font-bold text-emerald-400">LIVE</span>
+            </div>
+          </div>
+          <div className="space-y-2 mb-5">
+            {[
+              {
+                name: 'Neural Net Pro',
+                status: 'active',
+                accuracy: '94%',
+              },
+              {
+                name: 'Deep Learning X',
+                status: 'active',
+                accuracy: '91%',
+              },
+              {
+                name: 'Quantum Predict',
+                status: 'standby',
+                accuracy: '88%',
+              },
+            ].map((model) => (
+              <div
+                key={model.name}
+                className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all group"
+              >
+                <div className="flex items-center gap-3">
+                  <Cpu className="w-4 h-4 text-indigo-400" />
+                  <span className="text-sm font-semibold text-white">
+                    {model.name}
+                  </span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-xs font-bold text-zinc-400">
+                    {model.accuracy}
+                  </span>
+                  <span
+                    className={`px-2 py-1 rounded-lg text-xs font-bold ${model.status === 'active' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20'}`}
+                  >
+                    {model.status === 'active' ? 'Active' : 'Standby'}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="flex items-baseline gap-2 pt-5 border-t border-indigo-500/20">
+            <span className="text-2xl font-black text-indigo-400">12</span>
+            <span className="text-sm font-semibold text-zinc-500">
+              / 14 models active
+            </span>
+          </div>
+        </div>
+      </div>
+      {/* Daily Predictions - Enhanced */}
+      <div className="rounded-2xl border border-sky-500/20 bg-gradient-to-br from-sky-950/30 to-blue-950/30 p-6 backdrop-blur-xl shadow-xl">
+        <div className="flex justify-between items-start mb-5">
+          <div>
+            <h4 className="text-sm font-black text-white mb-1 uppercase tracking-wider">
+              Daily Predictions
+            </h4>
+            <p className="text-xs text-zinc-500 font-medium">Generated today</p>
+          </div>
+          <BarChart3 className="w-5 h-5 text-sky-400" />
+        </div>
+        <div className="space-y-3">
+          <div className="flex items-center justify-between p-3 rounded-xl bg-sky-500/5 border border-sky-500/10">
+            <span className="text-sm font-semibold text-zinc-400">Today</span>
+            <span className="text-xl font-black text-sky-400">856</span>
+          </div>
+          <div className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/5">
+            <span className="text-sm font-semibold text-zinc-400">
+              Yesterday
+            </span>
+            <span className="text-lg font-bold text-zinc-500">765</span>
+          </div>
+          <div className="flex items-center justify-between pt-3 border-t border-white/10">
+            <span className="text-sm font-semibold text-zinc-400">Change</span>
+            <span className="text-sm font-black text-emerald-400 bg-emerald-500/10 px-3 py-1.5 rounded-lg border border-emerald-500/20">
+              +11.9%
+            </span>
+          </div>
+        </div>
+      </div>
+      {/* Premier League Table - Enhanced */}
+      <div className="rounded-2xl bg-gradient-to-br from-zinc-900/80 to-black/80 border border-white/10 shadow-xl p-6">
+        <div className="flex justify-between items-start mb-5">
+          <div>
+            <p className="text-xs font-bold text-zinc-500 uppercase tracking-wider mb-1">
+              English
+            </p>
+            <p className="text-base font-black text-white">Premier League</p>
+          </div>
+          <div className="w-10 h-10 bg-gradient-to-br from-emerald-600 to-green-700 rounded-xl flex items-center justify-center border border-emerald-500/30 shadow-lg shadow-emerald-900/30">
+            <Trophy className="w-5 h-5 text-white" />
+          </div>
+        </div>
+        <div className="bg-zinc-900/50 rounded-xl overflow-hidden border border-white/10">
+          <div className="grid grid-cols-12 gap-0 bg-zinc-800/80 px-3 py-2.5 text-xs font-black text-zinc-400 uppercase tracking-wider">
+            <div className="col-span-1">#</div>
+            <div className="col-span-7">Team</div>
+            <div className="col-span-2 text-center">Form</div>
+            <div className="col-span-2 text-right">PTS</div>
+          </div>
+          <div className="divide-y divide-zinc-800/50">
+            {[
+              {
+                pos: 1,
+                team: 'Liverpool',
+                pts: 24,
+                form: 'WWWWW',
+              },
+              {
+                pos: 2,
+                team: 'Man City',
+                pts: 16,
+                form: 'WDLWW',
+              },
+              {
+                pos: 3,
+                team: 'Arsenal',
+                pts: 15,
+                form: 'DDWLW',
+              },
+              {
+                pos: 4,
+                team: 'Leicester',
+                pts: 14,
+                form: 'WLDDW',
+              },
+              {
+                pos: 5,
+                team: 'Chelsea',
+                pts: 14,
+                form: 'WWDDL',
+              },
+            ].map((row, i) => (
+              <div
+                key={row.team}
+                className="grid grid-cols-12 gap-0 px-3 py-3 text-xs hover:bg-white/5 transition-all cursor-default group"
+              >
+                <div className="col-span-1 font-black text-emerald-400">
+                  {row.pos}
+                </div>
+                <div className="col-span-7 font-bold text-white group-hover:text-cyan-400 transition-colors">
+                  {row.team}
+                </div>
+                <div className="col-span-2 flex justify-center gap-1">
+                  {row.form
+                    .split('')
+                    .slice(-3)
+                    .map((result, idx) => (
+                      <div
+                        key={idx}
+                        className={`w-1.5 h-1.5 rounded-full ${result === 'W' ? 'bg-emerald-500' : result === 'D' ? 'bg-zinc-500' : 'bg-red-500'}`}
+                      />
+                    ))}
+                </div>
+                <div className="col-span-2 text-right font-black text-white">
+                  {row.pts}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+      {/* Weekly Yield - Enhanced */}
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-cyan-950/40 to-blue-950/40 border border-cyan-500/20 shadow-xl">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,_var(--tw-gradient-stops))] from-cyan-600/10 via-transparent to-transparent" />
+        <div className="relative p-6">
+          <div className="flex items-center justify-between mb-6 pb-4 border-b border-cyan-500/20">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-cyan-500/10 rounded-xl border border-cyan-500/20">
+                <TrendingUp className="w-5 h-5 text-cyan-400" />
+              </div>
+              <div>
+                <p className="text-sm font-black text-white uppercase tracking-wider">
+                  Weekly Yield
+                </p>
+                <p className="text-xs text-zinc-500 font-medium">Last 7 days</p>
+              </div>
+            </div>
+            <span className="text-xs text-cyan-300 font-black bg-cyan-500/20 px-3 py-1.5 rounded-full border border-cyan-500/30">
+              +2.1%
+            </span>
+          </div>
+          <div className="space-y-3">
+            {[
+              {
+                day: 'Monday',
+                val: 40,
+                max: 85,
+              },
+              {
+                day: 'Tuesday',
+                val: 60,
+                max: 85,
+              },
+              {
+                day: 'Wednesday',
+                val: 85,
+                max: 85,
+                highlight: true,
+              },
+              {
+                day: 'Thursday',
+                val: 50,
+                max: 85,
+              },
+              {
+                day: 'Friday',
+                val: 30,
+                max: 85,
+              },
+            ].map((item) => (
+              <div key={item.day} className="flex items-center gap-3 text-xs">
+                <span className="w-20 text-zinc-400 font-semibold">
+                  {item.day}
+                </span>
+                <div className="flex-1 h-2 bg-black/40 rounded-full overflow-hidden">
+                  <div
+                    className={`h-full rounded-full transition-all duration-500 ${item.highlight ? 'bg-gradient-to-r from-cyan-500 via-blue-500 to-cyan-400 shadow-lg shadow-cyan-900/50' : 'bg-cyan-600/40'}`}
+                    style={{
+                      width: `${(item.val / item.max) * 100}%`,
+                    }}
+                  />
+                </div>
+                <span
+                  className={`w-12 text-right font-black ${item.highlight ? 'text-cyan-300' : 'text-zinc-500'}`}
+                >
+                  €{item.val}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+      {/* Premium CTA - Enhanced */}
+      <div className="relative overflow-hidden rounded-2xl border border-yellow-500/30 bg-gradient-to-br from-yellow-950/30 to-orange-950/30 p-6 shadow-xl">
+        <div className="absolute top-0 right-0 -mt-10 -mr-10 w-32 h-32 bg-yellow-500/10 blur-3xl rounded-full" />
+        <div className="flex items-start gap-4 relative">
+          <div className="p-3 bg-gradient-to-br from-yellow-600 to-orange-600 rounded-xl border border-yellow-500/30 shrink-0 shadow-lg shadow-yellow-900/30">
+            <Crown className="w-5 h-5 text-white" />
+          </div>
+          <div className="flex-1">
+            <h4 className="text-base font-black text-white mb-1">
+              Premium Access
+            </h4>
+            <p className="text-xs text-zinc-400 leading-relaxed mb-4 font-medium">
+              Unlock all AI models and exclusive premium predictions.
+            </p>
+            <button className="w-full text-sm font-black bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-500 hover:to-orange-500 text-white px-4 py-3 rounded-xl transition-all shadow-lg shadow-yellow-900/30 hover:shadow-yellow-900/50">
+              Upgrade Now
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+function FiltersSidebar() {
+  return (
+    <aside className="lg:col-span-3 sticky top-28 space-y-6 hidden lg:block">
+      {/* Leagues - Enhanced */}
+      <div className="bg-gradient-to-br from-zinc-900/80 to-zinc-950/80 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-xl">
+        <h3 className="text-sm font-black text-white mb-5 uppercase tracking-wider flex items-center gap-2">
+          <Trophy className="w-4 h-4 text-cyan-400" />
+          Leagues
+        </h3>
+        <div className="space-y-3">
+          {[
+            {
+              name: 'Premier League',
+              count: 12,
+            },
+            {
+              name: 'La Liga',
+              count: 8,
+            },
+            {
+              name: 'Serie A',
+              count: 5,
+            },
+            {
+              name: 'Bundesliga',
+              count: 4,
+              active: true,
+            },
+            {
+              name: 'Champions League',
+              count: 2,
+            },
+          ].map((league) => (
+            <label
+              key={league.name}
+              className="flex items-center gap-3 cursor-pointer group p-2 rounded-lg hover:bg-white/5 transition-all"
+            >
+              <div
+                className={`
+                w-5 h-5 rounded-lg border-2 flex items-center justify-center transition-all
+                ${league.active ? 'bg-gradient-to-br from-cyan-600 to-blue-600 border-cyan-400 shadow-lg shadow-cyan-900/30' : 'bg-zinc-800/50 border-zinc-600 group-hover:border-cyan-500'}
+              `}
+              >
+                {league.active && <Check className="w-3.5 h-3.5 text-white" />}
+              </div>
+              <span
+                className={`text-sm font-semibold transition-colors flex-1 ${league.active ? 'text-white' : 'text-zinc-400 group-hover:text-white'}`}
+              >
+                {league.name}
+              </span>
+              <span className="text-xs font-bold text-zinc-600 bg-zinc-800/50 px-2 py-0.5 rounded">
+                {league.count}
+              </span>
+            </label>
+          ))}
+        </div>
+      </div>
+      {/* Confidence Range - Enhanced */}
+      <div className="bg-gradient-to-br from-zinc-900/80 to-zinc-950/80 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-xl">
+        <h3 className="text-sm font-black text-white mb-6 uppercase tracking-wider flex items-center gap-2">
+          <Target className="w-4 h-4 text-cyan-400" />
+          Confidence Level
+        </h3>
+        <div className="relative mb-8">
+          <input
+            type="range"
+            min="0"
+            max="100"
+            defaultValue="75"
+            className="w-full h-2 bg-zinc-800 rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-gradient-to-r [&::-webkit-slider-thumb]:from-cyan-500 [&::-webkit-slider-thumb]:to-blue-500 [&::-webkit-slider-thumb]:shadow-lg [&::-webkit-slider-thumb]:shadow-cyan-900/50 [&::-webkit-slider-thumb]:cursor-pointer"
+          />
+          <div className="absolute top-6 left-0 right-0 flex justify-between text-xs text-zinc-600 font-medium">
+            <span>Low</span>
+            <span>Medium</span>
+            <span>High</span>
+          </div>
+        </div>
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex-1 px-4 py-3 rounded-xl bg-zinc-800/50 border border-zinc-700 text-sm font-bold text-white text-center">
+            0%
+          </div>
+          <span className="text-zinc-600 font-bold">—</span>
+          <div className="flex-1 px-4 py-3 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 border border-cyan-500/30 text-sm font-bold text-white text-center shadow-lg shadow-cyan-900/30">
+            75%
+          </div>
+        </div>
+      </div>
+      {/* Quick Filters - Enhanced */}
+      <div className="bg-gradient-to-br from-zinc-900/80 to-zinc-950/80 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-xl">
+        <h3 className="text-sm font-black text-white mb-5 uppercase tracking-wider flex items-center gap-2">
+          <Zap className="w-4 h-4 text-cyan-400" />
+          Quick Filters
+        </h3>
+        <div className="flex flex-wrap gap-2">
+          {['Live Now', 'High Odds', 'Safe Bet', 'Value'].map((tag) => (
+            <button
+              key={tag}
+              className="px-4 py-2 rounded-xl bg-zinc-800/50 border border-zinc-700 text-zinc-400 text-xs font-bold cursor-pointer hover:text-white hover:border-cyan-500/50 hover:bg-zinc-700/50 transition-all"
+            >
+              {tag}
+            </button>
+          ))}
+        </div>
+      </div>
+      <ControlPanel />
+    </aside>
+  )
+}
+function MatchGrid() {
+  const matches = [
+    {
+      team1: 'Man City',
+      team2: 'Liverpool',
+      league: 'Premier League',
+      time: '20:45',
+      odds: '1.85',
+      prediction: 'Home Win',
+      confidence: 88,
+      hot: true,
+    },
+    {
+      team1: 'Real Madrid',
+      team2: 'Barcelona',
+      league: 'La Liga',
+      time: '21:00',
+      odds: '2.10',
+      prediction: 'Over 2.5',
+      confidence: 76,
+    },
+    {
+      team1: 'Bayern',
+      team2: 'Dortmund',
+      league: 'Bundesliga',
+      time: '18:30',
+      odds: '1.95',
+      prediction: 'BTTS',
+      confidence: 82,
+    },
+    {
+      team1: 'PSG',
+      team2: 'Lyon',
+      league: 'Ligue 1',
+      time: '21:00',
+      odds: '1.45',
+      prediction: 'Home Win',
+      confidence: 92,
+      hot: true,
+    },
+    {
+      team1: 'Inter',
+      team2: 'Milan',
+      league: 'Serie A',
+      time: '20:45',
+      odds: '2.40',
+      prediction: 'Draw',
+      confidence: 60,
+    },
+    {
+      team1: 'Arsenal',
+      team2: 'Chelsea',
+      league: 'Premier League',
+      time: '15:00',
+      odds: '1.75',
+      prediction: 'Home Win',
+      confidence: 85,
+    },
+  ]
+  return (
+    <div className="flex flex-col gap-8">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-black text-white mb-1">
+            Upcoming Predictions
+          </h2>
+          <p className="text-sm text-zinc-500 font-medium">
+            AI-powered match analysis
+          </p>
+        </div>
+        <div className="flex items-center gap-3">
+          <span className="text-sm text-zinc-500 font-semibold">Sort by:</span>
+          <select className="bg-zinc-900/50 border border-white/10 text-white text-sm font-semibold rounded-xl px-4 py-2.5 focus:outline-none focus:border-cyan-500/50 transition-all cursor-pointer">
+            <option>Highest Confidence</option>
+            <option>Time (Soonest)</option>
+            <option>Odds (High-Low)</option>
+          </select>
+        </div>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {matches.map((match, idx) => (
+          <div
+            key={idx}
+            className="group relative rounded-3xl bg-gradient-to-br from-zinc-900/80 to-zinc-950/80 border border-white/10 hover:border-cyan-500/30 transition-all duration-300 hover:-translate-y-2 overflow-hidden flex flex-col shadow-xl hover:shadow-2xl hover:shadow-cyan-900/20"
+          >
+            {/* Hot Badge */}
+            {match.hot && (
+              <div className="absolute top-0 left-0 bg-gradient-to-r from-orange-600 to-red-600 text-white text-xs font-black px-4 py-2 rounded-br-2xl z-20 shadow-lg shadow-red-900/30">
+                🔥 HOT TIP
+              </div>
+            )}
+            {/* Card Header */}
+            <div className="relative h-40 bg-gradient-to-br from-zinc-800 via-zinc-900 to-black flex items-center justify-center p-8 overflow-hidden">
+              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-cyan-600/5 via-transparent to-transparent" />
+              <div className="flex items-center gap-6 w-full justify-center relative z-10">
+                <div className="text-center">
+                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-zinc-800 to-zinc-900 flex items-center justify-center text-sm font-black text-zinc-400 mb-3 border border-white/10 shadow-lg">
+                    {match.team1.substring(0, 3).toUpperCase()}
+                  </div>
+                  <span className="text-sm font-bold text-white">
+                    {match.team1}
+                  </span>
+                </div>
+                <div className="flex flex-col items-center gap-2">
+                  <div className="text-zinc-500 text-xs font-black">VS</div>
+                  <div className="text-xs text-zinc-600 font-semibold bg-zinc-800/50 px-3 py-1 rounded-full border border-white/5">
+                    {match.time}
+                  </div>
+                </div>
+                <div className="text-center">
+                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-zinc-800 to-zinc-900 flex items-center justify-center text-sm font-black text-zinc-400 mb-3 border border-white/10 shadow-lg">
+                    {match.team2.substring(0, 3).toUpperCase()}
+                  </div>
+                  <span className="text-sm font-bold text-white">
+                    {match.team2}
+                  </span>
+                </div>
+              </div>
+              {/* Favorite Button */}
+              <button className="absolute top-5 right-5 p-2.5 rounded-xl bg-black/40 backdrop-blur-md border border-white/10 text-zinc-400 hover:text-rose-500 hover:bg-rose-500/10 hover:border-rose-500/30 transition-all z-20">
+                <Heart className="w-4 h-4" />
+              </button>
+            </div>
+            {/* Content */}
+            <div className="p-6 flex flex-col flex-grow relative z-20 bg-gradient-to-b from-zinc-900/50 to-zinc-950/50 backdrop-blur-sm">
+              <div className="flex justify-between items-start mb-5">
+                <div>
+                  <p className="text-xs text-cyan-400 font-bold mb-2 uppercase tracking-wider">
+                    {match.league}
+                  </p>
+                  <h3 className="text-lg font-black text-white">
+                    {match.prediction}
+                  </h3>
+                </div>
+                <div className="text-right">
+                  <div className="inline-flex items-center gap-1.5 bg-gradient-to-r from-emerald-500/10 to-green-500/10 px-3 py-1.5 rounded-xl text-xs font-black text-emerald-400 border border-emerald-500/20">
+                    <Star className="w-3.5 h-3.5 fill-current" />
+                    {match.confidence}%
+                  </div>
+                </div>
+              </div>
+              <div className="mt-auto pt-5 flex items-center justify-between border-t border-white/10">
+                <div>
+                  <span className="text-xs text-zinc-500 font-semibold block mb-1">
+                    Odds
+                  </span>
+                  <span className="text-2xl font-black text-white">
+                    {match.odds}
+                  </span>
+                </div>
+                <button className="px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white text-sm font-black transition-all shadow-lg shadow-cyan-900/30 hover:shadow-cyan-900/50">
+                  Bet Now
+                </button>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+export function WinMixTipster() {
+  return (
+    <div className="min-h-screen bg-black text-white selection:bg-cyan-500/30">
+      {/* Enhanced Background */}
+      <div className="fixed inset-0 z-0 pointer-events-none">
+        <div className="absolute top-0 left-0 w-[600px] h-[600px] bg-cyan-600/10 rounded-full blur-[150px]" />
+        <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-blue-600/10 rounded-full blur-[150px]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-indigo-600/5 rounded-full blur-[200px]" />
+        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-30 brightness-100 contrast-150 mix-blend-overlay" />
+      </div>
+      <div className="relative z-10 flex flex-col min-h-screen">
+        <UnifiedHeader />
+        <main className="flex-1 max-w-[1600px] mx-auto w-full p-8 space-y-10">
+          {/* Hero Section */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-2">
+              <StadiumHero />
+            </div>
+            <div className="lg:col-span-1">
+              <StatsBento />
+            </div>
+          </div>
+          {/* Team Ticker */}
+          <TeamTicker />
+          {/* Main Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <FiltersSidebar />
+            <div className="lg:col-span-9 space-y-10">
+              <MatchGrid />
+            </div>
+          </div>
+        </main>
+        <footer className="border-t border-white/10 py-16 mt-16 bg-black/80 backdrop-blur-2xl">
+          <div className="max-w-[1600px] mx-auto px-8 text-center text-zinc-500 text-sm font-medium">
+            <p>&copy; 2025 WinMix Tipster Pro. All rights reserved.</p>
+          </div>
+        </footer>
+      </div>
+    </div>
+  )
+}

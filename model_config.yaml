@@ -1,0 +1,62 @@
+model_type: LogisticRegression
+target_column: fulltime_result
+
+input_features:
+  - home_goals_avg
+  - away_goals_avg
+  - home_form
+  - away_form
+  - head_to_head
+  - possession_avg
+  - shots_on_target_avg
+  - corner_kicks_avg
+
+hyperparameters:
+  max_iter: 1000
+  random_state: 42
+  solver: lbfgs
+  C: 1.0
+{
+  "input_features": [
+    "team_form_index",
+    "opponent_form_index",
+    "avg_goals_scored",
+    "avg_goals_conceded",
+    "injury_count",
+    "rest_days",
+    "tempo_rating"
+  ],
+  "scoreline_classes": [
+    "0-0",
+    "1-0",
+    "0-1",
+    "2-1",
+    "1-2",
+    "2-0",
+    "0-2",
+    "Other"
+  ]
+}
+meta:
+  domain: "football_prediction"
+  config_version: "1.0"
+
+inference:
+  active_model_id: "logistic_regression_v1"
+  prediction_target: "fulltime_result"
+  input_features:
+    - "team_a_rolling_xG"
+    - "team_b_rolling_xG"
+    - "head_to_head_score"
+    - "venue_advantage"
+
+training:
+  algorithm: "LogisticRegression"
+  random_seed: 42
+  hyperparameters:
+    max_iter: 1000
+    C: 1.0
+    solver: "liblinear"
+  data_source:
+    path: "data/training_dataset.csv"
+    target_column: "fulltime_result"

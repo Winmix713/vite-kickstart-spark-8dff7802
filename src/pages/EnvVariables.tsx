@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Plus, Download, Upload, Eye, EyeOff, Edit, Trash2, Shield, Key, Database, Mail, Settings, AlertTriangle } from "lucide-react";
-import Sidebar from "@/components/Sidebar";
+import Sidebar from "@/components/navigation/Sidebar";
 import TopBar from "@/components/TopBar";
 import AuthGate from "@/components/AuthGate";
 import { Button } from "@/components/ui/button";

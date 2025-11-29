@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
-import Sidebar from "@/components/Sidebar";
+import Sidebar from "@/components/navigation/Sidebar";
 import TopBar from "@/components/TopBar";
 import { ArrowLeft, TrendingUp, Users, Target, Shield, Activity, TrendingDown } from "lucide-react";
 import { Button } from "@/components/ui/button";

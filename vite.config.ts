@@ -23,7 +23,7 @@ export default defineConfig(({ mode }) => ({
             rewrite: (path) => path, // Keep the path as-is
           },
         }
-      : {},
+      : undefined,
   },
   plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
   resolve: {

@@ -855,8 +855,7 @@ export default function MonitoringPage() {
                   </Table>
                  )}
               </CardContent>
-            </Card>
-          </div>
+             </Card>
         </div>
       </AuthGate>
     );

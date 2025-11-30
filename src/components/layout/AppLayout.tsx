@@ -1,26 +1,65 @@
-import React, { Suspense, ReactNode } from 'react';
+import React, { Suspense, ReactNode, useCallback, useMemo } from 'react';
 import { Outlet } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import Sidebar from '@/components/navigation/Sidebar';
 import PageLoading from '@/components/ui/PageLoading';
 import ErrorBoundary from '@/components/ErrorBoundary';
 
+/**
+ * Props for the AppLayout component
+ */
 interface AppLayoutProps {
+  /** Child components to render */
   children?: ReactNode;
-  /** When true, uses Outlet for nested routes, otherwise renders children */
+  
+  /** When true, uses React Router's Outlet for nested routes */
   useOutlet?: boolean;
+  
   /** Additional CSS classes for the main content area */
   className?: string;
-  /** Whether to show the sidebar (default: true) */
+  
+  /** Whether to display the sidebar navigation */
   showSidebar?: boolean;
-  /** Whether to show error boundary (default: true) */
+  
+  /** Wrap content in an error boundary for graceful error handling */
   withErrorBoundary?: boolean;
-  /** Custom loading fallback */
+  
+  /** Custom loading component shown during Suspense */
   loadingFallback?: ReactNode;
-  /** Custom error fallback */
+  
+  /** Custom error component shown when errors occur */
   errorFallback?: ReactNode;
+  
+  /** Additional wrapper classes for the root container */
+  containerClassName?: string;
+  
+  /** Sidebar width class (affects main content margin) */
+  sidebarWidth?: string;
+  
+  /** Disable transitions for better performance on slower devices */
+  disableTransitions?: boolean;
+  
+  /** Callback fired when layout mounts */
+  onLayoutMount?: () => void;
 }
 
+/**
+ * AppLayout Component
+ * 
+ * A robust, flexible layout component that provides:
+ * - Responsive sidebar navigation
+ * - Error boundary protection
+ * - Suspense-based code splitting support
+ * - Customizable loading states
+ * - React Router integration
+ * 
+ * @example
+ * ```tsx
+ * <AppLayout showSidebar={true} useOutlet={true}>
+ *   <YourContent />
+ * </AppLayout>
+ * ```
+ */
 const AppLayout: React.FC<AppLayoutProps> = ({
   children,
   useOutlet = true,
@@ -28,35 +67,88 @@ const AppLayout: React.FC<AppLayoutProps> = ({
   showSidebar = true,
   withErrorBoundary = true,
   loadingFallback,
-  errorFallback
+  errorFallback,
+  containerClassName,
+  sidebarWidth = 'lg:ml-16',
+  disableTransitions = false,
+  onLayoutMount
 }) => {
-  const content = useOutlet ? <Outlet /> : children;
+  // Fire mount callback once
+  React.useEffect(() => {
+    onLayoutMount?.();
+  }, [onLayoutMount]);
 
-  const wrappedContent = (
-    <div className="min-h-screen bg-background">
-      {/* Sidebar */}
-      {showSidebar && <Sidebar />}
+  // Memoize content selection to prevent unnecessary re-renders
+  const content = useMemo(
+    () => (useOutlet ? <Outlet /> : children),
+    [useOutlet, children]
+  );
 
-      {/* Main Content */}
+  // Memoize main content classes
+  const mainClasses = useMemo(
+    () =>
+      cn(
+        'flex-1 min-h-screen',
+        !disableTransitions && 'transition-all duration-300 ease-in-out',
+        showSidebar && sidebarWidth,
+        className
+      ),
+    [showSidebar, sidebarWidth, className, disableTransitions]
+  );
+
+  // Memoize container classes
+  const containerClasses = useMemo(
+    () => cn('min-h-screen bg-background flex', containerClassName),
+    [containerClassName]
+  );
+
+  // Render loading fallback
+  const loadingComponent = useMemo(
+    () => loadingFallback || <PageLoading message="Tartalom betöltése..." />,
+    [loadingFallback]
+  );
+
+  // Main layout structure
+  const layoutContent = (
+    <div className={containerClasses}>
+      {/* Sidebar Navigation */}
+      {showSidebar && (
+        <aside className="flex-shrink-0" aria-label="Oldalsó navigáció">
+          <Sidebar />
+        </aside>
+      )}
+
+      {/* Main Content Area */}
       <main 
-        className={cn(
-          'flex-1 transition-all duration-300 ease-in-out',
-          showSidebar && 'lg:ml-16', // Adjust based on sidebar width
-          className
-        )}
+        className={mainClasses}
+        role="main"
+        aria-label="Fő tartalom"
       >
-        <Suspense fallback={loadingFallback || <PageLoading message="Loading content..." />}>
+        <Suspense fallback={loadingComponent}>
           {content}
         </Suspense>
       </main>
     </div>
   );
 
+  // Conditionally wrap with ErrorBoundary
   if (withErrorBoundary) {
-    return <ErrorBoundary fallback={errorFallback}>{wrappedContent}</ErrorBoundary>;
+    return (
+      <ErrorBoundary fallback={errorFallback}>
+        {layoutContent}
+      </ErrorBoundary>
+    );
   }
 
-  return wrappedContent;
+  return layoutContent;
 };
 
+// Display name for debugging
+AppLayout.displayName = 'AppLayout';
+
 export default AppLayout;
+
+/**
+ * Type export for external use
+ */
+export type { AppLayoutProps };

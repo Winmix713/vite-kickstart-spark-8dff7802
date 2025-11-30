@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '@/components/navigation/Sidebar';
 import TopBar from '@/components/TopBar';
@@ -8,6 +8,8 @@ import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { Loader2, RefreshCcw, Sparkles } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+
+// Types
 interface PredictionListItem {
   id: string;
   match: {
@@ -21,6 +23,7 @@ interface PredictionListItem {
   actual_outcome: string | null;
   was_correct: boolean | null;
 }
+
 interface SupabasePredictionRow {
   id: string;
   predicted_outcome: string;
@@ -40,22 +43,43 @@ interface SupabasePredictionRow {
     } | null;
   } | null;
 }
-const PredictionsView = () => {
+
+// Constants
+const DEFAULT_TEAM_HOME = 'Ismeretlen hazai';
+const DEFAULT_TEAM_AWAY = 'Ismeretlen vendég';
+const DEFAULT_LEAGUE = 'Ismeretlen liga';
+const PREDICTIONS_LIMIT = 25;
+
+const PredictionsView: React.FC = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [predictions, setPredictions] = useState<PredictionListItem[]>([]);
   const [error, setError] = useState<string | null>(null);
-  useEffect(() => {
-    loadPredictions();
-  }, []);
-  const loadPredictions = async () => {
+
+  // Transform Supabase row to PredictionListItem
+  const transformPrediction = (item: SupabasePredictionRow): PredictionListItem => ({
+    id: item.id,
+    predicted_outcome: item.predicted_outcome,
+    confidence_score: item.confidence_score,
+    actual_outcome: item.actual_outcome,
+    was_correct: item.was_correct,
+    match: {
+      home_team: item.match?.home_team?.name ?? DEFAULT_TEAM_HOME,
+      away_team: item.match?.away_team?.name ?? DEFAULT_TEAM_AWAY,
+      match_date: item.match?.match_date ?? new Date().toISOString(),
+      league: item.match?.league?.name ?? DEFAULT_LEAGUE,
+    },
+  });
+
+  // Load predictions from Supabase
+  const loadPredictions = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
-      const {
-        data,
-        error: predictionsError
-      } = await supabase.from('predictions').select(`
+
+      const { data, error: predictionsError } = await supabase
+        .from('predictions')
+        .select(`
           id,
           predicted_outcome,
           confidence_score,
@@ -67,26 +91,16 @@ const PredictionsView = () => {
             away_team:teams!matches_away_team_id_fkey(name),
             league:leagues(name)
           )
-        `).order('created_at', {
-        ascending: false
-      }).limit(25);
+        `)
+        .order('created_at', { ascending: false })
+        .limit(PREDICTIONS_LIMIT);
+
       if (predictionsError) {
         throw predictionsError;
       }
+
       const rows = (data ?? []) as SupabasePredictionRow[];
-      const formatted: PredictionListItem[] = rows.map(item => ({
-        id: item.id,
-        predicted_outcome: item.predicted_outcome,
-        confidence_score: item.confidence_score,
-        actual_outcome: item.actual_outcome,
-        was_correct: item.was_correct,
-        match: {
-          home_team: item.match?.home_team?.name ?? 'Ismeretlen hazai',
-          away_team: item.match?.away_team?.name ?? 'Ismeretlen vendég',
-          match_date: item.match?.match_date ?? new Date().toISOString(),
-          league: item.match?.league?.name ?? 'Ismeretlen liga'
-        }
-      }));
+      const formatted = rows.map(transformPrediction);
       setPredictions(formatted);
     } catch (err) {
       console.error('Error loading predictions:', err);
@@ -94,13 +108,26 @@ const PredictionsView = () => {
     } finally {
       setLoading(false);
     }
+  }, []);
+
+  useEffect(() => {
+    loadPredictions();
+  }, [loadPredictions]);
+
+  // Navigate to new predictions page
+  const handleNewPredictions = () => {
+    navigate('/predictions/new');
   };
-  return <div className="min-h-screen">
+
+  return (
+    <div className="min-h-screen">
       <Sidebar />
       <TopBar />
+      
       <main className="relative">
         <div className="ml-0 md:ml-[84px] py-10 sm:py-14">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            {/* Header Section */}
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
               <div>
                 <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground">
@@ -111,29 +138,57 @@ const PredictionsView = () => {
                   listát és indíts új elemzéseket közvetlenül a felületről.
                 </p>
               </div>
+              
+              {/* Action Buttons */}
               <div className="flex items-center gap-2">
-                <Button variant="outline" onClick={loadPredictions} disabled={loading} className="gap-2">
-                  {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCcw className="w-4 h-4" />}
+                <Button
+                  variant="outline"
+                  onClick={loadPredictions}
+                  disabled={loading}
+                  className="gap-2"
+                  aria-label="Lista frissítése"
+                >
+                  {loading ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <RefreshCcw className="w-4 h-4" />
+                  )}
                   Lista frissítése
                 </Button>
-                <Button onClick={() => navigate('/predictions/new')} className="gap-2">
+                
+                <Button
+                  onClick={handleNewPredictions}
+                  className="gap-2"
+                  aria-label="Új predikciók létrehozása"
+                >
                   <Sparkles className="w-4 h-4" />
                   Új predikciók
                 </Button>
               </div>
             </div>
 
-            {error && <Alert variant="destructive" className="mb-6">
+            {/* Error Alert */}
+            {error && (
+              <Alert variant="destructive" className="mb-6">
                 <AlertDescription>{error}</AlertDescription>
-              </Alert>}
+              </Alert>
+            )}
 
-            {loading ? <div className="flex items-center justify-center py-20">
+            {/* Content Section */}
+            {loading ? (
+              <div className="flex items-center justify-center py-20">
                 <Loader2 className="w-8 h-8 animate-spin text-primary" />
-              </div> : <RecentPredictions predictions={predictions} />}
+              </div>
+            ) : (
+              <RecentPredictions predictions={predictions} />
+            )}
           </div>
         </div>
       </main>
+      
       <Footer />
-    </div>;
+    </div>
+  );
 };
+
 export default PredictionsView;

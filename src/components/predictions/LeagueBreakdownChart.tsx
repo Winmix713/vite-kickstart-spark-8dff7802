@@ -1,16 +1,6 @@
 import React from 'react';
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-} from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-
 interface LeagueBreakdownData {
   league: string;
   total_predictions: number;
@@ -19,21 +9,18 @@ interface LeagueBreakdownData {
   avg_confidence: number;
   avg_accuracy_score: number;
 }
-
 interface LeagueBreakdownChartProps {
   data: LeagueBreakdownData[];
   isLoading?: boolean;
   error?: string | null;
 }
-
 const LeagueBreakdownChart: React.FC<LeagueBreakdownChartProps> = ({
   data,
   isLoading,
-  error,
+  error
 }) => {
   if (isLoading) {
-    return (
-      <Card className="w-full">
+    return <Card className="w-full">
         <CardHeader>
           <CardTitle>League Performance Breakdown</CardTitle>
           <CardDescription>Loading league analysis...</CardDescription>
@@ -41,13 +28,10 @@ const LeagueBreakdownChart: React.FC<LeagueBreakdownChartProps> = ({
         <CardContent className="h-80 flex items-center justify-center">
           <div className="text-gray-400">Loading...</div>
         </CardContent>
-      </Card>
-    );
+      </Card>;
   }
-
   if (error) {
-    return (
-      <Card className="w-full">
+    return <Card className="w-full">
         <CardHeader>
           <CardTitle>League Performance Breakdown</CardTitle>
           <CardDescription>Error loading data</CardDescription>
@@ -55,13 +39,10 @@ const LeagueBreakdownChart: React.FC<LeagueBreakdownChartProps> = ({
         <CardContent className="h-80 flex items-center justify-center">
           <div className="text-red-400">{error}</div>
         </CardContent>
-      </Card>
-    );
+      </Card>;
   }
-
   if (!data || data.length === 0) {
-    return (
-      <Card className="w-full">
+    return <Card className="w-full">
         <CardHeader>
           <CardTitle>League Performance Breakdown</CardTitle>
           <CardDescription>No data available</CardDescription>
@@ -69,12 +50,9 @@ const LeagueBreakdownChart: React.FC<LeagueBreakdownChartProps> = ({
         <CardContent className="h-80 flex items-center justify-center">
           <div className="text-gray-400">No league data to display</div>
         </CardContent>
-      </Card>
-    );
+      </Card>;
   }
-
-  return (
-    <Card className="w-full">
+  return <Card className="w-full">
       <CardHeader>
         <CardTitle>League Performance Breakdown</CardTitle>
         <CardDescription>
@@ -83,50 +61,33 @@ const LeagueBreakdownChart: React.FC<LeagueBreakdownChartProps> = ({
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={400}>
-          <BarChart
-            data={data}
-            margin={{ top: 5, right: 30, left: 0, bottom: 5 }}
-          >
+          <BarChart data={data} margin={{
+          top: 5,
+          right: 30,
+          left: 0,
+          bottom: 5
+        }}>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis
-              dataKey="league"
-              stroke="#666"
-              style={{ fontSize: '12px' }}
-              angle={-45}
-              textAnchor="end"
-              height={80}
-            />
-            <YAxis
-              stroke="#666"
-              style={{ fontSize: '12px' }}
-            />
-            <Tooltip
-              contentStyle={{
-                backgroundColor: '#1f2937',
-                border: '1px solid #374151',
-                borderRadius: '6px',
-                color: '#e5e7eb',
-              }}
-              formatter={(value) => {
-                if (typeof value === 'number') {
-                  return value.toFixed(1);
-                }
-                return value;
-              }}
-            />
+            <XAxis dataKey="league" stroke="#666" style={{
+            fontSize: '12px'
+          }} angle={-45} textAnchor="end" height={80} />
+            <YAxis stroke="#666" style={{
+            fontSize: '12px'
+          }} />
+            <Tooltip contentStyle={{
+            backgroundColor: '#1f2937',
+            border: '1px solid #374151',
+            borderRadius: '6px',
+            color: '#e5e7eb'
+          }} formatter={value => {
+            if (typeof value === 'number') {
+              return value.toFixed(1);
+            }
+            return value;
+          }} />
             <Legend />
-            <Bar
-              dataKey="accuracy_percentage"
-              fill="#10b981"
-              name="Accuracy %"
-              radius={[8, 8, 0, 0]}
-            />
-            <Bar
-              dataKey="avg_confidence"
-              fill="#3b82f6"
-              name="Avg Confidence"
-              radius={[8, 8, 0, 0]}
-            />
+            <Bar dataKey="accuracy_percentage" fill="#10b981" name="Accuracy %" radius={[8, 8, 0, 0]} />
+            <Bar dataKey="avg_confidence" fill="#3b82f6" name="Avg Confidence" radius={[8, 8, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
         <div className="mt-6">
@@ -145,11 +106,7 @@ const LeagueBreakdownChart: React.FC<LeagueBreakdownChartProps> = ({
                 </tr>
               </thead>
               <tbody>
-                {data.map((row, idx) => (
-                  <tr
-                    key={idx}
-                    className="border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-900"
-                  >
+                {data.map((row, idx) => <tr key={idx} className="border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-900">
                     <td className="py-2 px-2 font-medium">{row.league}</td>
                     <td className="py-2 px-2 text-center">{row.total_predictions}</td>
                     <td className="py-2 px-2 text-center text-green-600 dark:text-green-400 font-semibold">
@@ -159,15 +116,12 @@ const LeagueBreakdownChart: React.FC<LeagueBreakdownChartProps> = ({
                     <td className="py-2 px-2 text-center text-blue-600 dark:text-blue-400">
                       {row.avg_accuracy_score.toFixed(2)}
                     </td>
-                  </tr>
-                ))}
+                  </tr>)}
               </tbody>
             </table>
           </div>
         </div>
       </CardContent>
-    </Card>
-  );
+    </Card>;
 };
-
 export default LeagueBreakdownChart;

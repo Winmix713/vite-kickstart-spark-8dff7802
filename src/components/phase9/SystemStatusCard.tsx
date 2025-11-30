@@ -1,7 +1,6 @@
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { AlertTriangle, CheckCircle, Clock } from 'lucide-react';
-
 interface SystemStatusCardProps {
   title: string;
   icon: React.ReactNode;
@@ -9,7 +8,6 @@ interface SystemStatusCardProps {
   description: string;
   color: 'blue' | 'green' | 'orange' | 'purple';
 }
-
 export const SystemStatusCard: React.FC<SystemStatusCardProps> = ({
   title,
   icon,
@@ -19,22 +17,28 @@ export const SystemStatusCard: React.FC<SystemStatusCardProps> = ({
 }) => {
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'active': return 'text-green-600';
-      case 'inactive': return 'text-gray-600';
-      case 'error': return 'text-red-600';
-      default: return 'text-gray-600';
+      case 'active':
+        return 'text-green-600';
+      case 'inactive':
+        return 'text-gray-600';
+      case 'error':
+        return 'text-red-600';
+      default:
+        return 'text-gray-600';
     }
   };
-
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'active': return <CheckCircle className="h-4 w-4 text-green-500" />;
-      case 'inactive': return <Clock className="h-4 w-4 text-gray-500" />;
-      case 'error': return <AlertTriangle className="h-4 w-4 text-red-500" />;
-      default: return <Clock className="h-4 w-4 text-gray-500" />;
+      case 'active':
+        return <CheckCircle className="h-4 w-4 text-green-500" />;
+      case 'inactive':
+        return <Clock className="h-4 w-4 text-gray-500" />;
+      case 'error':
+        return <AlertTriangle className="h-4 w-4 text-red-500" />;
+      default:
+        return <Clock className="h-4 w-4 text-gray-500" />;
     }
   };
-
   const getColorClasses = (color: string) => {
     const colors: Record<string, string> = {
       blue: 'border-blue-200 bg-blue-50',
@@ -44,9 +48,7 @@ export const SystemStatusCard: React.FC<SystemStatusCardProps> = ({
     };
     return colors[color] || colors.blue;
   };
-
-  return (
-    <Card className={getColorClasses(color)}>
+  return <Card className={getColorClasses(color)}>
       <CardContent className="p-6">
         <div className="flex items-center justify-between mb-4">
           <div className={`p-2 rounded-lg ${getColorClasses(color)}`}>
@@ -60,6 +62,5 @@ export const SystemStatusCard: React.FC<SystemStatusCardProps> = ({
           {status.toUpperCase()}
         </div>
       </CardContent>
-    </Card>
-  );
+    </Card>;
 };

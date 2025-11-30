@@ -1,11 +1,14 @@
 import React from 'react';
 import { usePhaseFlags } from '@/hooks/usePhaseFlags';
-
 const FeatureFlagsDemo: React.FC = () => {
-  const { isPhase5Enabled, isPhase6Enabled, isPhase7Enabled, isPhase8Enabled, isPhase9Enabled } = usePhaseFlags();
-
-  return (
-    <div className="container mx-auto px-4 py-8">
+  const {
+    isPhase5Enabled,
+    isPhase6Enabled,
+    isPhase7Enabled,
+    isPhase8Enabled,
+    isPhase9Enabled
+  } = usePhaseFlags();
+  return <div className="container mx-auto px-4 py-8">
       <h1 className="text-2xl font-bold mb-6">Feature Flags Demo</h1>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -72,8 +75,6 @@ const FeatureFlagsDemo: React.FC = () => {
           <div>VITE_FEATURE_PHASE9="true"</div>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default FeatureFlagsDemo;

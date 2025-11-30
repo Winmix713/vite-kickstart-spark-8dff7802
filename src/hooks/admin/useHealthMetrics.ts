@@ -3,10 +3,8 @@ import { supabase } from "@/integrations/supabase/client";
 import type { ComponentHealth } from "@/integrations/health-check";
 import { healthCheck } from "@/integrations/health-check";
 import logger from "@/lib/logger";
-
 export const useHealthMetrics = () => {
   const [metrics, setMetrics] = useState<ComponentHealth | null>(null);
-
   useEffect(() => {
     let cancelled = false;
     const interval = setInterval(async () => {
@@ -25,23 +23,24 @@ export const useHealthMetrics = () => {
             active_users: health.activeUsers ?? null,
             memory_usage: Math.round((health.memoryUsage ?? 0) * 100),
             cpu_usage: Math.round((health.cpuUsage ?? 0) * 100),
-            cache_hit_rate: Math.round((health.cacheHitRate ?? 0) * 100),
+            cache_hit_rate: Math.round((health.cacheHitRate ?? 0) * 100)
           });
         } catch (e) {
-          logger.debug("Failed to persist health metrics (likely table missing)", { error: e as Error });
+          logger.debug("Failed to persist health metrics (likely table missing)", {
+            error: e as Error
+          });
         }
       } catch (e) {
-        logger.warn("Health check failed", { error: e as Error });
+        logger.warn("Health check failed", {
+          error: e as Error
+        });
       }
     }, 10000);
-
     return () => {
       cancelled = true;
       clearInterval(interval);
     };
   }, []);
-
   return metrics;
 };
-
 export default useHealthMetrics;

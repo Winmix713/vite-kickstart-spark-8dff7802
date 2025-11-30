@@ -1,17 +1,6 @@
 import React from 'react';
-import {
-  ScatterChart,
-  Scatter,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-  Line,
-} from 'recharts';
+import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Line } from 'recharts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-
 interface CalibrationData {
   confidence_range: string;
   total_predictions: number;
@@ -19,21 +8,18 @@ interface CalibrationData {
   calibration_score: number;
   sample_size: number;
 }
-
 interface ConfidenceCalibrationChartProps {
   data: CalibrationData[];
   isLoading?: boolean;
   error?: string | null;
 }
-
 const ConfidenceCalibrationChart: React.FC<ConfidenceCalibrationChartProps> = ({
   data,
   isLoading,
-  error,
+  error
 }) => {
   if (isLoading) {
-    return (
-      <Card className="w-full">
+    return <Card className="w-full">
         <CardHeader>
           <CardTitle>Confidence Calibration</CardTitle>
           <CardDescription>Loading calibration analysis...</CardDescription>
@@ -41,13 +27,10 @@ const ConfidenceCalibrationChart: React.FC<ConfidenceCalibrationChartProps> = ({
         <CardContent className="h-80 flex items-center justify-center">
           <div className="text-gray-400">Loading...</div>
         </CardContent>
-      </Card>
-    );
+      </Card>;
   }
-
   if (error) {
-    return (
-      <Card className="w-full">
+    return <Card className="w-full">
         <CardHeader>
           <CardTitle>Confidence Calibration</CardTitle>
           <CardDescription>Error loading data</CardDescription>
@@ -55,13 +38,10 @@ const ConfidenceCalibrationChart: React.FC<ConfidenceCalibrationChartProps> = ({
         <CardContent className="h-80 flex items-center justify-center">
           <div className="text-red-400">{error}</div>
         </CardContent>
-      </Card>
-    );
+      </Card>;
   }
-
   if (!data || data.length === 0) {
-    return (
-      <Card className="w-full">
+    return <Card className="w-full">
         <CardHeader>
           <CardTitle>Confidence Calibration</CardTitle>
           <CardDescription>No data available</CardDescription>
@@ -69,26 +49,21 @@ const ConfidenceCalibrationChart: React.FC<ConfidenceCalibrationChartProps> = ({
         <CardContent className="h-80 flex items-center justify-center">
           <div className="text-gray-400">No calibration data to display</div>
         </CardContent>
-      </Card>
-    );
+      </Card>;
   }
 
   // Transform data for visualization
-  const transformedData = data.map((item) => ({
+  const transformedData = data.map(item => ({
     ...item,
     x: parseFloat(item.confidence_range.split('-')[0]),
-    y: item.calibration_score,
+    y: item.calibration_score
   }));
 
   // Calculate calibration metrics
-  const avgCalibration = Math.round(
-    data.reduce((sum, d) => sum + d.calibration_score, 0) / data.length
-  );
+  const avgCalibration = Math.round(data.reduce((sum, d) => sum + d.calibration_score, 0) / data.length);
   const totalSamples = data.reduce((sum, d) => sum + d.sample_size, 0);
-  const wellCalibrated = data.filter((d) => Math.abs(d.calibration_score - (parseFloat(d.confidence_range.split('-')[0]) + parseFloat(d.confidence_range.split('-')[1])) / 2) < 10).length;
-
-  return (
-    <Card className="w-full">
+  const wellCalibrated = data.filter(d => Math.abs(d.calibration_score - (parseFloat(d.confidence_range.split('-')[0]) + parseFloat(d.confidence_range.split('-')[1])) / 2) < 10).length;
+  return <Card className="w-full">
       <CardHeader>
         <CardTitle>Confidence Calibration Analysis</CardTitle>
         <CardDescription>
@@ -122,8 +97,7 @@ const ConfidenceCalibrationChart: React.FC<ConfidenceCalibrationChartProps> = ({
             Calibration by Confidence Range
           </h4>
           <div className="space-y-3">
-            {data.map((row, idx) => (
-              <div key={idx} className="space-y-1">
+            {data.map((row, idx) => <div key={idx} className="space-y-1">
                 <div className="flex items-center justify-between text-sm">
                   <span className="font-medium">{row.confidence_range}%</span>
                   <span className="text-gray-600 dark:text-gray-400">
@@ -132,23 +106,15 @@ const ConfidenceCalibrationChart: React.FC<ConfidenceCalibrationChartProps> = ({
                 </div>
                 <div className="flex items-center gap-3">
                   <div className="flex-1 h-6 rounded bg-gray-200 dark:bg-gray-700 overflow-hidden">
-                    <div
-                      className={`h-full transition-all ${
-                        row.calibration_score >= 70
-                          ? 'bg-green-500'
-                          : row.calibration_score >= 50
-                          ? 'bg-yellow-500'
-                          : 'bg-red-500'
-                      }`}
-                      style={{ width: `${row.calibration_score}%` }}
-                    />
+                    <div className={`h-full transition-all ${row.calibration_score >= 70 ? 'bg-green-500' : row.calibration_score >= 50 ? 'bg-yellow-500' : 'bg-red-500'}`} style={{
+                  width: `${row.calibration_score}%`
+                }} />
                   </div>
                   <span className="text-sm font-medium w-12 text-right">
                     {row.calibration_score}%
                   </span>
                 </div>
-              </div>
-            ))}
+              </div>)}
           </div>
         </div>
 
@@ -159,8 +125,6 @@ const ConfidenceCalibrationChart: React.FC<ConfidenceCalibrationChartProps> = ({
           </p>
         </div>
       </CardContent>
-    </Card>
-  );
+    </Card>;
 };
-
 export default ConfidenceCalibrationChart;

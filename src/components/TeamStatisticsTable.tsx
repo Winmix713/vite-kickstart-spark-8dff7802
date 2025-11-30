@@ -1,17 +1,9 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { TrendingUp, TrendingDown, Minus, ArrowUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
 interface TeamStats {
   name: string;
   played: number;
@@ -25,19 +17,18 @@ interface TeamStats {
   form: string[]; // Array of 'W', 'D', 'L'
   formScore: number;
 }
-
 interface TeamStatisticsTableProps {
   teams: TeamStats[];
   leagueName: string;
 }
-
 type SortField = 'name' | 'points' | 'goalDifference' | 'formScore';
 type SortDirection = 'asc' | 'desc';
-
-export default function TeamStatisticsTable({ teams, leagueName }: TeamStatisticsTableProps) {
+export default function TeamStatisticsTable({
+  teams,
+  leagueName
+}: TeamStatisticsTableProps) {
   const [sortField, setSortField] = useState<SortField>('points');
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
-
   const handleSort = (field: SortField) => {
     if (sortField === field) {
       setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
@@ -46,17 +37,13 @@ export default function TeamStatisticsTable({ teams, leagueName }: TeamStatistic
       setSortDirection('desc');
     }
   };
-
   const sortedTeams = [...teams].sort((a, b) => {
     const multiplier = sortDirection === 'asc' ? 1 : -1;
-    
     if (sortField === 'name') {
       return multiplier * a.name.localeCompare(b.name);
     }
-    
     return multiplier * ((a[sortField] || 0) - (b[sortField] || 0));
   });
-
   const getFormIcon = (result: string) => {
     switch (result) {
       case 'W':
@@ -69,15 +56,12 @@ export default function TeamStatisticsTable({ teams, leagueName }: TeamStatistic
         return null;
     }
   };
-
   const getFormTrendIcon = (formScore: number) => {
     if (formScore >= 70) return <TrendingUp className="w-4 h-4 text-green-400" />;
     if (formScore >= 40) return <Minus className="w-4 h-4 text-yellow-400" />;
     return <TrendingDown className="w-4 h-4 text-red-400" />;
   };
-
-  return (
-    <div className="rounded-2xl bg-card ring-1 ring-border overflow-hidden">
+  return <div className="rounded-2xl bg-card ring-1 ring-border overflow-hidden">
       <div className="p-6 border-b border-border">
         <h2 className="text-lg font-semibold text-foreground">{leagueName} - Statisztikák</h2>
         <p className="text-sm text-muted-foreground mt-1">Csapatok teljesítménye és forma</p>
@@ -89,12 +73,7 @@ export default function TeamStatisticsTable({ teams, leagueName }: TeamStatistic
             <TableRow className="hover:bg-transparent border-b border-border">
               <TableHead className="w-8 text-muted-foreground">#</TableHead>
               <TableHead className="min-w-[200px]">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => handleSort('name')}
-                  className="h-8 -ml-3 hover:bg-transparent"
-                >
+                <Button variant="ghost" size="sm" onClick={() => handleSort('name')} className="h-8 -ml-3 hover:bg-transparent">
                   Csapat
                   <ArrowUpDown className="ml-2 h-3 w-3" />
                 </Button>
@@ -106,35 +85,20 @@ export default function TeamStatisticsTable({ teams, leagueName }: TeamStatistic
               <TableHead className="text-center text-muted-foreground">G+</TableHead>
               <TableHead className="text-center text-muted-foreground">G-</TableHead>
               <TableHead className="text-center">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => handleSort('goalDifference')}
-                  className="h-8 hover:bg-transparent"
-                >
+                <Button variant="ghost" size="sm" onClick={() => handleSort('goalDifference')} className="h-8 hover:bg-transparent">
                   GK
                   <ArrowUpDown className="ml-2 h-3 w-3" />
                 </Button>
               </TableHead>
               <TableHead className="text-center">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => handleSort('points')}
-                  className="h-8 hover:bg-transparent"
-                >
+                <Button variant="ghost" size="sm" onClick={() => handleSort('points')} className="h-8 hover:bg-transparent">
                   Pont
                   <ArrowUpDown className="ml-2 h-3 w-3" />
                 </Button>
               </TableHead>
               <TableHead className="text-center">Forma (utolsó 5)</TableHead>
               <TableHead className="text-center">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => handleSort('formScore')}
-                  className="h-8 hover:bg-transparent"
-                >
+                <Button variant="ghost" size="sm" onClick={() => handleSort('formScore')} className="h-8 hover:bg-transparent">
                   Forma
                   <ArrowUpDown className="ml-2 h-3 w-3" />
                 </Button>
@@ -142,19 +106,12 @@ export default function TeamStatisticsTable({ teams, leagueName }: TeamStatistic
             </TableRow>
           </TableHeader>
           <TableBody>
-            {sortedTeams.map((team, index) => (
-              <TableRow 
-                key={team.name}
-                className="hover:bg-muted/50 transition-colors cursor-pointer group"
-              >
+            {sortedTeams.map((team, index) => <TableRow key={team.name} className="hover:bg-muted/50 transition-colors cursor-pointer group">
                 <TableCell className="text-center text-muted-foreground font-medium">
                   {index + 1}
                 </TableCell>
                 <TableCell>
-                  <Link 
-                    to={`/teams/${encodeURIComponent(team.name)}`}
-                    className="flex items-center gap-3 group-hover:text-primary transition-colors"
-                  >
+                  <Link to={`/teams/${encodeURIComponent(team.name)}`} className="flex items-center gap-3 group-hover:text-primary transition-colors">
                     <div className="h-10 w-10 rounded-full bg-muted ring-1 ring-border grid place-items-center flex-shrink-0">
                       <span className="text-sm font-bold text-primary">{team.name.charAt(0)}</span>
                     </div>
@@ -182,10 +139,7 @@ export default function TeamStatisticsTable({ teams, leagueName }: TeamStatistic
                   {team.goalsAgainst}
                 </TableCell>
                 <TableCell className="text-center">
-                  <Badge 
-                    variant={team.goalDifference >= 0 ? "default" : "destructive"}
-                    className="font-bold"
-                  >
+                  <Badge variant={team.goalDifference >= 0 ? "default" : "destructive"} className="font-bold">
                     {team.goalDifference > 0 ? '+' : ''}{team.goalDifference}
                   </Badge>
                 </TableCell>
@@ -196,11 +150,9 @@ export default function TeamStatisticsTable({ teams, leagueName }: TeamStatistic
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center justify-center gap-1">
-                    {team.form.slice(-5).map((result, i) => (
-                      <div key={i}>
+                    {team.form.slice(-5).map((result, i) => <div key={i}>
                         {getFormIcon(result)}
-                      </div>
-                    ))}
+                      </div>)}
                   </div>
                 </TableCell>
                 <TableCell>
@@ -211,8 +163,7 @@ export default function TeamStatisticsTable({ teams, leagueName }: TeamStatistic
                     </span>
                   </div>
                 </TableCell>
-              </TableRow>
-            ))}
+              </TableRow>)}
           </TableBody>
         </Table>
       </div>
@@ -236,6 +187,5 @@ export default function TeamStatisticsTable({ teams, leagueName }: TeamStatistic
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 }

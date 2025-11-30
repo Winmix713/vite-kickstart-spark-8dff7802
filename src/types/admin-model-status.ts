@@ -5,7 +5,6 @@ export interface SystemStatusResponse {
   recentPredictions: PredictionSummary[];
   config: ModelConfig;
 }
-
 export interface ModelRegistryItem {
   id: string;
   model_name: string;
@@ -20,7 +19,6 @@ export interface ModelRegistryItem {
   is_active?: boolean;
   description?: string;
 }
-
 export interface ModelExperimentItem {
   id: string;
   experiment_name: string;
@@ -36,19 +34,16 @@ export interface ModelExperimentItem {
   decision?: "promote" | "keep" | "continue" | null;
   completed_at?: string | null;
 }
-
 export interface PredictionSummary {
   id: string;
   confidence: number;
   created_at: string;
 }
-
 export interface ModelConfig {
   active_model_id: string | null;
   prediction_target: string;
   min_confidence_threshold: number;
 }
-
 export interface AnalyticsResponse {
   summary: {
     totalPredictions: number;
@@ -62,25 +57,21 @@ export interface AnalyticsResponse {
   windowDays: number;
   systemStatus: "healthy" | "warning" | "degraded";
 }
-
 export interface TimeSeriesPoint {
   date: string;
   accuracy: number;
   confidence: number;
   predictions: number;
 }
-
 export interface ConfidenceTrendPoint {
   timestamp: string;
   confidence: number;
   isCorrect: boolean;
 }
-
 export interface TrainingRequest {
   modelName?: string;
   algorithm?: string;
 }
-
 export interface TrainingResponse {
   success: boolean;
   message: string;
@@ -89,11 +80,9 @@ export interface TrainingResponse {
   estimatedTime: string;
   status: "queued" | "running" | "complete" | "failed";
 }
-
 export interface PromoteModelRequest {
   modelId: string;
 }
-
 export interface PromoteModelResponse {
   success: boolean;
   message: string;

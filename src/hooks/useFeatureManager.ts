@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback } from "react";
-
 interface Feature {
   id: string;
   name: string;
@@ -8,9 +7,7 @@ interface Feature {
   rollout: number;
   category: string;
 }
-
 const STORAGE_KEY = "winmixpro-features";
-
 export const useFeatureManager = (initialFeatures: Feature[]) => {
   const [features, setFeatures] = useState<Feature[]>(initialFeatures);
   const [isLoading, setIsLoading] = useState(false);
@@ -38,63 +35,48 @@ export const useFeatureManager = (initialFeatures: Feature[]) => {
       console.error("Failed to save features to localStorage:", error);
     }
   }, [features]);
-
-  const updateFeature = useCallback(
-    (id: string, updates: Partial<Feature>) => {
-      setFeatures((prev) =>
-        prev.map((f) => (f.id === id ? { ...f, ...updates } : f))
-      );
-    },
-    []
-  );
-
+  const updateFeature = useCallback((id: string, updates: Partial<Feature>) => {
+    setFeatures(prev => prev.map(f => f.id === id ? {
+      ...f,
+      ...updates
+    } : f));
+  }, []);
   const toggleFeature = useCallback((id: string) => {
-    setFeatures((prev) =>
-      prev.map((f) =>
-        f.id === id
-          ? {
-              ...f,
-              enabled: !f.enabled,
-              rollout: !f.enabled ? f.rollout : 0,
-            }
-          : f
-      )
-    );
+    setFeatures(prev => prev.map(f => f.id === id ? {
+      ...f,
+      enabled: !f.enabled,
+      rollout: !f.enabled ? f.rollout : 0
+    } : f));
   }, []);
-
   const setRollout = useCallback((id: string, rollout: number) => {
-    setFeatures((prev) =>
-      prev.map((f) =>
-        f.id === id
-          ? {
-              ...f,
-              rollout: Math.max(0, Math.min(100, rollout)),
-            }
-          : f
-      )
-    );
+    setFeatures(prev => prev.map(f => f.id === id ? {
+      ...f,
+      rollout: Math.max(0, Math.min(100, rollout))
+    } : f));
   }, []);
-
   const deleteFeature = useCallback((id: string) => {
-    setFeatures((prev) => prev.filter((f) => f.id !== id));
+    setFeatures(prev => prev.filter(f => f.id !== id));
   }, []);
-
   const addFeature = useCallback((feature: Feature) => {
-    setFeatures((prev) => [...prev, feature]);
+    setFeatures(prev => [...prev, feature]);
   }, []);
-
   const enableAll = useCallback(() => {
-    setFeatures((prev) => prev.map((f) => ({ ...f, enabled: true, rollout: 100 })));
+    setFeatures(prev => prev.map(f => ({
+      ...f,
+      enabled: true,
+      rollout: 100
+    })));
   }, []);
-
   const disableAll = useCallback(() => {
-    setFeatures((prev) => prev.map((f) => ({ ...f, enabled: false, rollout: 0 })));
+    setFeatures(prev => prev.map(f => ({
+      ...f,
+      enabled: false,
+      rollout: 0
+    })));
   }, []);
-
   const exportAsJSON = useCallback(() => {
     return JSON.stringify(features, null, 2);
   }, [features]);
-
   const importFromJSON = useCallback((jsonString: string) => {
     try {
       const imported = JSON.parse(jsonString) as Feature[];
@@ -103,18 +85,16 @@ export const useFeatureManager = (initialFeatures: Feature[]) => {
         throw new Error("Imported data must be an array");
       }
       setFeatures(imported);
-      return { success: true };
+      return {
+        success: true
+      };
     } catch (error) {
       return {
         success: false,
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to import features",
+        error: error instanceof Error ? error.message : "Failed to import features"
       };
     }
   }, []);
-
   return {
     features,
     isLoading,
@@ -126,6 +106,6 @@ export const useFeatureManager = (initialFeatures: Feature[]) => {
     enableAll,
     disableAll,
     exportAsJSON,
-    importFromJSON,
+    importFromJSON
   };
 };

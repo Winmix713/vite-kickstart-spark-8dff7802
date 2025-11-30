@@ -10,7 +10,6 @@ export interface EnvironmentVariable {
   created_at: string;
   updated_at: string;
 }
-
 export interface EnvironmentVariableSafe {
   id: string;
   key: string;
@@ -22,7 +21,6 @@ export interface EnvironmentVariableSafe {
   created_at: string;
   updated_at: string;
 }
-
 export interface EnvironmentVariableFormData {
   key: string;
   value: string;
@@ -30,7 +28,6 @@ export interface EnvironmentVariableFormData {
   is_secret: boolean;
   category: string;
 }
-
 export interface EnvImportResult {
   imported: number;
   skipped: number;
@@ -50,7 +47,6 @@ export interface AuditLog {
   user_agent?: string;
   created_at: string;
 }
-
 export interface AuditLogFilters {
   action?: string;
   table_name?: string;
@@ -69,7 +65,6 @@ export interface AdminAction {
   path?: string;
   action?: () => void;
 }
-
 export interface AdminStats {
   totalModels: number;
   activeModels: number;
@@ -97,7 +92,6 @@ export interface JobFormData {
   enabled: boolean;
   config: Record<string, unknown>;
 }
-
 export interface CronValidation {
   valid: boolean;
   description?: string;
@@ -117,7 +111,6 @@ export interface MatchFormData {
   halftime_home_score?: number | null;
   halftime_away_score?: number | null;
 }
-
 export interface CSVImportResult {
   total: number;
   imported: number;
@@ -138,7 +131,6 @@ export interface SystemWarning {
   linkText?: string;
   timestamp: string;
 }
-
 export interface AdminQuickLink {
   id: string;
   title: string;
@@ -155,7 +147,6 @@ export interface AdminApiResponse<T = unknown> {
   error?: string;
   message?: string;
 }
-
 export interface PaginatedResponse<T> {
   data: T[];
   total: number;
@@ -170,7 +161,6 @@ export interface ValidationError {
   field: string;
   message: string;
 }
-
 export interface FormState<T> {
   data: T;
   errors: ValidationError[];
@@ -188,12 +178,13 @@ export interface AdminBreadcrumbItem {
   label: string;
   href?: string;
 }
-
 export interface AdminNavItem {
   label: string;
   description?: string;
   href: string;
-  icon: React.ComponentType<{ className?: string }>;
+  icon: React.ComponentType<{
+    className?: string;
+  }>;
   roles?: AdminRole[];
 }
 
@@ -205,23 +196,11 @@ export interface AdminUser {
   created_at?: string | null;
   full_name?: string | null;
 }
-
 export interface AdminUsersResponse {
   users: AdminUser[];
   total: number;
 }
-
-export type AdminAuditAction =
-  | "user_created"
-  | "user_deleted"
-  | "role_changed"
-  | "job_started"
-  | "job_stopped"
-  | "phase9_updated"
-  | "feedback_viewed"
-  | "feedback_exported"
-  | "feedback_resolved"
-  | "feedback_reopened";
+export type AdminAuditAction = "user_created" | "user_deleted" | "role_changed" | "job_started" | "job_stopped" | "phase9_updated" | "feedback_viewed" | "feedback_exported" | "feedback_resolved" | "feedback_reopened";
 
 // Admin Dashboard Card Type
 export interface AdminCategoryCard {
@@ -229,7 +208,9 @@ export interface AdminCategoryCard {
   title: string;
   description: string;
   href: string;
-  icon: React.ComponentType<{ className?: string }>;
+  icon: React.ComponentType<{
+    className?: string;
+  }>;
   accentColorClass: string;
   value: string | number | null;
   pill?: string;
@@ -251,7 +232,6 @@ export interface AdminPhase9Settings {
   cross_league_depth: 'low' | 'medium' | 'high';
   updated_at: string;
 }
-
 export interface AdminPhase9SettingsInput {
   collaborative_intelligence_enabled: boolean;
   temporal_decay_enabled: boolean;
@@ -274,7 +254,6 @@ export interface AdminJobsManagerResult {
   error?: string;
   message?: string;
 }
-
 export interface UseJobsOptions {
   refetchInterval?: number;
   enabled?: boolean;

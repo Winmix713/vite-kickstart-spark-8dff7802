@@ -3,7 +3,6 @@ import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { CheckCircle2, AlertTriangle, Target } from "lucide-react";
 import { cn } from "@/lib/utils";
-
 interface NarrativeSectionProps {
   narrative: string; // Fő narratív szöveg (1-2 bekezdés)
   supportingFactors: string[]; // Támogató tényezők listája
@@ -15,13 +14,12 @@ interface NarrativeSectionProps {
   };
   cssScore: number; // 0-10, a fogadási javaslat színezéséhez
 }
-
 export function NarrativeSection({
   narrative,
   supportingFactors,
   riskFactors,
   bettingSuggestions,
-  cssScore,
+  cssScore
 }: NarrativeSectionProps) {
   // Fogadási javaslat színezés
   const getSuggestionColor = (type: "high" | "medium" | "low") => {
@@ -33,9 +31,7 @@ export function NarrativeSection({
       return "bg-red-100 text-red-800 border-red-300";
     }
   };
-
-  return (
-    <Card className="w-full">
+  return <Card className="w-full">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-2xl">
           <span>📖</span>
@@ -57,12 +53,10 @@ export function NarrativeSection({
               Támogató tényezők
             </h3>
             <ul className="space-y-2">
-              {supportingFactors.map((factor, index) => (
-                <li key={index} className="flex items-start gap-2 rounded-lg bg-green-50 p-3 text-sm">
+              {supportingFactors.map((factor, index) => <li key={index} className="flex items-start gap-2 rounded-lg bg-green-50 p-3 text-sm">
                   <span className="text-green-600">✅</span>
                   <span className="text-green-900">{factor}</span>
-                </li>
-              ))}
+                </li>)}
             </ul>
           </div>
 
@@ -73,12 +67,10 @@ export function NarrativeSection({
               Kockázati tényezők
             </h3>
             <ul className="space-y-2">
-              {riskFactors.map((factor, index) => (
-                <li key={index} className="flex items-start gap-2 rounded-lg bg-amber-50 p-3 text-sm">
+              {riskFactors.map((factor, index) => <li key={index} className="flex items-start gap-2 rounded-lg bg-amber-50 p-3 text-sm">
                   <span className="text-amber-600">⚠️</span>
                   <span className="text-amber-900">{factor}</span>
-                </li>
-              ))}
+                </li>)}
             </ul>
           </div>
         </div>
@@ -90,24 +82,15 @@ export function NarrativeSection({
             <div className="space-y-3">
               <h3 className="font-semibold text-blue-900">Fogadási javaslatok</h3>
               <div className="flex flex-wrap gap-2">
-                <Badge
-                  variant="outline"
-                  className={cn("border-2 px-3 py-1 text-sm font-semibold", getSuggestionColor("high"))}
-                >
+                <Badge variant="outline" className={cn("border-2 px-3 py-1 text-sm font-semibold", getSuggestionColor("high"))}>
                   <span className="mr-1">🎯</span>
                   {bettingSuggestions.high}
                 </Badge>
-                <Badge
-                  variant="outline"
-                  className={cn("border-2 px-3 py-1 text-sm font-semibold", getSuggestionColor("medium"))}
-                >
+                <Badge variant="outline" className={cn("border-2 px-3 py-1 text-sm font-semibold", getSuggestionColor("medium"))}>
                   <span className="mr-1">⚡</span>
                   {bettingSuggestions.medium}
                 </Badge>
-                <Badge
-                  variant="outline"
-                  className={cn("border-2 px-3 py-1 text-sm font-semibold", getSuggestionColor("low"))}
-                >
+                <Badge variant="outline" className={cn("border-2 px-3 py-1 text-sm font-semibold", getSuggestionColor("low"))}>
                   <span className="mr-1">🚫</span>
                   {bettingSuggestions.low}
                 </Badge>
@@ -116,6 +99,5 @@ export function NarrativeSection({
           </AlertDescription>
         </Alert>
       </CardContent>
-    </Card>
-  );
+    </Card>;
 }

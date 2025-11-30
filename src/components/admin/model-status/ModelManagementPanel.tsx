@@ -2,25 +2,11 @@ import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Award, Trophy, Archive, Loader2 } from "lucide-react";
 import type { ModelRegistryItem } from "@/types/admin-model-status";
 import { formatDistanceToNow } from "date-fns";
-
 interface ModelManagementPanelProps {
   models: ModelRegistryItem[];
   activeModel: ModelRegistryItem | null;
@@ -29,19 +15,15 @@ interface ModelManagementPanelProps {
   isPromoting: boolean;
   isTraining: boolean;
 }
-
 export function ModelManagementPanel({
   models,
   activeModel,
   onPromoteModel,
   onTriggerTraining,
   isPromoting,
-  isTraining,
+  isTraining
 }: ModelManagementPanelProps) {
-  const [selectedModelId, setSelectedModelId] = useState<string>(
-    activeModel?.id || ""
-  );
-
+  const [selectedModelId, setSelectedModelId] = useState<string>(activeModel?.id || "");
   const getModelTypeIcon = (type: string) => {
     switch (type) {
       case "champion":
@@ -54,28 +36,22 @@ export function ModelManagementPanel({
         return null;
     }
   };
-
   const getModelTypeBadge = (type: string) => {
     const variants: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
       champion: "default",
       challenger: "secondary",
-      retired: "outline",
+      retired: "outline"
     };
-    return (
-      <Badge variant={variants[type] || "default"}>
+    return <Badge variant={variants[type] || "default"}>
         {type.charAt(0).toUpperCase() + type.slice(1)}
-      </Badge>
-    );
+      </Badge>;
   };
-
   const handlePromote = async () => {
     if (selectedModelId && selectedModelId !== activeModel?.id) {
       await onPromoteModel(selectedModelId);
     }
   };
-
-  return (
-    <div className="space-y-6">
+  return <div className="space-y-6">
       {/* Active Model Selector */}
       <Card>
         <CardHeader>
@@ -89,43 +65,25 @@ export function ModelManagementPanel({
         </CardHeader>
         <CardContent>
           <div className="flex items-center gap-4">
-            <Select
-              value={selectedModelId}
-              onValueChange={setSelectedModelId}
-              disabled={isPromoting}
-            >
+            <Select value={selectedModelId} onValueChange={setSelectedModelId} disabled={isPromoting}>
               <SelectTrigger className="w-[300px]">
                 <SelectValue placeholder="Select a model" />
               </SelectTrigger>
               <SelectContent>
-                {models.map((model) => (
-                  <SelectItem key={model.id} value={model.id}>
+                {models.map(model => <SelectItem key={model.id} value={model.id}>
                     {model.model_name} ({model.model_version})
                     {model.id === activeModel?.id && " - Current"}
-                  </SelectItem>
-                ))}
+                  </SelectItem>)}
               </SelectContent>
             </Select>
-            <Button
-              onClick={handlePromote}
-              disabled={
-                isPromoting ||
-                !selectedModelId ||
-                selectedModelId === activeModel?.id
-              }
-            >
-              {isPromoting ? (
-                <>
+            <Button onClick={handlePromote} disabled={isPromoting || !selectedModelId || selectedModelId === activeModel?.id}>
+              {isPromoting ? <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Promoting...
-                </>
-              ) : (
-                "Promote Model"
-              )}
+                </> : "Promote Model"}
             </Button>
           </div>
-          {activeModel && (
-            <div className="mt-4 p-4 bg-muted rounded-lg">
+          {activeModel && <div className="mt-4 p-4 bg-muted rounded-lg">
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <p className="text-sm font-medium">Model Name</p>
@@ -152,8 +110,7 @@ export function ModelManagementPanel({
                   </p>
                 </div>
               </div>
-            </div>
-          )}
+            </div>}
         </CardContent>
       </Card>
 
@@ -179,8 +136,7 @@ export function ModelManagementPanel({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {models.map((model) => (
-                <TableRow key={model.id}>
+              {models.map(model => <TableRow key={model.id}>
                   <TableCell>
                     <div className="flex items-center gap-2">
                       {getModelTypeIcon(model.model_type)}
@@ -192,19 +148,16 @@ export function ModelManagementPanel({
                   <TableCell>{model.accuracy?.toFixed(2) || 0}%</TableCell>
                   <TableCell>{model.total_predictions || 0}</TableCell>
                   <TableCell>
-                    {model.registered_at
-                      ? formatDistanceToNow(new Date(model.registered_at), {
-                          addSuffix: true,
-                        })
-                      : "N/A"}
+                    {model.registered_at ? formatDistanceToNow(new Date(model.registered_at), {
+                  addSuffix: true
+                }) : "N/A"}
                   </TableCell>
                   <TableCell>
                     <Badge variant={model.is_active ? "default" : "outline"}>
                       {model.is_active ? "Active" : "Inactive"}
                     </Badge>
                   </TableCell>
-                </TableRow>
-              ))}
+                </TableRow>)}
             </TableBody>
           </Table>
         </CardContent>
@@ -220,14 +173,10 @@ export function ModelManagementPanel({
         </CardHeader>
         <CardContent>
           <Button onClick={onTriggerTraining} disabled={isTraining} size="lg">
-            {isTraining ? (
-              <>
+            {isTraining ? <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 Training in Progress...
-              </>
-            ) : (
-              "Retrain Model"
-            )}
+              </> : "Retrain Model"}
           </Button>
           <p className="mt-2 text-sm text-muted-foreground">
             This will create a new candidate model based on the latest match data.
@@ -235,6 +184,5 @@ export function ModelManagementPanel({
           </p>
         </CardContent>
       </Card>
-    </div>
-  );
+    </div>;
 }

@@ -1,7 +1,6 @@
 // AI Chat types for OpenAI GPT-4 + RAG integration
 
 export type ChatRole = 'user' | 'assistant';
-
 export interface ChatMessage {
   id: string;
   role: ChatRole;
@@ -18,25 +17,21 @@ export interface ChatMessage {
     prediction?: PredictionData;
   };
 }
-
 export interface Pattern {
   type: string;
   confidence: number;
   description: string;
   data?: Record<string, unknown>;
 }
-
 export interface PredictionData {
   outcome: 'home_win' | 'draw' | 'away_win';
   confidence: number;
   keyFactors: string[];
 }
-
 export interface TeamPair {
   home: string;
   away: string;
 }
-
 export interface MatchAnalysisData {
   teams: TeamPair;
   homeTeamId?: string;
@@ -62,7 +57,6 @@ export interface MatchAnalysisData {
     awayTeam?: Record<string, number>;
   };
 }
-
 export interface AIChatRequest {
   message: string;
   context?: {
@@ -75,7 +69,6 @@ export interface AIChatRequest {
   };
   conversationHistory?: ChatMessage[];
 }
-
 export interface AIChatResponse {
   success: boolean;
   message?: string;
@@ -87,7 +80,6 @@ export interface AIChatResponse {
     model?: string;
   };
 }
-
 export interface RAGContext {
   teams: {
     id: string;
@@ -111,18 +103,15 @@ export interface RAGContext {
     metrics: Record<string, unknown>;
   }>;
 }
-
 export interface OpenAIMessage {
   role: 'user' | 'assistant' | 'system';
   content: string;
 }
-
 export interface EmbeddingResult {
   text: string;
   embedding: number[];
   metadata: Record<string, unknown>;
 }
-
 export interface VectorSearchResult {
   id: string;
   text: string;

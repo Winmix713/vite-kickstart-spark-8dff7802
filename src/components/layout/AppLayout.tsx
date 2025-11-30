@@ -1,8 +1,8 @@
-import React, { ReactNode, Suspense } from 'react';
+import React, { Suspense, ReactNode } from 'react';
 import { Outlet } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import Sidebar from '@/components/navigation/Sidebar';
-import PageLoading from '@/components/ui/page-loading';
+import PageLoading from '@/components/ui/PageLoading';
 import ErrorBoundary from '@/components/ErrorBoundary';
 
 interface AppLayoutProps {
@@ -28,7 +28,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
   showSidebar = true,
   withErrorBoundary = true,
   loadingFallback,
-  errorFallback,
+  errorFallback
 }) => {
   const content = useOutlet ? <Outlet /> : children;
 
@@ -36,16 +36,16 @@ const AppLayout: React.FC<AppLayoutProps> = ({
     <div className="min-h-screen bg-background">
       {/* Sidebar */}
       {showSidebar && <Sidebar />}
-      
+
       {/* Main Content */}
-      <main className={cn(
-        "flex-1 transition-all duration-300 ease-in-out",
-        showSidebar && "lg:ml-16", // Adjust based on sidebar width
-        className
-      )}>
-        <Suspense 
-          fallback={loadingFallback || <PageLoading message="Loading content..." />}
-        >
+      <main 
+        className={cn(
+          'flex-1 transition-all duration-300 ease-in-out',
+          showSidebar && 'lg:ml-16', // Adjust based on sidebar width
+          className
+        )}
+      >
+        <Suspense fallback={loadingFallback || <PageLoading message="Loading content..." />}>
           {content}
         </Suspense>
       </main>
@@ -53,11 +53,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
   );
 
   if (withErrorBoundary) {
-    return (
-      <ErrorBoundary fallback={errorFallback}>
-        {wrappedContent}
-      </ErrorBoundary>
-    );
+    return <ErrorBoundary fallback={errorFallback}>{wrappedContent}</ErrorBoundary>;
   }
 
   return wrappedContent;

@@ -6,7 +6,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-
 interface SystemLog {
   id: string;
   component: string;
@@ -15,21 +14,18 @@ interface SystemLog {
   details: Record<string, unknown> | null;
   created_at: string | null;
 }
-
 const fetchSystemLogs = async (): Promise<SystemLog[]> => {
-  const { data, error } = await supabase
-    .from("system_logs")
-    .select("*")
-    .order("created_at", { ascending: false })
-    .limit(10);
-
+  const {
+    data,
+    error
+  } = await supabase.from("system_logs").select("*").order("created_at", {
+    ascending: false
+  }).limit(10);
   if (error) {
     throw new Error(error.message);
   }
-
   return data || [];
 };
-
 const getStatusIcon = (status: string) => {
   switch (status) {
     case "error":
@@ -41,7 +37,6 @@ const getStatusIcon = (status: string) => {
       return <Info className="h-4 w-4" />;
   }
 };
-
 const getStatusBadgeVariant = (status: string) => {
   switch (status) {
     case "error":
@@ -53,10 +48,8 @@ const getStatusBadgeVariant = (status: string) => {
       return "secondary";
   }
 };
-
 const formatTimestamp = (timestamp: string | null): string => {
   if (!timestamp) return "N/A";
-  
   const date = new Date(timestamp);
   return new Intl.DateTimeFormat("hu-HU", {
     year: "numeric",
@@ -64,44 +57,41 @@ const formatTimestamp = (timestamp: string | null): string => {
     day: "numeric",
     hour: "2-digit",
     minute: "2-digit",
-    second: "2-digit",
+    second: "2-digit"
   }).format(date);
 };
-
 export function SystemLogTable() {
-  const { toast } = useToast();
-
+  const {
+    toast
+  } = useToast();
   const {
     data: logs,
     isLoading,
     error,
     refetch,
-    isFetching,
+    isFetching
   } = useQuery({
     queryKey: ["system-logs"],
     queryFn: fetchSystemLogs,
-    refetchInterval: 30000, // Auto-refresh every 30 seconds
+    refetchInterval: 30000 // Auto-refresh every 30 seconds
   });
-
   const handleRefresh = async () => {
     try {
       await refetch();
       toast({
         title: "Frissítve",
-        description: "A rendszernapló sikeresen frissítve.",
+        description: "A rendszernapló sikeresen frissítve."
       });
     } catch (err) {
       toast({
         title: "Hiba",
         description: "Nem sikerült frissíteni a rendszernaplót.",
-        variant: "destructive",
+        variant: "destructive"
       });
     }
   };
-
   if (error) {
-    return (
-      <Card>
+    return <Card>
         <CardHeader>
           <CardTitle>Rendszernapló</CardTitle>
           <CardDescription>
@@ -114,12 +104,9 @@ export function SystemLogTable() {
             <span>{error instanceof Error ? error.message : "Ismeretlen hiba"}</span>
           </div>
         </CardContent>
-      </Card>
-    );
+      </Card>;
   }
-
-  return (
-    <Card>
+  return <Card>
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
@@ -128,29 +115,17 @@ export function SystemLogTable() {
               Legutóbbi 10 bejegyzés a Python ML pipeline-ból
             </CardDescription>
           </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleRefresh}
-            disabled={isFetching}
-          >
-            {isFetching ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <RefreshCw className="h-4 w-4" />
-            )}
+          <Button variant="outline" size="sm" onClick={handleRefresh} disabled={isFetching}>
+            {isFetching ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
             <span className="ml-2">Frissítés</span>
           </Button>
         </div>
       </CardHeader>
       <CardContent>
-        {isLoading ? (
-          <div className="flex items-center justify-center py-8">
+        {isLoading ? <div className="flex items-center justify-center py-8">
             <Loader2 className="h-6 w-6 animate-spin" />
             <span className="ml-2 text-muted-foreground">Betöltés...</span>
-          </div>
-        ) : logs && logs.length > 0 ? (
-          <div className="rounded-md border">
+          </div> : logs && logs.length > 0 ? <div className="rounded-md border">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -161,11 +136,7 @@ export function SystemLogTable() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {logs.map((log) => (
-                  <TableRow
-                    key={log.id}
-                    className={log.status === "error" ? "bg-destructive/5" : ""}
-                  >
+                {logs.map(log => <TableRow key={log.id} className={log.status === "error" ? "bg-destructive/5" : ""}>
                     <TableCell className="text-sm text-muted-foreground">
                       {formatTimestamp(log.created_at)}
                     </TableCell>
@@ -173,14 +144,7 @@ export function SystemLogTable() {
                       {log.component}
                     </TableCell>
                     <TableCell>
-                      <Badge
-                        variant={getStatusBadgeVariant(log.status)}
-                        className={
-                          log.status === "warning"
-                            ? "border-amber-500 text-amber-700"
-                            : ""
-                        }
-                      >
+                      <Badge variant={getStatusBadgeVariant(log.status)} className={log.status === "warning" ? "border-amber-500 text-amber-700" : ""}>
                         <span className="flex items-center gap-1">
                           {getStatusIcon(log.status)}
                           {log.status}
@@ -190,17 +154,12 @@ export function SystemLogTable() {
                     <TableCell className="max-w-md truncate">
                       {log.message || "N/A"}
                     </TableCell>
-                  </TableRow>
-                ))}
+                  </TableRow>)}
               </TableBody>
             </Table>
-          </div>
-        ) : (
-          <div className="py-8 text-center text-muted-foreground">
+          </div> : <div className="py-8 text-center text-muted-foreground">
             Nincsenek napló bejegyzések
-          </div>
-        )}
+          </div>}
       </CardContent>
-    </Card>
-  );
+    </Card>;
 }

@@ -1,46 +1,37 @@
 import { CloudUpload } from "lucide-react";
 import { useState, useRef, DragEvent } from "react";
-
 const ControlPanel = () => {
   const [selectedLang, setSelectedLang] = useState<"angol" | "spanyol">("angol");
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-
   const handleFileUpload = () => {
     fileInputRef.current?.click();
   };
-
   const handleFiles = (files: FileList | null) => {
     if (files && files.length > 0) {
       console.log('Files uploaded:', Array.from(files).map(f => f.name));
       // Add your file handling logic here
     }
   };
-
   const preventDefaults = (e: DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
   };
-
   const handleDragEnter = (e: DragEvent) => {
     preventDefaults(e);
     setIsDragging(true);
   };
-
   const handleDragLeave = (e: DragEvent) => {
     preventDefaults(e);
     setIsDragging(false);
   };
-
   const handleDrop = (e: DragEvent) => {
     preventDefaults(e);
     setIsDragging(false);
     const files = e.dataTransfer.files;
     handleFiles(files);
   };
-
-  return (
-    <aside className="lg:col-span-1">
+  return <aside className="lg:col-span-1">
       <div className="w-full max-w-md rounded-3xl bg-card/60 backdrop-blur-xl ring-1 ring-border shadow-[0_10px_50px_-20px_rgba(0,0,0,0.6)] sticky top-20">
         {/* Header Section */}
         <header className="flex items-center justify-between p-4 sm:p-5">
@@ -64,10 +55,7 @@ const ControlPanel = () => {
           </div>
 
           {/* Upload Button */}
-          <button 
-            onClick={handleFileUpload}
-            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-sm font-medium text-foreground bg-gradient-to-b from-muted/50 to-muted ring-1 ring-border hover:from-muted/60 hover:to-muted/90 hover:-translate-y-0.5 transition-all shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)]"
-          >
+          <button onClick={handleFileUpload} className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-sm font-medium text-foreground bg-gradient-to-b from-muted/50 to-muted ring-1 ring-border hover:from-muted/60 hover:to-muted/90 hover:-translate-y-0.5 transition-all shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)]">
             <CloudUpload className="h-4 w-4" />
             <span>Feltöltés</span>
           </button>
@@ -78,30 +66,15 @@ const ControlPanel = () => {
           <div className="mx-auto mb-5 mt-1 w-full max-w-[200px]">
             <div className="relative flex items-center rounded-full p-1 bg-gradient-to-b from-muted/30 to-muted/60 ring-1 ring-border shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1)]">
               {/* Active Thumb */}
-              <div 
-                className="absolute top-1 left-1 h-[34px] w-[90px] rounded-full bg-gradient-to-b from-muted to-card backdrop-blur-sm shadow-[inset_0_1px_0_0_rgba(255,255,255,0.08),0_1px_1px_rgba(0,0,0,0.25)] transition-transform duration-300 ease-out"
-                style={{ transform: `translateX(${selectedLang === "angol" ? "0px" : "90px"})` }}
-              ></div>
+              <div className="absolute top-1 left-1 h-[34px] w-[90px] rounded-full bg-gradient-to-b from-muted to-card backdrop-blur-sm shadow-[inset_0_1px_0_0_rgba(255,255,255,0.08),0_1px_1px_rgba(0,0,0,0.25)] transition-transform duration-300 ease-out" style={{
+              transform: `translateX(${selectedLang === "angol" ? "0px" : "90px"})`
+            }}></div>
               
               {/* Options */}
-              <button 
-                onClick={() => setSelectedLang("angol")}
-                className={`text-[13px] transition-all duration-200 h-[34px] z-10 px-5 relative translate-x-2 ${
-                  selectedLang === "angol" 
-                    ? "font-semibold text-foreground" 
-                    : "font-medium text-muted-foreground hover:text-foreground/70"
-                }`}
-              >
+              <button onClick={() => setSelectedLang("angol")} className={`text-[13px] transition-all duration-200 h-[34px] z-10 px-5 relative translate-x-2 ${selectedLang === "angol" ? "font-semibold text-foreground" : "font-medium text-muted-foreground hover:text-foreground/70"}`}>
                 Angol
               </button>
-              <button 
-                onClick={() => setSelectedLang("spanyol")}
-                className={`text-[13px] transition-all duration-200 h-[34px] z-10 px-5 relative translate-x-4 ${
-                  selectedLang === "spanyol" 
-                    ? "font-semibold text-foreground" 
-                    : "font-medium text-muted-foreground hover:text-foreground/70"
-                }`}
-              >
+              <button onClick={() => setSelectedLang("spanyol")} className={`text-[13px] transition-all duration-200 h-[34px] z-10 px-5 relative translate-x-4 ${selectedLang === "spanyol" ? "font-semibold text-foreground" : "font-medium text-muted-foreground hover:text-foreground/70"}`}>
                 Spanyol
               </button>
             </div>
@@ -110,18 +83,9 @@ const ControlPanel = () => {
 
         {/* File Drop Zone */}
         <div className="px-4 sm:px-5 pb-5">
-          <label 
-            htmlFor="file-input" 
-            className="group block cursor-pointer rounded-2xl bg-muted/50 p-3 ring-1 ring-border hover:ring-primary/50 transition-all"
-            onDragEnter={handleDragEnter}
-            onDragOver={preventDefaults}
-            onDragLeave={handleDragLeave}
-            onDrop={handleDrop}
-          >
+          <label htmlFor="file-input" className="group block cursor-pointer rounded-2xl bg-muted/50 p-3 ring-1 ring-border hover:ring-primary/50 transition-all" onDragEnter={handleDragEnter} onDragOver={preventDefaults} onDragLeave={handleDragLeave} onDrop={handleDrop}>
             <div className="rounded-2xl border border-border bg-muted/50 p-1.5">
-              <div className={`relative aspect-square w-full rounded-2xl bg-muted/80 ring-1 overflow-hidden transition-all ${
-                isDragging ? "ring-primary/50" : "ring-border"
-              }`}>
+              <div className={`relative aspect-square w-full rounded-2xl bg-muted/80 ring-1 overflow-hidden transition-all ${isDragging ? "ring-primary/50" : "ring-border"}`}>
                 
                 {/* Inner Border */}
                 <div className="pointer-events-none absolute inset-3 rounded-2xl ring-1 ring-border"></div>
@@ -141,20 +105,12 @@ const ControlPanel = () => {
               </div>
             </div>
           </label>
-          <input 
-            ref={fileInputRef}
-            type="file" 
-            id="file-input" 
-            className="hidden"
-            onChange={(e) => handleFiles(e.target.files)}
-          />
+          <input ref={fileInputRef} type="file" id="file-input" className="hidden" onChange={e => handleFiles(e.target.files)} />
         </div>
 
         {/* Outer Glow */}
         <div className="pointer-events-none absolute inset-0 rounded-3xl ring-1 ring-border"></div>
       </div>
-    </aside>
-  );
+    </aside>;
 };
-
 export default ControlPanel;

@@ -4,7 +4,6 @@ import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbP
 import { Separator } from "@/components/ui/separator";
 import AdminNav from "@/components/admin/AdminNav";
 import type { AdminBreadcrumbItem } from "@/types/admin";
-
 interface AdminLayoutProps {
   title: string;
   description?: string;
@@ -12,9 +11,13 @@ interface AdminLayoutProps {
   children: ReactNode;
   actions?: ReactNode;
 }
-
-const AdminLayout = ({ title, description, breadcrumbs, children, actions }: AdminLayoutProps) => (
-  <SidebarProvider>
+const AdminLayout = ({
+  title,
+  description,
+  breadcrumbs,
+  children,
+  actions
+}: AdminLayoutProps) => <SidebarProvider>
     <div className="flex min-h-screen bg-background">
       <Sidebar className="bg-muted/30 backdrop-blur" collapsible="icon">
         <AdminNav />
@@ -28,21 +31,14 @@ const AdminLayout = ({ title, description, breadcrumbs, children, actions }: Adm
                 <Breadcrumb>
                   <BreadcrumbList>
                     {breadcrumbs.map((item, index) => {
-                      const isLast = index === breadcrumbs.length - 1;
-
-                      return (
-                        <Fragment key={`${item.label}-${index}`}>
+                    const isLast = index === breadcrumbs.length - 1;
+                    return <Fragment key={`${item.label}-${index}`}>
                           <BreadcrumbItem>
-                            {item.href && !isLast ? (
-                              <BreadcrumbLink href={item.href}>{item.label}</BreadcrumbLink>
-                            ) : (
-                              <BreadcrumbPage>{item.label}</BreadcrumbPage>
-                            )}
+                            {item.href && !isLast ? <BreadcrumbLink href={item.href}>{item.label}</BreadcrumbLink> : <BreadcrumbPage>{item.label}</BreadcrumbPage>}
                           </BreadcrumbItem>
                           {isLast ? null : <BreadcrumbSeparator />}
-                        </Fragment>
-                      );
-                    })}
+                        </Fragment>;
+                  })}
                   </BreadcrumbList>
                 </Breadcrumb>
               </div>
@@ -64,7 +60,5 @@ const AdminLayout = ({ title, description, breadcrumbs, children, actions }: Adm
         </div>
       </SidebarInset>
     </div>
-  </SidebarProvider>
-);
-
+  </SidebarProvider>;
 export default AdminLayout;

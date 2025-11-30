@@ -1,5 +1,5 @@
-type LogLevel = "debug" | "info" | "warn" | "error" | "critical";
-
+import { env } from '@/config/env';
+type LogLevel = 'debug' | 'info' | 'warn' | 'error' | 'critical';
 interface StructuredLog {
   level: LogLevel;
   message: string;
@@ -7,54 +7,56 @@ interface StructuredLog {
   timestamp?: string;
   service?: string;
 }
-
-const isDev = import.meta.env.MODE === "development";
-
+const isDev = env.isDev;
 function emit(level: LogLevel, message: string, data?: Record<string, unknown>, service?: string) {
-  const payload: StructuredLog = {
-    level,
-    message,
-    data,
-    service,
-    timestamp: new Date().toISOString(),
-  };
-
   const c = console;
-  if (level === "debug" && !isDev) return;
 
+  // Skip debug logs in production
+  if (level === 'debug' && !isDev) return;
+
+  // Create a clean, readable log format
+  const timestamp = new Date().toISOString().split('T')[1].split('.')[0]; // HH:MM:SS format
+  const servicePrefix = service ? `[${service}]` : '';
+  const prefix = `${timestamp} ${servicePrefix}`.trim();
   switch (level) {
-    case "debug":
-      c.debug?.("[DEBUG]", payload);
+    case 'debug':
+      if (isDev) {
+        c.debug(`🔍 ${prefix} ${message}`, data || '');
+      }
       break;
-    case "info":
-      c.info?.("[INFO]", payload);
+    case 'info':
+      c.info(`ℹ️ ${prefix} ${message}`, data || '');
       break;
-    case "warn":
-      c.warn?.("[WARN]", payload);
+    case 'warn':
+      c.warn(`⚠️ ${prefix} ${message}`, data || '');
       break;
-    case "error":
-      c.error?.("[ERROR]", payload);
+    case 'error':
+      c.error(`❌ ${prefix} ${message}`, data || '');
       break;
-    case "critical":
-      c.error?.("[CRITICAL]", payload);
+    case 'critical':
+      c.error(`🚨 ${prefix} ${message}`, data || '');
       break;
     default:
-      c.log?.(payload);
+      c.log(message, data || '');
   }
 }
-
 export const logger = {
-  debug: (message: string, data?: Record<string, unknown>, service?: string) => emit("debug", message, data, service),
-  info: (message: string, data?: Record<string, unknown>, service?: string) => emit("info", message, data, service),
-  warn: (message: string, data?: Record<string, unknown>, service?: string) => emit("warn", message, data, service),
+  debug: (message: string, data?: Record<string, unknown>, service?: string) => emit('debug', message, data, service),
+  info: (message: string, data?: Record<string, unknown>, service?: string) => emit('info', message, data, service),
+  warn: (message: string, data?: Record<string, unknown>, service?: string) => emit('warn', message, data, service),
   error: (message: string, error: unknown, context?: Record<string, unknown>, service?: string) => {
-    const data: Record<string, unknown> = { error, ...context };
-    emit("error", message, data, service);
+    const data: Record<string, unknown> = {
+      error: error instanceof Error ? error.message : String(error),
+      ...context
+    };
+    emit('error', message, data, service);
   },
   critical: (message: string, error: unknown, context?: Record<string, unknown>, service?: string) => {
-    const data: Record<string, unknown> = { error, ...context };
-    emit("critical", message, data, service);
-  },
+    const data: Record<string, unknown> = {
+      error: error instanceof Error ? error.message : String(error),
+      ...context
+    };
+    emit('critical', message, data, service);
+  }
 };
-
 export default logger;

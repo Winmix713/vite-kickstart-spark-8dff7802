@@ -1,19 +1,10 @@
 import { useNavigate } from "react-router-dom";
 import { AlertTriangle, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 const Unauthorized = () => {
   const navigate = useNavigate();
-
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+  return <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <Card className="w-full max-w-md mx-4">
         <CardHeader className="text-center">
           <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-orange-100">
@@ -27,11 +18,7 @@ const Unauthorized = () => {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <Button 
-            onClick={() => navigate("/")}
-            className="w-full"
-            variant="default"
-          >
+          <Button onClick={() => navigate("/")} className="w-full" variant="default">
             <Home className="mr-2 h-4 w-4" />
             Back to Home
           </Button>
@@ -42,8 +29,6 @@ const Unauthorized = () => {
           </div>
         </CardContent>
       </Card>
-    </div>
-  );
+    </div>;
 };
-
 export default Unauthorized;

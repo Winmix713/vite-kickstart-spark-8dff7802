@@ -2,36 +2,36 @@ import { useState, useEffect } from "react";
 import { Menu, Activity, Target, Clock, Zap, User, LogOut, Bot } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-
 const TopBar = () => {
   const navigate = useNavigate();
-  const { user, profile, signOut } = useAuth();
+  const {
+    user,
+    profile,
+    signOut
+  } = useAuth();
   const [currentTime, setCurrentTime] = useState("");
   const [currentDate, setCurrentDate] = useState("");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
-      setCurrentTime(now.toLocaleTimeString('hu-HU', { hour: '2-digit', minute: '2-digit' }));
-      setCurrentDate(now.toLocaleDateString('hu-HU', { day: '2-digit', month: 'short', year: 'numeric' }).replace('.', ''));
+      setCurrentTime(now.toLocaleTimeString('hu-HU', {
+        hour: '2-digit',
+        minute: '2-digit'
+      }));
+      setCurrentDate(now.toLocaleDateString('hu-HU', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric'
+      }).replace('.', ''));
     };
     updateTime();
     const interval = setInterval(updateTime, 1000);
     return () => clearInterval(interval);
   }, []);
-
-  return (
-    <>
+  return <>
       {/* Mobile top bar */}
       <header className="md:hidden sticky top-0 z-50 backdrop-blur bg-background/40 border-b border-border">
         <div className="px-4 h-14 flex items-center justify-between">
@@ -41,16 +41,12 @@ const TopBar = () => {
           </div>
           <div className="flex items-center gap-3">
             <div className="text-xs text-muted-foreground">{currentTime}</div>
-            <button 
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="inline-flex items-center justify-center h-9 w-9 rounded-md bg-card ring-1 ring-border hover:bg-muted hover:ring-primary/30 transition-all"
-            >
+            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="inline-flex items-center justify-center h-9 w-9 rounded-md bg-card ring-1 ring-border hover:bg-muted hover:ring-primary/30 transition-all">
               <Menu className="w-5 h-5" />
             </button>
           </div>
         </div>
-        {mobileMenuOpen && (
-          <div className="border-t border-border backdrop-blur bg-background/50">
+        {mobileMenuOpen && <div className="border-t border-border backdrop-blur bg-background/50">
             <div className="px-4 py-3 grid grid-cols-2 gap-3">
               <a href="#hero" className="h-10 rounded-lg bg-card ring-1 ring-border hover:bg-muted text-sm grid place-items-center">Kezdőlap</a>
               <button onClick={() => navigate('/dashboard')} className="h-10 rounded-lg bg-primary text-primary-foreground text-sm grid place-items-center font-semibold">
@@ -61,8 +57,7 @@ const TopBar = () => {
                 <Bot className="w-4 h-4" /> AI Chat
               </button>
             </div>
-          </div>
-        )}
+          </div>}
       </header>
 
       {/* Desktop top meta bar */}
@@ -71,17 +66,11 @@ const TopBar = () => {
           <div className="rounded-lg bg-card ring-1 ring-border px-3 py-1.5">
             <div className="text-muted-foreground text-sm tracking-tight font-medium">Smart Betting • {currentDate}</div>
           </div>
-          <button 
-            onClick={() => navigate('/dashboard')}
-            className="rounded-lg bg-primary text-primary-foreground px-4 py-2 font-semibold text-sm hover:opacity-90 transition-opacity flex items-center gap-2"
-          >
+          <button onClick={() => navigate('/dashboard')} className="rounded-lg bg-primary text-primary-foreground px-4 py-2 font-semibold text-sm hover:opacity-90 transition-opacity flex items-center gap-2">
             <Zap className="w-4 h-4" />
             WinMix Prototípus
           </button>
-          <button 
-            onClick={() => navigate('/ai-chat')}
-            className="rounded-lg bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 font-semibold text-sm transition-colors flex items-center gap-2"
-          >
+          <button onClick={() => navigate('/ai-chat')} className="rounded-lg bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 font-semibold text-sm transition-colors flex items-center gap-2">
             <Bot className="w-4 h-4" />
             AI Chat
           </button>
@@ -101,8 +90,7 @@ const TopBar = () => {
             </span>
           </div>
           
-          {user ? (
-            <DropdownMenu>
+          {user ? <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="sm" className="gap-2">
                   <User className="w-4 h-4" />
@@ -114,9 +102,7 @@ const TopBar = () => {
                   <div className="flex flex-col space-y-1">
                     <p className="text-sm font-medium">{profile?.full_name || 'User'}</p>
                     <p className="text-xs text-muted-foreground">{user.email}</p>
-                    {profile?.role && (
-                      <p className="text-xs text-muted-foreground capitalize">Role: {profile.role}</p>
-                    )}
+                    {profile?.role && <p className="text-xs text-muted-foreground capitalize">Role: {profile.role}</p>}
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
@@ -124,28 +110,16 @@ const TopBar = () => {
                   Dashboard
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem 
-                  onClick={() => signOut()}
-                  className="text-destructive focus:text-destructive"
-                >
+                <DropdownMenuItem onClick={() => signOut()} className="text-destructive focus:text-destructive">
                   <LogOut className="w-4 h-4 mr-2" />
                   Sign Out
                 </DropdownMenuItem>
               </DropdownMenuContent>
-            </DropdownMenu>
-          ) : (
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={() => navigate('/login')}
-            >
+            </DropdownMenu> : <Button variant="outline" size="sm" onClick={() => navigate('/login')}>
               Sign In
-            </Button>
-          )}
+            </Button>}
         </div>
       </div>
-    </>
-  );
+    </>;
 };
-
 export default TopBar;

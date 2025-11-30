@@ -8,7 +8,6 @@ import { CopyButton, CopyBadge } from "@/components/common";
 import type { ModelRegistry } from "@/types/models";
 import type { ModelAction } from "@/types/admin";
 import { cn } from "@/lib/utils";
-
 interface Props {
   model: ModelRegistry;
   onPromote?: (model: ModelRegistry) => void;
@@ -17,7 +16,6 @@ interface Props {
   onAction?: (action: ModelAction, model: ModelRegistry) => void;
   actions?: ModelAction[];
 }
-
 function typeBadgeVariant(type: ModelRegistry["model_type"]): string {
   switch (type) {
     case "champion":
@@ -28,35 +26,42 @@ function typeBadgeVariant(type: ModelRegistry["model_type"]): string {
       return "bg-muted text-muted-foreground";
   }
 }
-
 function formatPct(value?: number | null): string {
   if (value === null || value === undefined) return "-";
   return `${Math.round(value * 100)}%`;
 }
-
 function getActionIcon(actionType: ModelAction['type']) {
   switch (actionType) {
-    case 'activate': return Play;
-    case 'deactivate': return Pause;
-    case 'promote': return Zap;
-    case 'retire': return Shield;
-    case 'duplicate': return Settings;
-    default: return Settings;
+    case 'activate':
+      return Play;
+    case 'deactivate':
+      return Pause;
+    case 'promote':
+      return Zap;
+    case 'retire':
+      return Shield;
+    case 'duplicate':
+      return Settings;
+    default:
+      return Settings;
   }
 }
-
-export default function ModelCard({ model, onPromote, onEdit, onDelete, onAction, actions = [] }: Props) {
+export default function ModelCard({
+  model,
+  onPromote,
+  onEdit,
+  onDelete,
+  onAction,
+  actions = []
+}: Props) {
   const canPromote = model.model_type === "challenger";
   const isActive = model.is_active !== false;
-
   const handleAction = (action: ModelAction) => {
     if (onAction) {
       onAction(action, model);
     }
   };
-
-  return (
-    <Card className="bg-card/60 border-border/80 backdrop-blur">
+  return <Card className="bg-card/60 border-border/80 backdrop-blur">
       <CardHeader>
         <div className="flex items-start justify-between gap-4">
           <div className="space-y-1">
@@ -67,12 +72,7 @@ export default function ModelCard({ model, onPromote, onEdit, onDelete, onAction
               {model.algorithm || "Algoritmus: ismeretlen"}
             </p>
             <div className="flex items-center gap-2 mt-2">
-              <CopyBadge 
-                text={model.id} 
-                showIcon={true}
-                className="font-mono text-xs"
-                aria-label={`Copy model ID: ${model.id}`}
-              >
+              <CopyBadge text={model.id} showIcon={true} className="font-mono text-xs" aria-label={`Copy model ID: ${model.id}`}>
                 ID: {model.id.slice(0, 8)}...
               </CopyBadge>
             </div>
@@ -109,22 +109,14 @@ export default function ModelCard({ model, onPromote, onEdit, onDelete, onAction
             <p className="text-foreground font-medium">{model.registered_at ? new Date(model.registered_at).toLocaleDateString() : "-"}</p>
           </div>
         </div>
-        {model.description && (
-          <div className="text-sm text-muted-foreground">
+        {model.description && <div className="text-sm text-muted-foreground">
             <p className="font-medium text-foreground mb-1">Description</p>
             <p>{model.description}</p>
-          </div>
-        )}
-        {model.hyperparameters && (
-          <div className="text-sm">
+          </div>}
+        {model.hyperparameters && <div className="text-sm">
             <div className="flex items-center justify-between mb-2">
               <p className="font-medium text-foreground">Hyperparameters</p>
-              <CopyButton
-                text={model.hyperparameters}
-                size="sm"
-                variant="outline"
-                successMessage="Hyperparameters copied to clipboard"
-              >
+              <CopyButton text={model.hyperparameters} size="sm" variant="outline" successMessage="Hyperparameters copied to clipboard">
                 <Copy className="w-3 h-3 mr-1" />
                 Copy JSON
               </CopyButton>
@@ -132,26 +124,20 @@ export default function ModelCard({ model, onPromote, onEdit, onDelete, onAction
             <pre className="bg-muted/50 rounded p-2 text-xs font-mono overflow-x-auto">
               {JSON.stringify(JSON.parse(model.hyperparameters), null, 2)}
             </pre>
-          </div>
-        )}
+          </div>}
       </CardContent>
       <CardFooter className="flex items-center justify-between">
         <div className="flex gap-2">
-          {canPromote && (
-            <Button size="sm" onClick={() => onPromote?.(model)}>
+          {canPromote && <Button size="sm" onClick={() => onPromote?.(model)}>
               <Zap className="w-4 h-4 mr-2" />
               Promote
-            </Button>
-          )}
-          {onEdit && (
-            <Button size="sm" variant="outline" onClick={() => onEdit(model)}>
+            </Button>}
+          {onEdit && <Button size="sm" variant="outline" onClick={() => onEdit(model)}>
               <Edit className="w-4 h-4 mr-2" />
               Edit
-            </Button>
-          )}
+            </Button>}
         </div>
-        {actions.length > 0 && (
-          <DropdownMenu>
+        {actions.length > 0 && <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="sm">
                 <MoreHorizontal className="w-4 h-4" />
@@ -159,30 +145,18 @@ export default function ModelCard({ model, onPromote, onEdit, onDelete, onAction
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               {actions.map((action, index) => {
-                const Icon = getActionIcon(action.type);
-                return (
-                  <DropdownMenuItem 
-                    key={index}
-                    onClick={() => handleAction(action)}
-                  >
+            const Icon = getActionIcon(action.type);
+            return <DropdownMenuItem key={index} onClick={() => handleAction(action)}>
                     <Icon className="w-4 h-4 mr-2" />
                     {action.label}
-                  </DropdownMenuItem>
-                );
-              })}
-              {onDelete && (
-                <DropdownMenuItem 
-                  onClick={() => onDelete(model.id)}
-                  className="text-destructive"
-                >
+                  </DropdownMenuItem>;
+          })}
+              {onDelete && <DropdownMenuItem onClick={() => onDelete(model.id)} className="text-destructive">
                   <Trash2 className="w-4 h-4 mr-2" />
                   Delete
-                </DropdownMenuItem>
-              )}
+                </DropdownMenuItem>}
             </DropdownMenuContent>
-          </DropdownMenu>
-        )}
+          </DropdownMenu>}
       </CardFooter>
-    </Card>
-  );
+    </Card>;
 }

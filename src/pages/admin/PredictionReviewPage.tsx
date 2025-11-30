@@ -1,17 +1,14 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { PredictionReviewPanel } from "@/components/admin/model-status/PredictionReviewPanel";
 import { AlertCircle } from "lucide-react";
-
 const HUNGARIAN_LABELS = {
   title: "Előrejelzés-felülvizsgálati panel",
   subtitle: "Blokkolt és túlzottan magabiztos előrejelzések triázs felülete",
   info_title: "Információ",
-  info_desc: "Ez az oldal lehetővé teszi az adminisztrátoroknak, hogy felülvizsgálják az olyan előrejelzéseket, amelyeket túlzott magabiztosság miatt blokkolt a rendszer. Az \"Elfogadás\" gomb az előrejelzést blokkolt státuszban hagyja, az \"Elutasítás\" gomb pedig visszaállítja az aktív státuszra.",
+  info_desc: "Ez az oldal lehetővé teszi az adminisztrátoroknak, hogy felülvizsgálják az olyan előrejelzéseket, amelyeket túlzott magabiztosság miatt blokkolt a rendszer. Az \"Elfogadás\" gomb az előrejelzést blokkolt státuszban hagyja, az \"Elutasítás\" gomb pedig visszaállítja az aktív státuszra."
 };
-
 export default function PredictionReviewPage() {
-  return (
-    <div className="container mx-auto p-6 space-y-6">
+  return <div className="container mx-auto p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">{HUNGARIAN_LABELS.title}</h1>
@@ -34,6 +31,5 @@ export default function PredictionReviewPage() {
 
       {/* Prediction Review Panel */}
       <PredictionReviewPanel autoRefresh={true} refreshInterval={30000} />
-    </div>
-  );
+    </div>;
 }

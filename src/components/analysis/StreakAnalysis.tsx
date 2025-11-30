@@ -3,30 +3,65 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Flame, Shield, TrendingUp, Home } from "lucide-react";
-
 interface StreakAnalysisProps {
   teamId?: string;
   teamName?: string;
 }
-
 interface StreakResponse {
   team_id: string;
   streaks: {
-    overall_winning?: { pattern_type: string; pattern_name: string; confidence: number; strength: number; metadata: { streak_length: number } } | null;
-    clean_sheet?: { pattern_type: string; pattern_name: string; confidence: number; strength: number; metadata: { streak_length: number } } | null;
-    btts?: { pattern_type: string; pattern_name: string; confidence: number; strength: number; metadata: { streak_length: number } } | null;
+    overall_winning?: {
+      pattern_type: string;
+      pattern_name: string;
+      confidence: number;
+      strength: number;
+      metadata: {
+        streak_length: number;
+      };
+    } | null;
+    clean_sheet?: {
+      pattern_type: string;
+      pattern_name: string;
+      confidence: number;
+      strength: number;
+      metadata: {
+        streak_length: number;
+      };
+    } | null;
+    btts?: {
+      pattern_type: string;
+      pattern_name: string;
+      confidence: number;
+      strength: number;
+      metadata: {
+        streak_length: number;
+      };
+    } | null;
     home_winning?: number | null;
   };
 }
-
-export function StreakAnalysis({ teamId, teamName }: StreakAnalysisProps) {
-  const { data, isLoading, isError } = useQuery<StreakResponse | null>({
+export function StreakAnalysis({
+  teamId,
+  teamName
+}: StreakAnalysisProps) {
+  const {
+    data,
+    isLoading,
+    isError
+  } = useQuery<StreakResponse | null>({
     queryKey: ["team-streaks", teamId, teamName],
     queryFn: async () => {
       try {
-        const payload = teamId ? { teamId } : { teamName };
-        const { data, error } = await supabase.functions.invoke("team-streaks", {
-          body: payload,
+        const payload = teamId ? {
+          teamId
+        } : {
+          teamName
+        };
+        const {
+          data,
+          error
+        } = await supabase.functions.invoke("team-streaks", {
+          body: payload
         });
         if (error) throw error;
         return data as StreakResponse;
@@ -35,23 +70,15 @@ export function StreakAnalysis({ teamId, teamName }: StreakAnalysisProps) {
         return null;
       }
     },
-    staleTime: 30_000,
+    staleTime: 30_000
   });
-
-  return (
-    <Card className="rounded-2xl bg-card ring-1 ring-border">
+  return <Card className="rounded-2xl bg-card ring-1 ring-border">
       <CardHeader>
         <CardTitle>Sorozatok és trendek</CardTitle>
       </CardHeader>
       <CardContent>
-        {isLoading ? (
-          <div className="text-sm text-muted-foreground">Loading streaks...</div>
-        ) : isError || !data ? (
-          <div className="text-sm text-muted-foreground">Streak adatok nem elérhetők ehhez a csapathoz.</div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {data.streaks.overall_winning ? (
-              <div className="rounded-lg border border-border p-4">
+        {isLoading ? <div className="text-sm text-muted-foreground">Loading streaks...</div> : isError || !data ? <div className="text-sm text-muted-foreground">Streak adatok nem elérhetők ehhez a csapathoz.</div> : <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {data.streaks.overall_winning ? <div className="rounded-lg border border-border p-4">
                 <div className="flex items-center gap-2 mb-2"><Flame className="w-4 h-4 text-primary" />
                   <span className="font-medium">Győzelmi széria</span>
                 </div>
@@ -61,11 +88,9 @@ export function StreakAnalysis({ teamId, teamName }: StreakAnalysisProps) {
                   <Badge variant="default">Bizalom: {data.streaks.overall_winning.confidence}%</Badge>
                   <Badge variant="secondary">Erő: {data.streaks.overall_winning.strength}/100</Badge>
                 </div>
-              </div>
-            ) : null}
+              </div> : null}
 
-            {data.streaks.clean_sheet ? (
-              <div className="rounded-lg border border-border p-4">
+            {data.streaks.clean_sheet ? <div className="rounded-lg border border-border p-4">
                 <div className="flex items-center gap-2 mb-2"><Shield className="w-4 h-4 text-secondary" />
                   <span className="font-medium">Kapott gól nélkül</span>
                 </div>
@@ -75,11 +100,9 @@ export function StreakAnalysis({ teamId, teamName }: StreakAnalysisProps) {
                   <Badge variant="default">Bizalom: {data.streaks.clean_sheet.confidence}%</Badge>
                   <Badge variant="secondary">Védelem: {data.streaks.clean_sheet.strength}/100</Badge>
                 </div>
-              </div>
-            ) : null}
+              </div> : null}
 
-            {data.streaks.btts ? (
-              <div className="rounded-lg border border-border p-4">
+            {data.streaks.btts ? <div className="rounded-lg border border-border p-4">
                 <div className="flex items-center gap-2 mb-2"><TrendingUp className="w-4 h-4 text-emerald-500" />
                   <span className="font-medium">BTTS széria</span>
                 </div>
@@ -89,11 +112,9 @@ export function StreakAnalysis({ teamId, teamName }: StreakAnalysisProps) {
                   <Badge variant="default">Bizalom: {data.streaks.btts.confidence}%</Badge>
                   <Badge variant="secondary">Mindkét csapat gól</Badge>
                 </div>
-              </div>
-            ) : null}
+              </div> : null}
 
-            {data.streaks.home_winning ? (
-              <div className="rounded-lg border border-border p-4">
+            {data.streaks.home_winning ? <div className="rounded-lg border border-border p-4">
                 <div className="flex items-center gap-2 mb-2"><Home className="w-4 h-4 text-primary" />
                   <span className="font-medium">Hazai széria</span>
                 </div>
@@ -102,13 +123,9 @@ export function StreakAnalysis({ teamId, teamName }: StreakAnalysisProps) {
                 <div className="mt-2 flex items-center gap-2">
                   <Badge variant="secondary">Otthoni előny</Badge>
                 </div>
-              </div>
-            ) : null}
-          </div>
-        )}
+              </div> : null}
+          </div>}
       </CardContent>
-    </Card>
-  );
+    </Card>;
 }
-
 export default StreakAnalysis;

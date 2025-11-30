@@ -1,15 +1,12 @@
 import React from "react";
-
 export interface CorrelationHeatmapProps {
   labels: string[];
   matrix: number[][]; // values in [-1, 1]
   size?: number; // cell size in px
 }
-
 function lerp(a: number, b: number, t: number) {
   return Math.round(a + (b - a) * t);
 }
-
 function valueToColor(v: number): string {
   // clamp
   const x = Math.max(-1, Math.min(1, v));
@@ -31,47 +28,38 @@ function valueToColor(v: number): string {
   }
   return `rgb(${r}, ${g}, ${b})`;
 }
-
-const CorrelationHeatmap: React.FC<CorrelationHeatmapProps> = ({ labels, matrix, size = 32 }) => {
+const CorrelationHeatmap: React.FC<CorrelationHeatmapProps> = ({
+  labels,
+  matrix,
+  size = 32
+}) => {
   const n = labels.length;
   const width = size * (n + 1);
   const height = size * (n + 1);
-
-  return (
-    <div className="overflow-x-auto">
+  return <div className="overflow-x-auto">
       <svg width={width} height={height} className="rounded-lg ring-1 ring-border bg-card">
         {/* Labels top */}
-        {labels.map((lab, i) => (
-          <text key={`t-${i}`} x={(i + 1) * size + size / 2} y={size / 2} textAnchor="middle" fontSize={11} fill="#6b7280">
+        {labels.map((lab, i) => <text key={`t-${i}`} x={(i + 1) * size + size / 2} y={size / 2} textAnchor="middle" fontSize={11} fill="#6b7280">
             {lab}
-          </text>
-        ))}
+          </text>)}
         {/* Labels left */}
-        {labels.map((lab, i) => (
-          <text key={`l-${i}`} x={size / 2} y={(i + 1) * size + size / 2} textAnchor="middle" fontSize={11} fill="#6b7280">
+        {labels.map((lab, i) => <text key={`l-${i}`} x={size / 2} y={(i + 1) * size + size / 2} textAnchor="middle" fontSize={11} fill="#6b7280">
             {lab}
-          </text>
-        ))}
+          </text>)}
         {/* Grid */}
-        {matrix.map((row, i) =>
-          row.map((val, j) => {
-            const x = (j + 1) * size;
-            const y = (i + 1) * size;
-            const v = typeof val === "number" && Number.isFinite(val) ? val : 0;
-            const fill = valueToColor(v);
-            return (
-              <g key={`c-${i}-${j}`}> 
+        {matrix.map((row, i) => row.map((val, j) => {
+        const x = (j + 1) * size;
+        const y = (i + 1) * size;
+        const v = typeof val === "number" && Number.isFinite(val) ? val : 0;
+        const fill = valueToColor(v);
+        return <g key={`c-${i}-${j}`}> 
                 <rect x={x} y={y} width={size - 2} height={size - 2} fill={fill} rx={4} />
                 <text x={x + (size - 2) / 2} y={y + (size - 2) / 2 + 4} textAnchor="middle" fontSize={11} fill="#111827">
                   {v.toFixed(2)}
                 </text>
-              </g>
-            );
-          }),
-        )}
+              </g>;
+      }))}
       </svg>
-    </div>
-  );
+    </div>;
 };
-
 export default CorrelationHeatmap;

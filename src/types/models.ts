@@ -1,5 +1,4 @@
 export type ModelType = "champion" | "challenger" | "retired";
-
 export interface ModelRegistry {
   id: string;
   model_name: string;
@@ -14,7 +13,6 @@ export interface ModelRegistry {
   is_active?: boolean;
   description?: string;
 }
-
 export interface ModelExperiment {
   id: string;
   experiment_name: string;
@@ -30,18 +28,15 @@ export interface ModelExperiment {
   decision?: "promote" | "keep" | "continue" | null;
   completed_at?: string | null;
 }
-
 export interface ModelSelectionResponse {
   selectedModelId: string;
   strategy: "exploit" | "explore";
   explorationRate: number;
 }
-
 export interface ShadowRunRequest {
   matchId: string;
   modelId: string;
 }
-
 export interface ShadowRunResult {
   createdPredictionId?: string;
 }

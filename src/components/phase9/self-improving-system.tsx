@@ -7,30 +7,11 @@ import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { 
-  Brain, 
-  Rocket, 
-  TestTube, 
-  TrendingUp, 
-  Settings,
-  Play,
-  Pause,
-  CheckCircle,
-  XCircle,
-  Clock,
-  BarChart3,
-  Zap,
-  AlertTriangle
-} from 'lucide-react';
+import { Brain, Rocket, TestTube, TrendingUp, Settings, Play, Pause, CheckCircle, XCircle, Clock, BarChart3, Zap, AlertTriangle } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { SelfImprovingSystemService } from '@/lib/phase9-api';
 import { supabase } from '@/integrations/supabase/client';
-import type { 
-  FeatureExperiment, 
-  ExperimentDashboardProps,
-  FeatureGenerationRequest,
-  ContinuousLearningResponse
-} from '@/types/phase9';
+import type { FeatureExperiment, ExperimentDashboardProps, FeatureGenerationRequest, ContinuousLearningResponse } from '@/types/phase9';
 
 // Experiment Dashboard Component
 export const ExperimentDashboard: React.FC<ExperimentDashboardProps> = ({
@@ -43,23 +24,20 @@ export const ExperimentDashboard: React.FC<ExperimentDashboardProps> = ({
   const [isRunningLearning, setIsRunningLearning] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [lastRefresh, setLastRefresh] = useState<Date | null>(null);
-
   const fetchExperiments = useCallback(async () => {
     try {
       setError(null);
-      
       let query = supabase.from('feature_experiments').select('*');
-      
       if (showActiveOnly) {
         query = query.eq('is_active', true);
       }
-      
-      const { data, error: fetchError } = await query
-        .order('created_at', { ascending: false })
-        .limit(50);
-
+      const {
+        data,
+        error: fetchError
+      } = await query.order('created_at', {
+        ascending: false
+      }).limit(50);
       if (fetchError) throw fetchError;
-
       setExperiments(data as FeatureExperiment[]);
       setLastRefresh(new Date());
     } catch (err) {
@@ -74,10 +52,8 @@ export const ExperimentDashboard: React.FC<ExperimentDashboardProps> = ({
       setIsLoading(false);
     }
   }, [showActiveOnly]);
-
   const handleGenerateFeatures = async () => {
     setIsGenerating(true);
-    
     try {
       const request: FeatureGenerationRequest = {
         feature_types: ['polynomial', 'interaction', 'ratio'],
@@ -85,13 +61,11 @@ export const ExperimentDashboard: React.FC<ExperimentDashboardProps> = ({
         sample_size: 2000,
         test_duration_days: 14
       };
-
       const result = await SelfImprovingSystemService.generateNewFeatures(request);
-      
       if (result.success) {
         toast({
           title: 'Features generated successfully',
-          description: `Generated ${result.experiments?.length || 0} new feature experiments`,
+          description: `Generated ${result.experiments?.length || 0} new feature experiments`
         });
         await fetchExperiments();
       } else {
@@ -108,19 +82,20 @@ export const ExperimentDashboard: React.FC<ExperimentDashboardProps> = ({
       setIsGenerating(false);
     }
   };
-
   const handleRunContinuousLearning = async () => {
     setIsRunningLearning(true);
-    
     try {
       const result = await SelfImprovingSystemService.runContinuousLearning();
-      
       if (result.success && result.results) {
-        const { experimentsGenerated, experimentsCompleted, featuresApproved, modelAccuracyImprovement } = result.results;
-        
+        const {
+          experimentsGenerated,
+          experimentsCompleted,
+          featuresApproved,
+          modelAccuracyImprovement
+        } = result.results;
         toast({
           title: 'Continuous learning completed',
-          description: `Generated: ${experimentsGenerated}, Completed: ${experimentsCompleted}, Approved: ${featuresApproved}, Improvement: +${modelAccuracyImprovement.toFixed(1)}%`,
+          description: `Generated: ${experimentsGenerated}, Completed: ${experimentsCompleted}, Approved: ${featuresApproved}, Improvement: +${modelAccuracyImprovement.toFixed(1)}%`
         });
         await fetchExperiments();
       } else {
@@ -137,15 +112,13 @@ export const ExperimentDashboard: React.FC<ExperimentDashboardProps> = ({
       setIsRunningLearning(false);
     }
   };
-
   const handleTestFeature = async (experimentId: string) => {
     try {
       const result = await SelfImprovingSystemService.testFeature(experimentId);
-      
       if (result.success) {
         toast({
           title: 'Feature test completed',
-          description: `Recommendation: ${result.result?.recommendation}`,
+          description: `Recommendation: ${result.result?.recommendation}`
         });
         await fetchExperiments();
       } else {
@@ -160,40 +133,39 @@ export const ExperimentDashboard: React.FC<ExperimentDashboardProps> = ({
       });
     }
   };
-
   useEffect(() => {
     fetchExperiments();
-
     if (autoRefresh) {
       const interval = setInterval(fetchExperiments, 30000); // Refresh every 30 seconds
       return () => clearInterval(interval);
     }
   }, [showActiveOnly, autoRefresh, fetchExperiments]);
-
   const getExperimentStats = () => {
     const total = experiments.length;
     const active = experiments.filter(e => e.is_active).length;
     const completed = experiments.filter(e => !e.is_active).length;
     const approved = experiments.filter(e => e.is_approved).length;
     const significant = experiments.filter(e => e.statistical_significance).length;
-
-    return { total, active, completed, approved, significant };
+    return {
+      total,
+      active,
+      completed,
+      approved,
+      significant
+    };
   };
-
   const getStatusIcon = (experiment: FeatureExperiment) => {
     if (experiment.is_approved) return <CheckCircle className="h-4 w-4 text-green-500" />;
     if (experiment.is_active) return <Clock className="h-4 w-4 text-blue-500" />;
     if (experiment.statistical_significance) return <TrendingUp className="h-4 w-4 text-green-500" />;
     return <XCircle className="h-4 w-4 text-red-500" />;
   };
-
   const getStatusBadge = (experiment: FeatureExperiment) => {
     if (experiment.is_approved) return <Badge className="bg-green-100 text-green-800">APPROVED</Badge>;
     if (experiment.is_active) return <Badge className="bg-blue-100 text-blue-800">ACTIVE</Badge>;
     if (experiment.statistical_significance) return <Badge className="bg-green-100 text-green-800">SIGNIFICANT</Badge>;
     return <Badge variant="secondary">COMPLETED</Badge>;
   };
-
   const getFeatureTypeColor = (type: string) => {
     const colors: Record<string, string> = {
       'polynomial': 'bg-purple-100 text-purple-800',
@@ -204,12 +176,9 @@ export const ExperimentDashboard: React.FC<ExperimentDashboardProps> = ({
     };
     return colors[type] || 'bg-gray-100 text-gray-800';
   };
-
   const stats = getExperimentStats();
-
   if (isLoading) {
-    return (
-      <Card className="w-full">
+    return <Card className="w-full">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Brain className="h-5 w-5" />
@@ -221,13 +190,10 @@ export const ExperimentDashboard: React.FC<ExperimentDashboardProps> = ({
             <Clock className="h-8 w-8 animate-pulse" />
           </div>
         </CardContent>
-      </Card>
-    );
+      </Card>;
   }
-
   if (error) {
-    return (
-      <Card className="w-full">
+    return <Card className="w-full">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Brain className="h-5 w-5" />
@@ -240,12 +206,9 @@ export const ExperimentDashboard: React.FC<ExperimentDashboardProps> = ({
             <AlertDescription>{error}</AlertDescription>
           </Alert>
         </CardContent>
-      </Card>
-    );
+      </Card>;
   }
-
-  return (
-    <div className="space-y-6">
+  return <div className="space-y-6">
       {/* Statistics Overview */}
       <Card>
         <CardHeader>
@@ -255,40 +218,23 @@ export const ExperimentDashboard: React.FC<ExperimentDashboardProps> = ({
               Experiment Statistics
             </CardTitle>
             <div className="flex gap-2">
-              <Button
-                onClick={handleGenerateFeatures}
-                disabled={isGenerating}
-                variant="outline"
-                size="sm"
-              >
-                {isGenerating ? (
-                  <>
+              <Button onClick={handleGenerateFeatures} disabled={isGenerating} variant="outline" size="sm">
+                {isGenerating ? <>
                     <Clock className="mr-2 h-4 w-4 animate-pulse" />
                     Generating...
-                  </>
-                ) : (
-                  <>
+                  </> : <>
                     <Zap className="mr-2 h-4 w-4" />
                     Generate Features
-                  </>
-                )}
+                  </>}
               </Button>
-              <Button
-                onClick={handleRunContinuousLearning}
-                disabled={isRunningLearning}
-                size="sm"
-              >
-                {isRunningLearning ? (
-                  <>
+              <Button onClick={handleRunContinuousLearning} disabled={isRunningLearning} size="sm">
+                {isRunningLearning ? <>
                     <Clock className="mr-2 h-4 w-4 animate-pulse" />
                     Learning...
-                  </>
-                ) : (
-                  <>
+                  </> : <>
                     <Play className="mr-2 h-4 w-4" />
                     Run Learning
-                  </>
-                )}
+                  </>}
               </Button>
             </div>
           </div>
@@ -327,11 +273,9 @@ export const ExperimentDashboard: React.FC<ExperimentDashboardProps> = ({
               <TestTube className="h-5 w-5" />
               Feature Experiments
             </CardTitle>
-            {lastRefresh && (
-              <span className="text-xs text-gray-500">
+            {lastRefresh && <span className="text-xs text-gray-500">
                 Updated: {lastRefresh.toLocaleTimeString()}
-              </span>
-            )}
+              </span>}
           </div>
         </CardHeader>
         <CardContent>
@@ -344,49 +288,24 @@ export const ExperimentDashboard: React.FC<ExperimentDashboardProps> = ({
             </TabsList>
             
             <TabsContent value="all" className="space-y-4">
-              <ExperimentList 
-                experiments={experiments} 
-                onTestFeature={handleTestFeature}
-                getStatusIcon={getStatusIcon}
-                getStatusBadge={getStatusBadge}
-                getFeatureTypeColor={getFeatureTypeColor}
-              />
+              <ExperimentList experiments={experiments} onTestFeature={handleTestFeature} getStatusIcon={getStatusIcon} getStatusBadge={getStatusBadge} getFeatureTypeColor={getFeatureTypeColor} />
             </TabsContent>
             
             <TabsContent value="active" className="space-y-4">
-              <ExperimentList 
-                experiments={experiments.filter(e => e.is_active)} 
-                onTestFeature={handleTestFeature}
-                getStatusIcon={getStatusIcon}
-                getStatusBadge={getStatusBadge}
-                getFeatureTypeColor={getFeatureTypeColor}
-              />
+              <ExperimentList experiments={experiments.filter(e => e.is_active)} onTestFeature={handleTestFeature} getStatusIcon={getStatusIcon} getStatusBadge={getStatusBadge} getFeatureTypeColor={getFeatureTypeColor} />
             </TabsContent>
             
             <TabsContent value="approved" className="space-y-4">
-              <ExperimentList 
-                experiments={experiments.filter(e => e.is_approved)} 
-                onTestFeature={handleTestFeature}
-                getStatusIcon={getStatusIcon}
-                getStatusBadge={getStatusBadge}
-                getFeatureTypeColor={getFeatureTypeColor}
-              />
+              <ExperimentList experiments={experiments.filter(e => e.is_approved)} onTestFeature={handleTestFeature} getStatusIcon={getStatusIcon} getStatusBadge={getStatusBadge} getFeatureTypeColor={getFeatureTypeColor} />
             </TabsContent>
             
             <TabsContent value="significant" className="space-y-4">
-              <ExperimentList 
-                experiments={experiments.filter(e => e.statistical_significance)} 
-                onTestFeature={handleTestFeature}
-                getStatusIcon={getStatusIcon}
-                getStatusBadge={getStatusBadge}
-                getFeatureTypeColor={getFeatureTypeColor}
-              />
+              <ExperimentList experiments={experiments.filter(e => e.statistical_significance)} onTestFeature={handleTestFeature} getStatusIcon={getStatusIcon} getStatusBadge={getStatusBadge} getFeatureTypeColor={getFeatureTypeColor} />
             </TabsContent>
           </Tabs>
         </CardContent>
       </Card>
-    </div>
-  );
+    </div>;
 };
 
 // Experiment List Component
@@ -397,7 +316,6 @@ interface ExperimentListProps {
   getStatusBadge: (experiment: FeatureExperiment) => React.ReactNode;
   getFeatureTypeColor: (type: string) => string;
 }
-
 const ExperimentList: React.FC<ExperimentListProps> = ({
   experiments,
   onTestFeature,
@@ -406,18 +324,13 @@ const ExperimentList: React.FC<ExperimentListProps> = ({
   getFeatureTypeColor
 }) => {
   if (experiments.length === 0) {
-    return (
-      <div className="text-center py-8 text-gray-500">
+    return <div className="text-center py-8 text-gray-500">
         <TestTube className="h-12 w-12 mx-auto mb-4 opacity-50" />
         <p>No experiments found in this category.</p>
-      </div>
-    );
+      </div>;
   }
-
-  return (
-    <div className="space-y-4">
-      {experiments.map((experiment) => (
-        <div key={experiment.id} className="border rounded-lg p-4 space-y-3">
+  return <div className="space-y-4">
+      {experiments.map(experiment => <div key={experiment.id} className="border rounded-lg p-4 space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               {getStatusIcon(experiment)}
@@ -434,24 +347,17 @@ const ExperimentList: React.FC<ExperimentListProps> = ({
             </div>
           </div>
 
-          {experiment.is_active && (
-            <div className="flex items-center justify-between pt-2 border-t">
+          {experiment.is_active && <div className="flex items-center justify-between pt-2 border-t">
               <div className="text-sm text-gray-600">
                 Started: {new Date(experiment.test_start_date).toLocaleDateString()}
               </div>
-              <Button
-                onClick={() => onTestFeature(experiment.id)}
-                size="sm"
-                variant="outline"
-              >
+              <Button onClick={() => onTestFeature(experiment.id)} size="sm" variant="outline">
                 <TestTube className="mr-2 h-4 w-4" />
                 Test Feature
               </Button>
-            </div>
-          )}
+            </div>}
 
-          {!experiment.is_active && experiment.improvement_delta !== null && (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-2 border-t text-sm">
+          {!experiment.is_active && experiment.improvement_delta !== null && <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-2 border-t text-sm">
               <div>
                 <span className="text-gray-600">Control:</span>
                 <div className="font-semibold">{experiment.control_accuracy?.toFixed(1)}%</div>
@@ -470,19 +376,15 @@ const ExperimentList: React.FC<ExperimentListProps> = ({
                 <span className="text-gray-600">P-value:</span>
                 <div className="font-semibold">{experiment.p_value?.toFixed(4)}</div>
               </div>
-            </div>
-          )}
-        </div>
-      ))}
-    </div>
-  );
+            </div>}
+        </div>)}
+    </div>;
 };
 
 // Feature Generation Wizard Component
 interface FeatureGenerationWizardProps {
   onGenerationComplete?: () => void;
 }
-
 export const FeatureGenerationWizard: React.FC<FeatureGenerationWizardProps> = ({
   onGenerationComplete
 }) => {
@@ -494,40 +396,36 @@ export const FeatureGenerationWizard: React.FC<FeatureGenerationWizardProps> = (
     sample_size: 1000,
     test_duration_days: 14
   });
-
-  const availableFeatures = [
-    'home_form',
-    'away_form',
-    'h2h_record',
-    'league_avg_goals',
-    'recent_scoring',
-    'defensive_strength',
-    'attacking_strength',
-    'home_advantage',
-    'travel_distance',
-    'weather_impact',
-    'injury_factor',
-    'motivation_level'
-  ];
-
-  const featureTypes = [
-    { value: 'polynomial', label: 'Polynomial Features', description: 'x², x³, etc.' },
-    { value: 'interaction', label: 'Interaction Features', description: 'x₁ × x₂' },
-    { value: 'ratio', label: 'Ratio Features', description: 'x₁ / x₂' },
-    { value: 'temporal', label: 'Temporal Features', description: 'Time-based patterns' },
-    { value: 'aggregate', label: 'Aggregate Features', description: 'Rolling averages' }
-  ];
-
+  const availableFeatures = ['home_form', 'away_form', 'h2h_record', 'league_avg_goals', 'recent_scoring', 'defensive_strength', 'attacking_strength', 'home_advantage', 'travel_distance', 'weather_impact', 'injury_factor', 'motivation_level'];
+  const featureTypes = [{
+    value: 'polynomial',
+    label: 'Polynomial Features',
+    description: 'x², x³, etc.'
+  }, {
+    value: 'interaction',
+    label: 'Interaction Features',
+    description: 'x₁ × x₂'
+  }, {
+    value: 'ratio',
+    label: 'Ratio Features',
+    description: 'x₁ / x₂'
+  }, {
+    value: 'temporal',
+    label: 'Temporal Features',
+    description: 'Time-based patterns'
+  }, {
+    value: 'aggregate',
+    label: 'Aggregate Features',
+    description: 'Rolling averages'
+  }];
   const handleGenerate = async () => {
     setIsGenerating(true);
-    
     try {
       const result = await SelfImprovingSystemService.generateNewFeatures(config);
-      
       if (result.success) {
         toast({
           title: 'Feature generation completed',
-          description: `Generated ${result.experiments?.length || 0} new experiments`,
+          description: `Generated ${result.experiments?.length || 0} new experiments`
         });
         onGenerationComplete?.();
       } else {
@@ -544,27 +442,19 @@ export const FeatureGenerationWizard: React.FC<FeatureGenerationWizardProps> = (
       setIsGenerating(false);
     }
   };
-
   const toggleFeatureType = (type: string) => {
     setConfig(prev => ({
       ...prev,
-      feature_types: prev.feature_types.includes(type as 'polynomial' | 'interaction' | 'ratio' | 'temporal' | 'aggregate')
-        ? prev.feature_types.filter(t => t !== type)
-        : [...prev.feature_types, type as 'polynomial' | 'interaction' | 'ratio' | 'temporal' | 'aggregate']
+      feature_types: prev.feature_types.includes(type as 'polynomial' | 'interaction' | 'ratio' | 'temporal' | 'aggregate') ? prev.feature_types.filter(t => t !== type) : [...prev.feature_types, type as 'polynomial' | 'interaction' | 'ratio' | 'temporal' | 'aggregate']
     }));
   };
-
   const toggleBaseFeature = (feature: string) => {
     setConfig(prev => ({
       ...prev,
-      base_features: prev.base_features.includes(feature)
-        ? prev.base_features.filter(f => f !== feature)
-        : [...prev.base_features, feature]
+      base_features: prev.base_features.includes(feature) ? prev.base_features.filter(f => f !== feature) : [...prev.base_features, feature]
     }));
   };
-
-  return (
-    <Card className="w-full max-w-4xl mx-auto">
+  return <Card className="w-full max-w-4xl mx-auto">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Rocket className="h-5 w-5" />
@@ -574,7 +464,7 @@ export const FeatureGenerationWizard: React.FC<FeatureGenerationWizardProps> = (
       <CardContent>
         {/* Progress Bar */}
         <div className="mb-6">
-          <Progress value={(step / 3) * 100} className="h-2" />
+          <Progress value={step / 3 * 100} className="h-2" />
           <div className="flex justify-between text-sm text-gray-600 mt-2">
             <span>Feature Types</span>
             <span>Base Features</span>
@@ -582,66 +472,35 @@ export const FeatureGenerationWizard: React.FC<FeatureGenerationWizardProps> = (
           </div>
         </div>
 
-        {step === 1 && (
-          <div className="space-y-4">
+        {step === 1 && <div className="space-y-4">
             <h3 className="text-lg font-semibold">Select Feature Types</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {featureTypes.map((type) => (
-                <div
-                  key={type.value}
-                  className={`p-4 border rounded-lg cursor-pointer transition-colors ${
-                    config.feature_types.includes(type.value as 'polynomial' | 'interaction' | 'ratio' | 'temporal' | 'aggregate')
-                      ? 'border-blue-500 bg-blue-50'
-                      : 'border-gray-200 hover:border-gray-300'
-                  }`}
-                  onClick={() => toggleFeatureType(type.value)}
-                >
+              {featureTypes.map(type => <div key={type.value} className={`p-4 border rounded-lg cursor-pointer transition-colors ${config.feature_types.includes(type.value as 'polynomial' | 'interaction' | 'ratio' | 'temporal' | 'aggregate') ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'}`} onClick={() => toggleFeatureType(type.value)}>
                   <div className="flex items-center justify-between">
                     <div>
                       <h4 className="font-semibold">{type.label}</h4>
                       <p className="text-sm text-gray-600">{type.description}</p>
                     </div>
-                    <div className={`w-4 h-4 rounded-full border-2 ${
-                      config.feature_types.includes(type.value as 'polynomial' | 'interaction' | 'ratio' | 'temporal' | 'aggregate')
-                        ? 'bg-blue-500 border-blue-500'
-                        : 'border-gray-300'
-                    }`} />
+                    <div className={`w-4 h-4 rounded-full border-2 ${config.feature_types.includes(type.value as 'polynomial' | 'interaction' | 'ratio' | 'temporal' | 'aggregate') ? 'bg-blue-500 border-blue-500' : 'border-gray-300'}`} />
                   </div>
-                </div>
-              ))}
+                </div>)}
             </div>
             <div className="flex justify-end">
               <Button onClick={() => setStep(2)} disabled={config.feature_types.length === 0}>
                 Next
               </Button>
             </div>
-          </div>
-        )}
+          </div>}
 
-        {step === 2 && (
-          <div className="space-y-4">
+        {step === 2 && <div className="space-y-4">
             <h3 className="text-lg font-semibold">Select Base Features</h3>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-              {availableFeatures.map((feature) => (
-                <div
-                  key={feature}
-                  className={`p-3 border rounded-lg cursor-pointer transition-colors ${
-                    config.base_features.includes(feature)
-                      ? 'border-blue-500 bg-blue-50'
-                      : 'border-gray-200 hover:border-gray-300'
-                  }`}
-                  onClick={() => toggleBaseFeature(feature)}
-                >
+              {availableFeatures.map(feature => <div key={feature} className={`p-3 border rounded-lg cursor-pointer transition-colors ${config.base_features.includes(feature) ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'}`} onClick={() => toggleBaseFeature(feature)}>
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium">{feature.replace(/_/g, ' ')}</span>
-                    <div className={`w-3 h-3 rounded-full border-2 ${
-                      config.base_features.includes(feature)
-                        ? 'bg-blue-500 border-blue-500'
-                        : 'border-gray-300'
-                    }`} />
+                    <div className={`w-3 h-3 rounded-full border-2 ${config.base_features.includes(feature) ? 'bg-blue-500 border-blue-500' : 'border-gray-300'}`} />
                   </div>
-                </div>
-              ))}
+                </div>)}
             </div>
             <div className="flex justify-between">
               <Button variant="outline" onClick={() => setStep(1)}>
@@ -651,39 +510,27 @@ export const FeatureGenerationWizard: React.FC<FeatureGenerationWizardProps> = (
                 Next
               </Button>
             </div>
-          </div>
-        )}
+          </div>}
 
-        {step === 3 && (
-          <div className="space-y-6">
+        {step === 3 && <div className="space-y-6">
             <h3 className="text-lg font-semibold">Configuration</h3>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium mb-2">Sample Size</label>
-                <input
-                  type="number"
-                  value={config.sample_size}
-                  onChange={(e) => setConfig(prev => ({ ...prev, sample_size: parseInt(e.target.value) || 1000 }))}
-                  className="w-full px-3 py-2 border rounded-md"
-                  min="100"
-                  max="10000"
-                  step="100"
-                />
+                <input type="number" value={config.sample_size} onChange={e => setConfig(prev => ({
+              ...prev,
+              sample_size: parseInt(e.target.value) || 1000
+            }))} className="w-full px-3 py-2 border rounded-md" min="100" max="10000" step="100" />
                 <p className="text-xs text-gray-500 mt-1">Number of samples for testing</p>
               </div>
               
               <div>
                 <label className="block text-sm font-medium mb-2">Test Duration (days)</label>
-                <input
-                  type="number"
-                  value={config.test_duration_days}
-                  onChange={(e) => setConfig(prev => ({ ...prev, test_duration_days: parseInt(e.target.value) || 14 }))}
-                  className="w-full px-3 py-2 border rounded-md"
-                  min="7"
-                  max="90"
-                  step="1"
-                />
+                <input type="number" value={config.test_duration_days} onChange={e => setConfig(prev => ({
+              ...prev,
+              test_duration_days: parseInt(e.target.value) || 14
+            }))} className="w-full px-3 py-2 border rounded-md" min="7" max="90" step="1" />
                 <p className="text-xs text-gray-500 mt-1">Duration of A/B test</p>
               </div>
             </div>
@@ -705,22 +552,16 @@ export const FeatureGenerationWizard: React.FC<FeatureGenerationWizardProps> = (
                 Previous
               </Button>
               <Button onClick={handleGenerate} disabled={isGenerating}>
-                {isGenerating ? (
-                  <>
+                {isGenerating ? <>
                     <Clock className="mr-2 h-4 w-4 animate-pulse" />
                     Generating...
-                  </>
-                ) : (
-                  <>
+                  </> : <>
                     <Rocket className="mr-2 h-4 w-4" />
                     Generate Features
-                  </>
-                )}
+                  </>}
               </Button>
             </div>
-          </div>
-        )}
+          </div>}
       </CardContent>
-    </Card>
-  );
+    </Card>;
 };

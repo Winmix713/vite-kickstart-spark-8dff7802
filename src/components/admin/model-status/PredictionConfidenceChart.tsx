@@ -5,18 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { TrendingUp, TrendingDown, Calendar } from "lucide-react";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-} from "recharts";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { supabase } from "@/integrations/supabase/client";
-
 interface AnalyticsResponse {
   summary: {
     totalPredictions: number;
@@ -39,36 +29,38 @@ interface AnalyticsResponse {
   windowDays: number;
   systemStatus: "healthy" | "warning" | "degraded";
 }
-
 interface PredictionConfidenceChartProps {
   className?: string;
 }
-
-export const PredictionConfidenceChart = memo(function PredictionConfidenceChart({ className }: PredictionConfidenceChartProps) {
+export const PredictionConfidenceChart = memo(function PredictionConfidenceChart({
+  className
+}: PredictionConfidenceChartProps) {
   const [windowDays, setWindowDays] = useState(7);
-
-  const { data: analytics, isLoading, error } = useQuery<AnalyticsResponse>({
+  const {
+    data: analytics,
+    isLoading,
+    error
+  } = useQuery<AnalyticsResponse>({
     queryKey: ["admin-model-analytics", windowDays],
     queryFn: async () => {
-      const { data, error } = await supabase.functions.invoke<AnalyticsResponse>(
-        "admin-model-analytics",
-        {
-          body: { window_days: windowDays },
+      const {
+        data,
+        error
+      } = await supabase.functions.invoke<AnalyticsResponse>("admin-model-analytics", {
+        body: {
+          window_days: windowDays
         }
-      );
+      });
       if (error) throw new Error(error.message);
       return data;
     },
-    refetchInterval: 60000, // Refetch every minute
+    refetchInterval: 60000 // Refetch every minute
   });
-
   const handleWindowChange = (days: number) => {
     setWindowDays(days);
   };
-
   if (error) {
-    return (
-      <Card className={className}>
+    return <Card className={className}>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <TrendingUp className="h-5 w-5" />
@@ -80,12 +72,9 @@ export const PredictionConfidenceChart = memo(function PredictionConfidenceChart
             Error loading analytics: {error.message}
           </div>
         </CardContent>
-      </Card>
-    );
+      </Card>;
   }
-
-  return (
-    <Card className={className}>
+  return <Card className={className}>
       <CardHeader>
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
@@ -98,26 +87,17 @@ export const PredictionConfidenceChart = memo(function PredictionConfidenceChart
             </CardDescription>
           </div>
           <div className="flex items-center gap-2">
-            <Button
-              variant={windowDays === 7 ? "default" : "outline"}
-              size="sm"
-              onClick={() => handleWindowChange(7)}
-            >
+            <Button variant={windowDays === 7 ? "default" : "outline"} size="sm" onClick={() => handleWindowChange(7)}>
               7 days
             </Button>
-            <Button
-              variant={windowDays === 30 ? "default" : "outline"}
-              size="sm"
-              onClick={() => handleWindowChange(30)}
-            >
+            <Button variant={windowDays === 30 ? "default" : "outline"} size="sm" onClick={() => handleWindowChange(30)}>
               30 days
             </Button>
           </div>
         </div>
       </CardHeader>
       <CardContent>
-        {isLoading ? (
-          <div className="space-y-4">
+        {isLoading ? <div className="space-y-4">
             <Skeleton className="h-4 w-1/4" />
             <Skeleton className="h-64 w-full" />
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -126,9 +106,7 @@ export const PredictionConfidenceChart = memo(function PredictionConfidenceChart
               <Skeleton className="h-16 w-full" />
               <Skeleton className="h-16 w-full" />
             </div>
-          </div>
-        ) : analytics ? (
-          <div className="space-y-6">
+          </div> : analytics ? <div className="space-y-6">
             {/* Summary Stats */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div className="space-y-1">
@@ -159,58 +137,33 @@ export const PredictionConfidenceChart = memo(function PredictionConfidenceChart
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={analytics.timeSeriesData}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis 
-                    dataKey="date" 
-                    tickFormatter={(value) => {
-                      const date = new Date(value);
-                      return date.toLocaleDateString('en-US', { 
-                        month: 'short', 
-                        day: 'numeric' 
-                      });
-                    }}
-                  />
-                  <YAxis 
-                    yAxisId="accuracy"
-                    domain={[0, 100]}
-                    tickFormatter={(value) => `${value}%`}
-                  />
-                  <YAxis 
-                    yAxisId="confidence"
-                    orientation="right"
-                    domain={[0, 1]}
-                    tickFormatter={(value) => `${(value * 100).toFixed(0)}%`}
-                  />
-                  <Tooltip
-                    labelFormatter={(value) => new Date(value).toLocaleDateString()}
-                    formatter={(value: number, name: string) => {
-                      if (name === "accuracy") {
-                        return [`${value.toFixed(1)}%`, "Accuracy"];
-                      }
-                      if (name === "confidence") {
-                        return [`${(value * 100).toFixed(1)}%`, "Avg Confidence"];
-                      }
-                      return [value, name];
-                    }}
-                  />
+                  <XAxis dataKey="date" tickFormatter={value => {
+                const date = new Date(value);
+                return date.toLocaleDateString('en-US', {
+                  month: 'short',
+                  day: 'numeric'
+                });
+              }} />
+                  <YAxis yAxisId="accuracy" domain={[0, 100]} tickFormatter={value => `${value}%`} />
+                  <YAxis yAxisId="confidence" orientation="right" domain={[0, 1]} tickFormatter={value => `${(value * 100).toFixed(0)}%`} />
+                  <Tooltip labelFormatter={value => new Date(value).toLocaleDateString()} formatter={(value: number, name: string) => {
+                if (name === "accuracy") {
+                  return [`${value.toFixed(1)}%`, "Accuracy"];
+                }
+                if (name === "confidence") {
+                  return [`${(value * 100).toFixed(1)}%`, "Avg Confidence"];
+                }
+                return [value, name];
+              }} />
                   <Legend />
-                  <Line
-                    yAxisId="accuracy"
-                    type="monotone"
-                    dataKey="accuracy"
-                    stroke="#10b981"
-                    strokeWidth={2}
-                    dot={{ fill: "#10b981", r: 4 }}
-                    name="Accuracy"
-                  />
-                  <Line
-                    yAxisId="confidence"
-                    type="monotone"
-                    dataKey="confidence"
-                    stroke="#3b82f6"
-                    strokeWidth={2}
-                    dot={{ fill: "#3b82f6", r: 4 }}
-                    name="Avg Confidence"
-                  />
+                  <Line yAxisId="accuracy" type="monotone" dataKey="accuracy" stroke="#10b981" strokeWidth={2} dot={{
+                fill: "#10b981",
+                r: 4
+              }} name="Accuracy" />
+                  <Line yAxisId="confidence" type="monotone" dataKey="confidence" stroke="#3b82f6" strokeWidth={2} dot={{
+                fill: "#3b82f6",
+                r: 4
+              }} name="Avg Confidence" />
                 </LineChart>
               </ResponsiveContainer>
             </div>
@@ -219,16 +172,7 @@ export const PredictionConfidenceChart = memo(function PredictionConfidenceChart
             <div className="flex items-center justify-between pt-4 border-t">
               <div className="flex items-center gap-2">
                 <span className="text-sm text-muted-foreground">System Status:</span>
-                <Badge
-                  variant={
-                    analytics.systemStatus === "healthy"
-                      ? "default"
-                      : analytics.systemStatus === "warning"
-                      ? "secondary"
-                      : "destructive"
-                  }
-                  className="gap-1"
-                >
+                <Badge variant={analytics.systemStatus === "healthy" ? "default" : analytics.systemStatus === "warning" ? "secondary" : "destructive"} className="gap-1">
                   {analytics.systemStatus === "healthy" && <TrendingUp className="w-3 h-3" />}
                   {analytics.systemStatus === "warning" && <TrendingDown className="w-3 h-3" />}
                   {analytics.systemStatus === "degraded" && <TrendingDown className="w-3 h-3" />}
@@ -239,11 +183,8 @@ export const PredictionConfidenceChart = memo(function PredictionConfidenceChart
                 {analytics.summary.correctPredictions} of {analytics.summary.totalPredictions} predictions correct
               </div>
             </div>
-          </div>
-        ) : null}
+          </div> : null}
       </CardContent>
-    </Card>
-  );
+    </Card>;
 });
-
 PredictionConfidenceChart.displayName = 'PredictionConfidenceChart';

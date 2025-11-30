@@ -8,12 +8,10 @@ export interface JobLog {
   error_message: string | null;
   error_stack?: string | null;
 }
-
 export interface JobStats {
   total_runs: number;
   success_runs: number;
 }
-
 export interface JobSummary {
   id: string;
   job_name: string;
@@ -29,7 +27,6 @@ export interface JobSummary {
   last_log: JobLog | null;
   recent_logs?: JobLog[];
 }
-
 export interface JobExecutionResult {
   success: boolean;
   recordsProcessed: number;
@@ -39,19 +36,15 @@ export interface JobExecutionResult {
   logId: string;
   error?: string;
 }
-
 export interface JobListResponse {
   jobs: JobSummary[];
 }
-
 export interface JobLogsResponse {
   logs: JobLog[];
 }
-
 export interface JobToggleResponse {
   job: JobSummary;
 }
-
 export interface JobTriggerResponse {
   result: JobExecutionResult;
 }

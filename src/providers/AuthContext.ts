@@ -1,8 +1,6 @@
 import { createContext } from 'react';
 import { User, Session } from '@supabase/supabase-js';
-
 export type UserRole = 'admin' | 'analyst' | 'user';
-
 export interface UserProfile {
   id: string;
   email: string;
@@ -11,7 +9,6 @@ export interface UserProfile {
   created_at: string;
   updated_at: string;
 }
-
 export interface AuthContextType {
   user: User | null;
   session: Session | null;
@@ -26,5 +23,4 @@ export interface AuthContextType {
   isAdmin: () => boolean;
   isAnalyst: () => boolean;
 }
-
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);

@@ -21,46 +21,44 @@ export interface UseEdgeFunctionMutationOptions<T = unknown, V = unknown> extend
 /**
  * Hook for calling edge functions with React Query integration
  */
-export function useEdgeFunction<T = unknown>(
-  functionName: string,
-  options: Parameters<typeof callEdgeFunction>[1] = {}
-) {
+export function useEdgeFunction<T = unknown>(functionName: string, options: Parameters<typeof callEdgeFunction>[1] = {}) {
   const queryClient = useQueryClient();
-  const { toast } = useToast();
-
+  const {
+    toast
+  } = useToast();
   const mutation = useMutation<ApiResponse<T>, Error, unknown>({
     mutationFn: (variables?: unknown) => {
       return callEdgeFunction<T>(functionName, {
         ...options,
-        body: variables || options.body,
+        body: variables || options.body
       });
     },
-    onSuccess: (result) => {
+    onSuccess: result => {
       if (result.success && result.data) {
         // Invalidate related queries to trigger refetch
-        queryClient.invalidateQueries({ queryKey: [functionName] });
-        
+        queryClient.invalidateQueries({
+          queryKey: [functionName]
+        });
         toast({
           title: 'Success',
-          description: `${functionName} completed successfully`,
+          description: `${functionName} completed successfully`
         });
       } else {
         toast({
           title: 'Error',
           description: result.error || 'Unknown error occurred',
-          variant: 'destructive',
+          variant: 'destructive'
         });
       }
     },
-    onError: (error) => {
+    onError: error => {
       toast({
         title: 'Error',
         description: error.message,
-        variant: 'destructive',
+        variant: 'destructive'
       });
-    },
+    }
   });
-
   return mutation;
 }
 
@@ -74,29 +72,30 @@ export function useEdgeFunctionQuery<T = unknown>({
   onError,
   ...queryOptions
 }: UseEdgeFunctionQueryOptions<T>) {
-  const { toast } = useToast();
-
+  const {
+    toast
+  } = useToast();
   return useQuery({
     queryKey: [functionName, options],
     queryFn: () => callEdgeFunction<T>(functionName, options),
     ...queryOptions,
-    onSuccess: (data) => {
+    onSuccess: data => {
       if (data.success && data.data) {
         onSuccess?.(data.data);
       } else {
         onError?.(data.error || 'Unknown error');
       }
     },
-    onError: (error) => {
+    onError: error => {
       onError?.(error.message);
       toast({
         title: 'Query Error',
         description: error.message,
-        variant: 'destructive',
+        variant: 'destructive'
       });
     },
     select: (data: ApiResponse<T>) => data.success ? data.data : null,
-    enabled: queryOptions.enabled !== false && functionName !== undefined,
+    enabled: queryOptions.enabled !== false && functionName !== undefined
   });
 }
 
@@ -111,44 +110,46 @@ export function useEdgeFunctionMutation<T = unknown, V = unknown>({
   ...mutationOptions
 }: UseEdgeFunctionMutationOptions<T, V>) {
   const queryClient = useQueryClient();
-  const { toast } = useToast();
-
+  const {
+    toast
+  } = useToast();
   return useMutation<ApiResponse<T>, Error, V>({
     mutationFn: (variables: V) => {
       return callEdgeFunction<T>(functionName, {
         ...options,
-        body: variables,
+        body: variables
       });
     },
-    onSuccess: (result) => {
+    onSuccess: result => {
       if (result.success && result.data) {
         onSuccess?.(result.data);
-        
+
         // Invalidate related queries
-        queryClient.invalidateQueries({ queryKey: [functionName] });
-        
+        queryClient.invalidateQueries({
+          queryKey: [functionName]
+        });
         toast({
           title: 'Success',
-          description: `${functionName} completed successfully`,
+          description: `${functionName} completed successfully`
         });
       } else {
         onError?.(result.error || 'Unknown error');
         toast({
           title: 'Error',
           description: result.error || 'Unknown error occurred',
-          variant: 'destructive',
+          variant: 'destructive'
         });
       }
     },
-    onError: (error) => {
+    onError: error => {
       onError?.(error.message);
       toast({
         title: 'Error',
         description: error.message,
-        variant: 'destructive',
+        variant: 'destructive'
       });
     },
-    ...mutationOptions,
+    ...mutationOptions
   });
 }
 
@@ -159,85 +160,92 @@ export function useEdgeFunctionMutation<T = unknown, V = unknown>({
 // Jobs management
 export const useJobsList = () => useEdgeFunctionQuery({
   functionName: 'jobs-list',
-  options: { method: 'GET' },
+  options: {
+    method: 'GET'
+  }
 });
-
 export const useJobCreate = () => useEdgeFunctionMutation({
-  functionName: 'jobs-create',
+  functionName: 'jobs-create'
 });
-
 export const useJobToggle = () => useEdgeFunctionMutation({
-  functionName: 'jobs-toggle',
+  functionName: 'jobs-toggle'
 });
 
 // Models management
 export const useModelsPerformance = () => useEdgeFunctionQuery({
   functionName: 'models-performance',
-  options: { method: 'GET' },
+  options: {
+    method: 'GET'
+  }
 });
-
 export const useModelCompare = () => useEdgeFunctionMutation({
-  functionName: 'models-compare',
+  functionName: 'models-compare'
 });
 
 // Analytics
 export const useMonitoringMetrics = () => useEdgeFunctionQuery({
   functionName: 'monitoring-metrics',
-  options: { method: 'GET' },
+  options: {
+    method: 'GET'
+  }
 });
-
 export const useAnalyticsData = () => useEdgeFunctionQuery({
   functionName: 'analytics-data',
-  options: { method: 'GET' },
+  options: {
+    method: 'GET'
+  }
 });
 
 // Phase 9
 export const usePhase9CollaborativeIntelligence = () => useEdgeFunctionQuery({
   functionName: 'phase9-collaborative-intelligence',
-  options: { method: 'GET' },
+  options: {
+    method: 'GET'
+  }
 });
-
 export const usePhase9MarketIntegration = () => useEdgeFunctionMutation({
-  functionName: 'phase9-market-integration',
+  functionName: 'phase9-market-integration'
 });
 
 // Cross-league
 export const useCrossLeagueAnalyze = () => useEdgeFunctionMutation({
-  functionName: 'cross-league-analyze',
+  functionName: 'cross-league-analyze'
 });
-
 export const useCrossLeagueCorrelations = () => useEdgeFunctionQuery({
   functionName: 'cross-league-correlations',
-  options: { method: 'GET' },
+  options: {
+    method: 'GET'
+  }
 });
 
 // Pattern detection
 export const usePatternsDetect = () => useEdgeFunctionMutation({
-  functionName: 'patterns-detect',
+  functionName: 'patterns-detect'
 });
-
 export const useMetaPatternsDiscover = () => useEdgeFunctionMutation({
-  functionName: 'meta-patterns-discover',
+  functionName: 'meta-patterns-discover'
 });
 
 // AI Chat
 export const useAIChat = () => useEdgeFunctionMutation({
-  functionName: 'ai-chat',
+  functionName: 'ai-chat'
 });
 
 // Admin functions
 export const useAdminModelAnalytics = () => useEdgeFunctionQuery({
   functionName: 'admin-model-analytics',
-  options: { method: 'GET' },
+  options: {
+    method: 'GET'
+  }
 });
-
 export const useAdminModelTriggerTraining = () => useEdgeFunctionMutation({
-  functionName: 'admin-model-trigger-training',
+  functionName: 'admin-model-trigger-training'
 });
-
 export const useAdminPredictionReview = () => useEdgeFunctionQuery({
   functionName: 'admin-prediction-review',
-  options: { method: 'GET' },
+  options: {
+    method: 'GET'
+  }
 });
 
 // Prediction Analyzer
@@ -248,10 +256,10 @@ export const usePredictionAnalyzer = (params?: {
   league?: string;
 }) => useEdgeFunctionQuery({
   functionName: 'prediction-analyzer',
-  options: { 
+  options: {
     method: 'GET',
-    params: params,
-  },
+    params: params
+  }
 });
 
 // Value Ranking for predictions
@@ -261,8 +269,8 @@ export const useValueRankedPredictions = (matchIds?: string[]) => useEdgeFunctio
     method: 'GET',
     params: {
       value_ranking: 'true',
-      match_ids: matchIds?.join(','),
-    },
+      match_ids: matchIds?.join(',')
+    }
   },
-  enabled: matchIds && matchIds.length > 0,
+  enabled: matchIds && matchIds.length > 0
 });

@@ -1,26 +1,27 @@
 import { Trophy, Award } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
 const HeroCard = () => {
-  return (
-    <div className="relative perspective-1000">
+  return <div className="relative perspective-1000">
       {/* Floating decorations */}
       <div className="absolute -top-10 -right-10 w-[400px] h-[400px] border border-blue-400/20 rounded-full animate-float" />
-      <div className="absolute -bottom-10 -left-10 w-[300px] h-[300px] border border-purple-400/20 rounded-full animate-float" style={{ animationDelay: "1.5s" }} />
+      <div className="absolute -bottom-10 -left-10 w-[300px] h-[300px] border border-purple-400/20 rounded-full animate-float" style={{
+      animationDelay: "1.5s"
+    }} />
       
       <div className="absolute top-10 right-10 glass-card p-3 rounded-xl animate-float glow-blue">
         <Trophy className="w-8 h-8 text-yellow-400" />
       </div>
       
-      <div className="absolute bottom-10 left-10 glass-card p-3 rounded-xl animate-float glow-purple" style={{ animationDelay: "1s" }}>
+      <div className="absolute bottom-10 left-10 glass-card p-3 rounded-xl animate-float glow-purple" style={{
+      animationDelay: "1s"
+    }}>
         <Award className="w-8 h-8 text-blue-400" />
       </div>
 
       {/* Main card */}
-      <div 
-        className="relative w-full max-w-[380px] mx-auto bg-gradient-to-br from-gray-900/80 via-gray-900/70 to-gray-900/80 backdrop-blur-2xl rounded-[2rem] p-6 border border-white/10 shadow-2xl transition-transform duration-500 hover:rotate-0"
-        style={{ transform: "rotateY(3deg)" }}
-      >
+      <div className="relative w-full max-w-[380px] mx-auto bg-gradient-to-br from-gray-900/80 via-gray-900/70 to-gray-900/80 backdrop-blur-2xl rounded-[2rem] p-6 border border-white/10 shadow-2xl transition-transform duration-500 hover:rotate-0" style={{
+      transform: "rotateY(3deg)"
+    }}>
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-500/20 border border-red-400/30">
@@ -67,7 +68,9 @@ const HeroCard = () => {
               <span className="text-blue-400 font-bold">42%</span>
             </div>
             <div className="h-2 bg-gray-800 rounded-full overflow-hidden">
-              <div className="h-full bg-gradient-to-r from-blue-500 to-blue-400 rounded-full" style={{ width: "42%" }} />
+              <div className="h-full bg-gradient-to-r from-blue-500 to-blue-400 rounded-full" style={{
+              width: "42%"
+            }} />
             </div>
           </div>
 
@@ -77,7 +80,9 @@ const HeroCard = () => {
               <span className="text-gray-400 font-bold">28%</span>
             </div>
             <div className="h-2 bg-gray-800 rounded-full overflow-hidden">
-              <div className="h-full bg-gradient-to-r from-gray-500 to-gray-400 rounded-full" style={{ width: "28%" }} />
+              <div className="h-full bg-gradient-to-r from-gray-500 to-gray-400 rounded-full" style={{
+              width: "28%"
+            }} />
             </div>
           </div>
 
@@ -87,7 +92,9 @@ const HeroCard = () => {
               <span className="text-blue-400 font-bold">30%</span>
             </div>
             <div className="h-2 bg-gray-800 rounded-full overflow-hidden">
-              <div className="h-full bg-gradient-to-r from-blue-500 to-blue-400 rounded-full" style={{ width: "30%" }} />
+              <div className="h-full bg-gradient-to-r from-blue-500 to-blue-400 rounded-full" style={{
+              width: "30%"
+            }} />
             </div>
           </div>
         </div>
@@ -105,8 +112,6 @@ const HeroCard = () => {
           </Button>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default HeroCard;

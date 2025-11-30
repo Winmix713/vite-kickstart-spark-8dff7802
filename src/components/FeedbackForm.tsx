@@ -6,15 +6,18 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { CheckCircle2, Save } from 'lucide-react';
 import ScoreInput from './ScoreInput';
 import HalftimeScoreInput from './HalftimeScoreInput';
-
 interface FeedbackFormProps {
   matchId: string;
   homeTeam: string;
   awayTeam: string;
   onSubmitted: () => void;
 }
-
-export default function FeedbackForm({ matchId, homeTeam, awayTeam, onSubmitted }: FeedbackFormProps) {
+export default function FeedbackForm({
+  matchId,
+  homeTeam,
+  awayTeam,
+  onSubmitted
+}: FeedbackFormProps) {
   const [fullTimeHome, setFullTimeHome] = useState<number>(0);
   const [fullTimeAway, setFullTimeAway] = useState<number>(0);
   const [halfTimeHome, setHalfTimeHome] = useState<number | null>(null);
@@ -22,7 +25,6 @@ export default function FeedbackForm({ matchId, homeTeam, awayTeam, onSubmitted 
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSubmitting(true);
@@ -39,9 +41,10 @@ export default function FeedbackForm({ matchId, homeTeam, awayTeam, onSubmitted 
       setSubmitting(false);
       return;
     }
-
     try {
-      const { error } = await supabase.functions.invoke('submit-feedback', {
+      const {
+        error
+      } = await supabase.functions.invoke('submit-feedback', {
         body: {
           matchId,
           homeScore: fullTimeHome,
@@ -50,9 +53,7 @@ export default function FeedbackForm({ matchId, homeTeam, awayTeam, onSubmitted 
           halfTimeAwayScore: halfTimeAway
         }
       });
-
       if (error) throw error;
-
       setSubmitted(true);
       onSubmitted();
     } catch (err) {
@@ -62,20 +63,15 @@ export default function FeedbackForm({ matchId, homeTeam, awayTeam, onSubmitted 
       setSubmitting(false);
     }
   }
-
   if (submitted) {
-    return (
-      <Alert className="mt-6">
+    return <Alert className="mt-6">
         <CheckCircle2 className="h-4 w-4" />
         <AlertDescription>
           Eredmény sikeresen rögzítve! A pattern accuracy frissült.
         </AlertDescription>
-      </Alert>
-    );
+      </Alert>;
   }
-
-  return (
-    <Card className="mt-6">
+  return <Card className="mt-6">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Save className="w-5 h-5" />
@@ -84,31 +80,13 @@ export default function FeedbackForm({ matchId, homeTeam, awayTeam, onSubmitted 
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
-          <ScoreInput
-            homeTeam={homeTeam}
-            awayTeam={awayTeam}
-            homeScore={fullTimeHome}
-            awayScore={fullTimeAway}
-            onHomeScoreChange={setFullTimeHome}
-            onAwayScoreChange={setFullTimeAway}
-          />
+          <ScoreInput homeTeam={homeTeam} awayTeam={awayTeam} homeScore={fullTimeHome} awayScore={fullTimeAway} onHomeScoreChange={setFullTimeHome} onAwayScoreChange={setFullTimeAway} />
 
-          <HalftimeScoreInput
-            homeTeam={homeTeam}
-            awayTeam={awayTeam}
-            homeScore={halfTimeHome}
-            awayScore={halfTimeAway}
-            onHomeScoreChange={setHalfTimeHome}
-            onAwayScoreChange={setHalfTimeAway}
-            maxHomeScore={fullTimeHome}
-            maxAwayScore={fullTimeAway}
-          />
+          <HalftimeScoreInput homeTeam={homeTeam} awayTeam={awayTeam} homeScore={halfTimeHome} awayScore={halfTimeAway} onHomeScoreChange={setHalfTimeHome} onAwayScoreChange={setHalfTimeAway} maxHomeScore={fullTimeHome} maxAwayScore={fullTimeAway} />
 
-          {error && (
-            <Alert variant="destructive">
+          {error && <Alert variant="destructive">
               <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          )}
+            </Alert>}
 
           <Button type="submit" disabled={submitting} className="w-full">
             <Save className="w-4 h-4 mr-2" />
@@ -116,6 +94,5 @@ export default function FeedbackForm({ matchId, homeTeam, awayTeam, onSubmitted 
           </Button>
         </form>
       </CardContent>
-    </Card>
-  );
+    </Card>;
 }

@@ -1,10 +1,8 @@
 import { Sparkles, CheckCircle, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import TopPredictions from "./TopPredictions";
-
 const CallToAction = () => {
-  return (
-    <section id="call-to-action" className="scroll-mt-24 ml-0 md:ml-[84px] py-10 sm:py-14">
+  return <section id="call-to-action" className="scroll-mt-24 ml-0 md:ml-[84px] py-10 sm:py-14">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
           {/* CTA / Results Panel */}
@@ -23,17 +21,10 @@ const CallToAction = () => {
               </div>
 
               <ul className="mt-5 space-y-3">
-                {[
-                  "Hozzáférés az összes előrejelzési funkcióhoz",
-                  "Csatlakozás exkluzív tippversenyekhez",
-                  "Teljesítményed követése részletes analitikákkal",
-                  "Versenyezz jutalmakért és díjakért"
-                ].map((benefit, index) => (
-                  <li key={index} className="flex items-start gap-3">
+                {["Hozzáférés az összes előrejelzési funkcióhoz", "Csatlakozás exkluzív tippversenyekhez", "Teljesítményed követése részletes analitikákkal", "Versenyezz jutalmakért és díjakért"].map((benefit, index) => <li key={index} className="flex items-start gap-3">
                     <CheckCircle className="w-5 h-5 text-primary mt-0.5" />
                     <span className="text-muted-foreground text-sm">{benefit}</span>
-                  </li>
-                ))}
+                  </li>)}
               </ul>
 
               <div className="mt-5 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
@@ -58,8 +49,6 @@ const CallToAction = () => {
           </aside>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default CallToAction;

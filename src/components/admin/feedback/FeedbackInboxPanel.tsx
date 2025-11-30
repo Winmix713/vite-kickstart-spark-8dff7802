@@ -1,49 +1,19 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
-import {
-  Download,
-  Eye,
-  CheckCircle,
-  XCircle,
-  MoreHorizontal,
-  MessageSquare,
-  Calendar,
-  User,
-} from "lucide-react";
+import { Download, Eye, CheckCircle, XCircle, MoreHorizontal, MessageSquare, Calendar, User } from "lucide-react";
 import Papa from "papaparse";
 import { toast } from "sonner";
-
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useAuditLog } from "@/hooks/admin/useAuditLog";
 import { Button } from "@/components/ui/button";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-
 interface FeedbackWithDetails {
   id: string;
   prediction_id: string;
@@ -63,26 +33,37 @@ interface FeedbackWithDetails {
     actual_outcome: string | null;
     explanation: Record<string, unknown> | null;
     matches?: {
-      home_team: { name: string } | null;
-      away_team: { name: string } | null;
+      home_team: {
+        name: string;
+      } | null;
+      away_team: {
+        name: string;
+      } | null;
       match_date: string;
     } | null;
   } | null;
 }
-
 const FeedbackInboxPanel = () => {
-  const { profile } = useAuth();
-  const { log: logAudit } = useAuditLog();
+  const {
+    profile
+  } = useAuth();
+  const {
+    log: logAudit
+  } = useAuditLog();
   const queryClient = useQueryClient();
   const [selectedPrediction, setSelectedPrediction] = useState<FeedbackWithDetails | null>(null);
   const [isPredictionDialogOpen, setIsPredictionDialogOpen] = useState(false);
-
-  const { data: feedback, isLoading, error } = useQuery({
+  const {
+    data: feedback,
+    isLoading,
+    error
+  } = useQuery({
     queryKey: ["admin", "feedback"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("feedback")
-        .select(`
+      const {
+        data,
+        error
+      } = await supabase.from("feedback").select(`
           *,
           user_profiles(email, full_name),
           predictions(
@@ -96,47 +77,52 @@ const FeedbackInboxPanel = () => {
               match_date
             )
           )
-        `)
-        .order("created_at", { ascending: false });
-
+        `).order("created_at", {
+        ascending: false
+      });
       if (error) throw error;
       return data as FeedbackWithDetails[];
     },
-    enabled: !!profile,
+    enabled: !!profile
   });
-
   const resolveMutation = useMutation({
-    mutationFn: async ({ feedbackId, resolved }: { feedbackId: string; resolved: boolean }) => {
-      const { error } = await supabase
-        .from("feedback")
-        .update({ resolved })
-        .eq("id", feedbackId);
-
+    mutationFn: async ({
+      feedbackId,
+      resolved
+    }: {
+      feedbackId: string;
+      resolved: boolean;
+    }) => {
+      const {
+        error
+      } = await supabase.from("feedback").update({
+        resolved
+      }).eq("id", feedbackId);
       if (error) throw error;
 
       // Log audit action
       await logAudit(resolved ? "feedback_resolved" : "feedback_reopened", {
         feedback_id: feedbackId,
         resolved: resolved,
-        admin_email: profile?.email,
+        admin_email: profile?.email
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin", "feedback"] });
+      queryClient.invalidateQueries({
+        queryKey: ["admin", "feedback"]
+      });
       toast.success(`Feedback ${resolveMutation.variables?.resolved ? "resolved" : "reopened"} successfully`);
     },
-    onError: (error) => {
+    onError: error => {
       toast.error(`Failed to update feedback: ${error.message}`);
-    },
+    }
   });
-
   const exportToCSV = async () => {
     if (!feedback || feedback.length === 0) {
       toast.error("No data to export");
       return;
     }
-
-    const csvData = feedback.map((item) => ({
+    const csvData = feedback.map(item => ({
       ID: item.id,
       "Prediction ID": item.prediction_id,
       Suggestion: item.user_suggestion,
@@ -145,23 +131,20 @@ const FeedbackInboxPanel = () => {
       Status: item.resolved ? "Resolved" : "Pending",
       "Submitted At": format(new Date(item.created_at), "yyyy-MM-dd HH:mm:ss"),
       "Updated At": format(new Date(item.updated_at), "yyyy-MM-dd HH:mm:ss"),
-      "Match": item.predictions?.matches
-        ? `${item.predictions.matches.home_team?.name} vs ${item.predictions.matches.away_team?.name}`
-        : "Unknown",
+      "Match": item.predictions?.matches ? `${item.predictions.matches.home_team?.name} vs ${item.predictions.matches.away_team?.name}` : "Unknown",
       "Predicted Outcome": item.predictions?.predicted_outcome || "",
       "Actual Outcome": item.predictions?.actual_outcome || "",
-      "Confidence Score": item.predictions?.confidence_score || "",
+      "Confidence Score": item.predictions?.confidence_score || ""
     }));
-
     const csv = Papa.unparse(csvData);
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const blob = new Blob([csv], {
+      type: "text/csv;charset=utf-8;"
+    });
     const link = document.createElement("a");
     const url = URL.createObjectURL(blob);
-    
     link.setAttribute("href", url);
     link.setAttribute("download", `feedback_export_${format(new Date(), "yyyy-MM-dd_HH-mm-ss")}.csv`);
     link.style.visibility = "hidden";
-    
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -169,30 +152,29 @@ const FeedbackInboxPanel = () => {
     // Log audit action
     await logAudit("feedback_exported", {
       export_count: feedback.length,
-      admin_email: profile?.email,
+      admin_email: profile?.email
     });
     toast.success("Feedback exported successfully");
   };
-
   const viewPrediction = async (feedbackItem: FeedbackWithDetails) => {
     setSelectedPrediction(feedbackItem);
     setIsPredictionDialogOpen(true);
-    
+
     // Log audit action
     await logAudit("feedback_viewed", {
       feedback_id: feedbackItem.id,
       prediction_id: feedbackItem.prediction_id,
-      admin_email: profile?.email,
+      admin_email: profile?.email
     });
   };
-
   const toggleResolve = (feedbackId: string, currentResolved: boolean) => {
-    resolveMutation.mutate({ feedbackId, resolved: !currentResolved });
+    resolveMutation.mutate({
+      feedbackId,
+      resolved: !currentResolved
+    });
   };
-
   if (isLoading) {
-    return (
-      <Card>
+    return <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <MessageSquare className="h-5 w-5" />
@@ -203,19 +185,14 @@ const FeedbackInboxPanel = () => {
           <div className="space-y-4">
             <Skeleton className="h-10 w-32" />
             <div className="space-y-2">
-              {[...Array(5)].map((_, i) => (
-                <Skeleton key={i} className="h-16 w-full" />
-              ))}
+              {[...Array(5)].map((_, i) => <Skeleton key={i} className="h-16 w-full" />)}
             </div>
           </div>
         </CardContent>
-      </Card>
-    );
+      </Card>;
   }
-
   if (error) {
-    return (
-      <Card>
+    return <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <MessageSquare className="h-5 w-5" />
@@ -225,12 +202,9 @@ const FeedbackInboxPanel = () => {
         <CardContent>
           <div className="text-destructive">Error loading feedback: {error.message}</div>
         </CardContent>
-      </Card>
-    );
+      </Card>;
   }
-
-  return (
-    <Card>
+  return <Card>
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2">
@@ -244,12 +218,7 @@ const FeedbackInboxPanel = () => {
             <Badge variant="secondary">
               {feedback?.filter(f => !f.resolved).length || 0} pending
             </Badge>
-            <Button
-              onClick={exportToCSV}
-              variant="outline"
-              size="sm"
-              className="flex items-center gap-2"
-            >
+            <Button onClick={exportToCSV} variant="outline" size="sm" className="flex items-center gap-2">
               <Download className="h-4 w-4" />
               Export CSV
             </Button>
@@ -257,8 +226,7 @@ const FeedbackInboxPanel = () => {
         </div>
       </CardHeader>
       <CardContent>
-        {feedback && feedback.length > 0 ? (
-          <div className="rounded-md border">
+        {feedback && feedback.length > 0 ? <div className="rounded-md border">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -271,8 +239,7 @@ const FeedbackInboxPanel = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {feedback.map((item) => (
-                  <TableRow key={item.id}>
+                {feedback.map(item => <TableRow key={item.id}>
                     <TableCell className="max-w-xs">
                       <div className="truncate font-medium">
                         {item.user_suggestion}
@@ -292,26 +259,18 @@ const FeedbackInboxPanel = () => {
                       </div>
                     </TableCell>
                     <TableCell>
-                      {item.predictions?.matches ? (
-                        <div>
+                      {item.predictions?.matches ? <div>
                           <div className="font-medium">
                             {item.predictions.matches.home_team?.name} vs {item.predictions.matches.away_team?.name}
                           </div>
                           <div className="text-sm text-muted-foreground">
                             {format(new Date(item.predictions.matches.match_date), "MMM dd, yyyy")}
                           </div>
-                        </div>
-                      ) : (
-                        <span className="text-muted-foreground">Unknown match</span>
-                      )}
+                        </div> : <span className="text-muted-foreground">Unknown match</span>}
                     </TableCell>
                     <TableCell>
                       <Badge variant={item.resolved ? "default" : "secondary"}>
-                        {item.resolved ? (
-                          <CheckCircle className="mr-1 h-3 w-3" />
-                        ) : (
-                          <XCircle className="mr-1 h-3 w-3" />
-                        )}
+                        {item.resolved ? <CheckCircle className="mr-1 h-3 w-3" /> : <XCircle className="mr-1 h-3 w-3" />}
                         {item.resolved ? "Resolved" : "Pending"}
                       </Badge>
                     </TableCell>
@@ -336,35 +295,25 @@ const FeedbackInboxPanel = () => {
                             View Prediction
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem
-                            onClick={() => toggleResolve(item.id, item.resolved)}
-                          >
-                            {item.resolved ? (
-                              <>
+                          <DropdownMenuItem onClick={() => toggleResolve(item.id, item.resolved)}>
+                            {item.resolved ? <>
                                 <XCircle className="mr-2 h-4 w-4" />
                                 Reopen
-                              </>
-                            ) : (
-                              <>
+                              </> : <>
                                 <CheckCircle className="mr-2 h-4 w-4" />
                                 Mark Resolved
-                              </>
-                            )}
+                              </>}
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>
-                  </TableRow>
-                ))}
+                  </TableRow>)}
               </TableBody>
             </Table>
-          </div>
-        ) : (
-          <div className="text-center py-8 text-muted-foreground">
+          </div> : <div className="text-center py-8 text-muted-foreground">
             <MessageSquare className="mx-auto h-12 w-12 mb-4 opacity-50" />
             <p>No feedback submissions yet.</p>
-          </div>
-        )}
+          </div>}
       </CardContent>
 
       {/* Prediction Details Dialog */}
@@ -376,12 +325,10 @@ const FeedbackInboxPanel = () => {
               Full details for the prediction associated with this feedback
             </DialogDescription>
           </DialogHeader>
-          {selectedPrediction?.predictions && (
-            <div className="space-y-6">
+          {selectedPrediction?.predictions && <div className="space-y-6">
               <div>
                 <h4 className="font-semibold mb-2">Match Information</h4>
-                {selectedPrediction.predictions.matches && (
-                  <div className="grid grid-cols-2 gap-4 text-sm">
+                {selectedPrediction.predictions.matches && <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
                       <span className="font-medium">Teams:</span>{" "}
                       {selectedPrediction.predictions.matches.home_team?.name} vs{" "}
@@ -391,8 +338,7 @@ const FeedbackInboxPanel = () => {
                       <span className="font-medium">Date:</span>{" "}
                       {format(new Date(selectedPrediction.predictions.matches.match_date), "PPP")}
                     </div>
-                  </div>
-                )}
+                  </div>}
               </div>
 
               <div>
@@ -413,16 +359,14 @@ const FeedbackInboxPanel = () => {
                 </div>
               </div>
 
-              {selectedPrediction.predictions.explanation && (
-                <div>
+              {selectedPrediction.predictions.explanation && <div>
                   <h4 className="font-semibold mb-2">Explanation</h4>
                   <div className="bg-muted p-4 rounded-md text-sm">
                     <pre className="whitespace-pre-wrap">
                       {JSON.stringify(selectedPrediction.predictions.explanation, null, 2)}
                     </pre>
                   </div>
-                </div>
-              )}
+                </div>}
 
               <div>
                 <h4 className="font-semibold mb-2">User Feedback</h4>
@@ -434,12 +378,9 @@ const FeedbackInboxPanel = () => {
                   </div>
                 </div>
               </div>
-            </div>
-          )}
+            </div>}
         </DialogContent>
       </Dialog>
-    </Card>
-  );
+    </Card>;
 };
-
 export default FeedbackInboxPanel;

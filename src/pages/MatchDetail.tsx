@@ -9,18 +9,24 @@ import { ArrowLeft, Brain, TrendingUp } from 'lucide-react';
 import { format } from 'date-fns';
 import PredictionDisplay from '@/components/PredictionDisplay';
 import FeedbackForm from '@/components/FeedbackForm';
-
 interface Match {
   id: string;
   match_date: string;
   status: string;
   home_score?: number;
   away_score?: number;
-  home_team: { id: string; name: string };
-  away_team: { id: string; name: string };
-  league: { name: string };
+  home_team: {
+    id: string;
+    name: string;
+  };
+  away_team: {
+    id: string;
+    name: string;
+  };
+  league: {
+    name: string;
+  };
 }
-
 interface Prediction {
   id: string;
   predicted_outcome: string;
@@ -29,37 +35,39 @@ interface Prediction {
   actual_outcome?: string;
   was_correct?: boolean;
 }
-
 interface Pattern {
   template_name: string;
   confidence_boost: number;
   data: Record<string, unknown>;
 }
-
 export default function MatchDetail() {
-  const { id } = useParams<{ id: string }>();
+  const {
+    id
+  } = useParams<{
+    id: string;
+  }>();
   const navigate = useNavigate();
   const [match, setMatch] = useState<Match | null>(null);
   const [prediction, setPrediction] = useState<Prediction | null>(null);
   const [patterns, setPatterns] = useState<Pattern[]>([]);
-  const [formScores, setFormScores] = useState<{ home: number; away: number } | null>(null);
+  const [formScores, setFormScores] = useState<{
+    home: number;
+    away: number;
+  } | null>(null);
   const [loading, setLoading] = useState(false);
   const [analyzing, setAnalyzing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
   const fetchMatch = useCallback(async () => {
     setLoading(true);
-    const { data, error } = await supabase
-      .from('matches')
-      .select(`
+    const {
+      data,
+      error
+    } = await supabase.from('matches').select(`
         *,
         home_team:teams!home_team_id(id, name),
         away_team:teams!away_team_id(id, name),
         league:leagues(name)
-      `)
-      .eq('id', id)
-      .single();
-
+      `).eq('id', id).single();
     if (error) {
       console.error('Error fetching match:', error);
       setError('Mérkőzés nem található');
@@ -68,37 +76,32 @@ export default function MatchDetail() {
     }
     setLoading(false);
   }, [id]);
-
   const fetchPrediction = useCallback(async () => {
-    const { data } = await supabase
-      .from('predictions')
-      .select('*')
-      .eq('match_id', id)
-      .maybeSingle();
-
+    const {
+      data
+    } = await supabase.from('predictions').select('*').eq('match_id', id).maybeSingle();
     setPrediction(data);
   }, [id]);
-
   useEffect(() => {
     if (id) {
       fetchMatch();
       fetchPrediction();
     }
   }, [id, fetchMatch, fetchPrediction]);
-
   async function handleAnalyze() {
     if (!match) return;
-
     setAnalyzing(true);
     setError(null);
-
     try {
-      const { data, error } = await supabase.functions.invoke('analyze-match', {
-        body: { matchId: id }
+      const {
+        data,
+        error
+      } = await supabase.functions.invoke('analyze-match', {
+        body: {
+          matchId: id
+        }
       });
-
       if (error) throw error;
-
       setPrediction(data.prediction);
       setPatterns(data.patterns || []);
       setFormScores(data.form_scores || null);
@@ -109,23 +112,17 @@ export default function MatchDetail() {
       setAnalyzing(false);
     }
   }
-
   function handleFeedbackSubmitted() {
     fetchPrediction();
     fetchMatch();
   }
-
   if (loading) {
-    return (
-      <div className="container mx-auto p-6 max-w-4xl">
+    return <div className="container mx-auto p-6 max-w-4xl">
         <p className="text-center text-muted-foreground">Betöltés...</p>
-      </div>
-    );
+      </div>;
   }
-
   if (!match) {
-    return (
-      <div className="container mx-auto p-6 max-w-4xl">
+    return <div className="container mx-auto p-6 max-w-4xl">
         <Alert variant="destructive">
           <AlertDescription>Mérkőzés nem található</AlertDescription>
         </Alert>
@@ -133,12 +130,9 @@ export default function MatchDetail() {
           <ArrowLeft className="w-4 h-4 mr-2" />
           Vissza
         </Button>
-      </div>
-    );
+      </div>;
   }
-
-  return (
-    <div className="container mx-auto p-6 max-w-4xl">
+  return <div className="container mx-auto p-6 max-w-4xl">
       <Button onClick={() => navigate('/dashboard')} variant="outline" className="mb-6">
         <ArrowLeft className="w-4 h-4 mr-2" />
         Vissza a Dashboard-ra
@@ -161,9 +155,7 @@ export default function MatchDetail() {
             <div className="flex items-center justify-between bg-muted/50 p-4 rounded-lg">
               <div className="text-center flex-1">
                 <p className="text-2xl font-bold">{match.home_team.name}</p>
-                {match.status === 'finished' && (
-                  <p className="text-4xl font-bold mt-2">{match.home_score}</p>
-                )}
+                {match.status === 'finished' && <p className="text-4xl font-bold mt-2">{match.home_score}</p>}
               </div>
 
               <div className="px-6">
@@ -172,23 +164,18 @@ export default function MatchDetail() {
 
               <div className="text-center flex-1">
                 <p className="text-2xl font-bold">{match.away_team.name}</p>
-                {match.status === 'finished' && (
-                  <p className="text-4xl font-bold mt-2">{match.away_score}</p>
-                )}
+                {match.status === 'finished' && <p className="text-4xl font-bold mt-2">{match.away_score}</p>}
               </div>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      {error && (
-        <Alert variant="destructive" className="mb-6">
+      {error && <Alert variant="destructive" className="mb-6">
           <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      )}
+        </Alert>}
 
-      {!prediction && match.status === 'scheduled' && (
-        <Card className="mb-6">
+      {!prediction && match.status === 'scheduled' && <Card className="mb-6">
           <CardContent className="pt-6">
             <div className="text-center">
               <Brain className="w-12 h-12 mx-auto mb-4 text-primary" />
@@ -196,55 +183,31 @@ export default function MatchDetail() {
               <p className="text-muted-foreground mb-4">
                 Indítsd el az AI elemzést, hogy predikciót kapj erre a mérkőzésre
               </p>
-              <Button
-                onClick={handleAnalyze}
-                disabled={analyzing}
-                size="lg"
-                className="w-full max-w-md"
-              >
+              <Button onClick={handleAnalyze} disabled={analyzing} size="lg" className="w-full max-w-md">
                 <TrendingUp className="w-4 h-4 mr-2" />
                 {analyzing ? 'Elemzés folyamatban...' : 'Elemzés indítása'}
               </Button>
             </div>
           </CardContent>
-        </Card>
-      )}
+        </Card>}
 
-      {prediction && (
-        <>
-          <PredictionDisplay 
-            prediction={prediction} 
-            patterns={patterns}
-            formScores={formScores}
-          />
+      {prediction && <>
+          <PredictionDisplay prediction={prediction} patterns={patterns} formScores={formScores} />
 
-          {match.status === 'finished' && !prediction.actual_outcome && (
-            <FeedbackForm
-              matchId={match.id}
-              homeTeam={match.home_team.name}
-              awayTeam={match.away_team.name}
-              onSubmitted={handleFeedbackSubmitted}
-            />
-          )}
+          {match.status === 'finished' && !prediction.actual_outcome && <FeedbackForm matchId={match.id} homeTeam={match.home_team.name} awayTeam={match.away_team.name} onSubmitted={handleFeedbackSubmitted} />}
 
-          {prediction.actual_outcome && (
-            <Alert className="mt-6">
+          {prediction.actual_outcome && <Alert className="mt-6">
               <AlertDescription>
                 <div className="flex items-center justify-between">
                   <span>
                     Predikció eredmény: <strong>{prediction.was_correct ? 'HELYES ✅' : 'HELYTELEN ❌'}</strong>
                   </span>
                   <Badge variant={prediction.was_correct ? 'default' : 'destructive'}>
-                    {prediction.actual_outcome === 'home_win' ? 'Hazai győzelem' : 
-                     prediction.actual_outcome === 'away_win' ? 'Vendég győzelem' : 
-                     'Döntetlen'}
+                    {prediction.actual_outcome === 'home_win' ? 'Hazai győzelem' : prediction.actual_outcome === 'away_win' ? 'Vendég győzelem' : 'Döntetlen'}
                   </Badge>
                 </div>
               </AlertDescription>
-            </Alert>
-          )}
-        </>
-      )}
-    </div>
-  );
+            </Alert>}
+        </>}
+    </div>;
 }

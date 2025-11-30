@@ -7,14 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 interface AnalyzerData {
   accuracy_trends?: Array<{
     week: string;
@@ -43,7 +36,6 @@ interface AnalyzerData {
     end: string;
   };
 }
-
 const PredictionAnalyzerPage: React.FC = () => {
   const [startDate, setStartDate] = useState<string>(() => {
     const date = new Date();
@@ -53,20 +45,22 @@ const PredictionAnalyzerPage: React.FC = () => {
   const [endDate, setEndDate] = useState<string>(new Date().toISOString().split('T')[0]);
   const [selectedLeague, setSelectedLeague] = useState<string>('');
   const [showAllMetrics, setShowAllMetrics] = useState(true);
-
-  const { data: analyzerData, isLoading, error } = usePredictionAnalyzer(
-    showAllMetrics
-      ? {
-          start_date: startDate,
-          end_date: endDate,
-        }
-      : {
-          start_date: startDate,
-          end_date: endDate,
-          league: selectedLeague || undefined,
-        }
-  ) as { data: AnalyzerData | null; isLoading: boolean; error: Error | null };
-
+  const {
+    data: analyzerData,
+    isLoading,
+    error
+  } = usePredictionAnalyzer(showAllMetrics ? {
+    start_date: startDate,
+    end_date: endDate
+  } : {
+    start_date: startDate,
+    end_date: endDate,
+    league: selectedLeague || undefined
+  }) as {
+    data: AnalyzerData | null;
+    isLoading: boolean;
+    error: Error | null;
+  };
   const handleReset = () => {
     const date = new Date();
     date.setDate(date.getDate() - 30);
@@ -81,36 +75,17 @@ const PredictionAnalyzerPage: React.FC = () => {
   const confidenceCalibration = analyzerData?.confidence_calibration || [];
 
   // Calculate summary metrics
-  const overallAccuracy = accuracyTrends.length > 0
-    ? Math.round(
-        accuracyTrends.reduce((sum, d) => sum + d.accuracy_percentage, 0) /
-          accuracyTrends.length
-      )
-    : 0;
-
+  const overallAccuracy = accuracyTrends.length > 0 ? Math.round(accuracyTrends.reduce((sum, d) => sum + d.accuracy_percentage, 0) / accuracyTrends.length) : 0;
   const totalPredictions = accuracyTrends.reduce((sum, d) => sum + d.total_predictions, 0);
   const totalAccurate = accuracyTrends.reduce((sum, d) => sum + d.accurate_predictions, 0);
 
   // Calculate ROI (simplified: assumes 1 unit per correct prediction, -1 for incorrect)
-  const roi = totalPredictions > 0
-    ? Math.round(((totalAccurate - (totalPredictions - totalAccurate)) / totalPredictions) * 100)
-    : 0;
+  const roi = totalPredictions > 0 ? Math.round((totalAccurate - (totalPredictions - totalAccurate)) / totalPredictions * 100) : 0;
 
   // Get top and worst performing leagues
-  const topLeague = leagueBreakdown.length > 0
-    ? leagueBreakdown.reduce((best, current) =>
-        current.accuracy_percentage > best.accuracy_percentage ? current : best
-      )
-    : null;
-
-  const worstLeague = leagueBreakdown.length > 0
-    ? leagueBreakdown.reduce((worst, current) =>
-        current.accuracy_percentage < worst.accuracy_percentage ? current : worst
-      )
-    : null;
-
-  return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6">
+  const topLeague = leagueBreakdown.length > 0 ? leagueBreakdown.reduce((best, current) => current.accuracy_percentage > best.accuracy_percentage ? current : best) : null;
+  const worstLeague = leagueBreakdown.length > 0 ? leagueBreakdown.reduce((worst, current) => current.accuracy_percentage < worst.accuracy_percentage ? current : worst) : null;
+  return <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="space-y-2">
@@ -131,21 +106,11 @@ const PredictionAnalyzerPage: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="start-date">Start Date</Label>
-                <Input
-                  id="start-date"
-                  type="date"
-                  value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
-                />
+                <Input id="start-date" type="date" value={startDate} onChange={e => setStartDate(e.target.value)} />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="end-date">End Date</Label>
-                <Input
-                  id="end-date"
-                  type="date"
-                  value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
-                />
+                <Input id="end-date" type="date" value={endDate} onChange={e => setEndDate(e.target.value)} />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="league-select">League (Optional)</Label>
@@ -155,11 +120,9 @@ const PredictionAnalyzerPage: React.FC = () => {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="">All leagues</SelectItem>
-                    {leagueBreakdown.map((league) => (
-                      <SelectItem key={league.league} value={league.league}>
+                    {leagueBreakdown.map(league => <SelectItem key={league.league} value={league.league}>
                         {league.league}
-                      </SelectItem>
-                    ))}
+                      </SelectItem>)}
                   </SelectContent>
                 </Select>
               </div>
@@ -219,7 +182,7 @@ const PredictionAnalyzerPage: React.FC = () => {
               <div className="text-center">
                 <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Win Rate</p>
                 <p className="text-3xl font-bold text-indigo-600 dark:text-indigo-400">
-                  {totalPredictions > 0 ? Math.round((totalAccurate / totalPredictions) * 100) : 0}%
+                  {totalPredictions > 0 ? Math.round(totalAccurate / totalPredictions * 100) : 0}%
                 </p>
               </div>
             </CardContent>
@@ -228,8 +191,7 @@ const PredictionAnalyzerPage: React.FC = () => {
 
         {/* Performance by League */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {topLeague && (
-            <Card className="border-l-4 border-l-green-500">
+          {topLeague && <Card className="border-l-4 border-l-green-500">
               <CardHeader>
                 <CardTitle className="text-base">Top Performing League</CardTitle>
               </CardHeader>
@@ -250,10 +212,8 @@ const PredictionAnalyzerPage: React.FC = () => {
                   </div>
                 </div>
               </CardContent>
-            </Card>
-          )}
-          {worstLeague && (
-            <Card className="border-l-4 border-l-red-500">
+            </Card>}
+          {worstLeague && <Card className="border-l-4 border-l-red-500">
               <CardHeader>
                 <CardTitle className="text-base">Lowest Performing League</CardTitle>
               </CardHeader>
@@ -274,27 +234,14 @@ const PredictionAnalyzerPage: React.FC = () => {
                   </div>
                 </div>
               </CardContent>
-            </Card>
-          )}
+            </Card>}
         </div>
 
         {/* Charts */}
         <div className="space-y-6">
-          <PredictionAccuracyChart
-            data={accuracyTrends}
-            isLoading={isLoading}
-            error={error?.message}
-          />
-          <LeagueBreakdownChart
-            data={leagueBreakdown}
-            isLoading={isLoading}
-            error={error?.message}
-          />
-          <ConfidenceCalibrationChart
-            data={confidenceCalibration}
-            isLoading={isLoading}
-            error={error?.message}
-          />
+          <PredictionAccuracyChart data={accuracyTrends} isLoading={isLoading} error={error?.message} />
+          <LeagueBreakdownChart data={leagueBreakdown} isLoading={isLoading} error={error?.message} />
+          <ConfidenceCalibrationChart data={confidenceCalibration} isLoading={isLoading} error={error?.message} />
         </div>
 
         {/* Footer Info */}
@@ -312,8 +259,6 @@ const PredictionAnalyzerPage: React.FC = () => {
           </CardContent>
         </Card>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default PredictionAnalyzerPage;

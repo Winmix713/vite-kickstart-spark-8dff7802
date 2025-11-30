@@ -6,25 +6,11 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Progress } from '@/components/ui/progress';
-import { 
-  Loader2, 
-  DollarSign, 
-  RefreshCw, 
-  AlertCircle,
-  ExternalLink,
-  Calculator,
-  Target,
-  Copy
-} from 'lucide-react';
+import { Loader2, DollarSign, RefreshCw, AlertCircle, ExternalLink, Calculator, Target, Copy } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { CopyButton } from '@/components/common';
 import { MarketIntegrationService } from '@/lib/phase9-api';
-import type { 
-  MarketOdds, 
-  ValueBet, 
-  MarketOddsDisplayProps, 
-  ValueBetHighlightsProps
-} from '@/types/phase9';
+import type { MarketOdds, ValueBet, MarketOddsDisplayProps, ValueBetHighlightsProps } from '@/types/phase9';
 
 // Market Odds Display Component
 export const MarketOddsDisplay: React.FC<MarketOddsDisplayProps> = ({
@@ -38,11 +24,10 @@ export const MarketOddsDisplay: React.FC<MarketOddsDisplayProps> = ({
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
-
   const fetchOddsAndValueBets = useCallback(async () => {
     try {
       setError(null);
-      
+
       // Fetch external odds first
       const oddsResult = await MarketIntegrationService.fetchExternalOdds(matchId);
       if (!oddsResult.success) {
@@ -76,32 +61,26 @@ export const MarketOddsDisplay: React.FC<MarketOddsDisplayProps> = ({
       setIsRefreshing(false);
     }
   }, [matchId, showValueBets]);
-
   const handleRefresh = async () => {
     setIsRefreshing(true);
     await fetchOddsAndValueBets();
   };
-
   useEffect(() => {
     fetchOddsAndValueBets();
-
     if (autoRefresh) {
       const interval = setInterval(fetchOddsAndValueBets, 60000); // Refresh every minute
       return () => clearInterval(interval);
     }
   }, [matchId, showValueBets, autoRefresh, fetchOddsAndValueBets]);
-
   const formatOdds = (odds: number) => {
     return odds.toFixed(2);
   };
-
   const getOddsColor = (odds: number) => {
     if (odds < 1.5) return 'text-green-600 font-semibold';
     if (odds < 2.5) return 'text-blue-600';
     if (odds < 4.0) return 'text-yellow-600';
     return 'text-red-600';
   };
-
   const getBookmakerColor = (bookmaker: string) => {
     const colors: Record<string, string> = {
       'Bet365': 'bg-green-100 text-green-800 border-green-200',
@@ -111,10 +90,8 @@ export const MarketOddsDisplay: React.FC<MarketOddsDisplayProps> = ({
     };
     return colors[bookmaker] || 'bg-gray-100 text-gray-800 border-gray-200';
   };
-
   if (isLoading) {
-    return (
-      <Card className="w-full">
+    return <Card className="w-full">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <DollarSign className="h-5 w-5" />
@@ -126,13 +103,10 @@ export const MarketOddsDisplay: React.FC<MarketOddsDisplayProps> = ({
             <Loader2 className="h-8 w-8 animate-spin" />
           </div>
         </CardContent>
-      </Card>
-    );
+      </Card>;
   }
-
   if (error) {
-    return (
-      <Card className="w-full">
+    return <Card className="w-full">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <DollarSign className="h-5 w-5" />
@@ -149,13 +123,10 @@ export const MarketOddsDisplay: React.FC<MarketOddsDisplayProps> = ({
             Retry
           </Button>
         </CardContent>
-      </Card>
-    );
+      </Card>;
   }
-
   if (odds.length === 0) {
-    return (
-      <Card className="w-full">
+    return <Card className="w-full">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <DollarSign className="h-5 w-5" />
@@ -172,12 +143,9 @@ export const MarketOddsDisplay: React.FC<MarketOddsDisplayProps> = ({
             </Button>
           </div>
         </CardContent>
-      </Card>
-    );
+      </Card>;
   }
-
-  return (
-    <div className="space-y-6">
+  return <div className="space-y-6">
       {/* Market Odds Table */}
       <Card>
         <CardHeader>
@@ -187,17 +155,10 @@ export const MarketOddsDisplay: React.FC<MarketOddsDisplayProps> = ({
               Market Odds
             </CardTitle>
             <div className="flex items-center gap-2">
-              {lastUpdated && (
-                <span className="text-xs text-gray-500">
+              {lastUpdated && <span className="text-xs text-gray-500">
                   Updated: {lastUpdated.toLocaleTimeString()}
-                </span>
-              )}
-              <Button
-                onClick={handleRefresh}
-                disabled={isRefreshing}
-                size="sm"
-                variant="outline"
-              >
+                </span>}
+              <Button onClick={handleRefresh} disabled={isRefreshing} size="sm" variant="outline">
                 <RefreshCw className={`mr-2 h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
                 Refresh
               </Button>
@@ -220,8 +181,7 @@ export const MarketOddsDisplay: React.FC<MarketOddsDisplayProps> = ({
                 </tr>
               </thead>
               <tbody>
-                {odds.map((odd) => (
-                  <tr key={odd.id} className="border-b hover:bg-gray-50">
+                {odds.map(odd => <tr key={odd.id} className="border-b hover:bg-gray-50">
                     <td className="p-2">
                       <Badge className={getBookmakerColor(odd.bookmaker)}>
                         {odd.bookmaker}
@@ -248,8 +208,7 @@ export const MarketOddsDisplay: React.FC<MarketOddsDisplayProps> = ({
                     <td className={`text-center p-2 ${getOddsColor(odd.btts_no_odds || 0)}`}>
                       {odd.btts_no_odds ? formatOdds(odd.btts_no_odds) : '-'}
                     </td>
-                  </tr>
-                ))}
+                  </tr>)}
               </tbody>
             </table>
           </div>
@@ -263,8 +222,7 @@ export const MarketOddsDisplay: React.FC<MarketOddsDisplayProps> = ({
       </Card>
 
       {/* Value Bets Section */}
-      {showValueBets && valueBets.length > 0 && (
-        <Card>
+      {showValueBets && valueBets.length > 0 && <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Target className="h-5 w-5" />
@@ -273,46 +231,42 @@ export const MarketOddsDisplay: React.FC<MarketOddsDisplayProps> = ({
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {valueBets.map((valueBet) => (
-                <ValueBetCard key={valueBet.id} valueBet={valueBet} />
-              ))}
+              {valueBets.map(valueBet => <ValueBetCard key={valueBet.id} valueBet={valueBet} />)}
             </div>
           </CardContent>
-        </Card>
-      )}
-    </div>
-  );
+        </Card>}
+    </div>;
 };
 
 // Value Bet Card Component
 interface ValueBetCardProps {
   valueBet: ValueBet;
 }
-
-const ValueBetCard: React.FC<ValueBetCardProps> = ({ valueBet }) => {
+const ValueBetCard: React.FC<ValueBetCardProps> = ({
+  valueBet
+}) => {
   const getEVColor = (ev: number) => {
     if (ev > 0.15) return 'text-green-600';
     if (ev > 0.08) return 'text-yellow-600';
     return 'text-orange-600';
   };
-
   const getConfidenceBadgeVariant = (level: string) => {
     switch (level) {
-      case 'high': return 'default';
-      case 'medium': return 'secondary';
-      case 'low': return 'outline';
-      default: return 'outline';
+      case 'high':
+        return 'default';
+      case 'medium':
+        return 'secondary';
+      case 'low':
+        return 'outline';
+      default:
+        return 'outline';
     }
   };
-
   const formatBetType = (betType: string) => {
     return betType.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
   };
-
   const kellyPercentage = (valueBet.kelly_fraction * 100).toFixed(1);
-
-  return (
-    <div className="border rounded-lg p-4 space-y-3 hover:shadow-md transition-shadow">
+  return <div className="border rounded-lg p-4 space-y-3 hover:shadow-md transition-shadow">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Badge variant={getConfidenceBadgeVariant(valueBet.confidence_level)}>
@@ -354,8 +308,7 @@ const ValueBetCard: React.FC<ValueBetCardProps> = ({ valueBet }) => {
           Recommended bet size according to Kelly Criterion
         </p>
       </div>
-    </div>
-  );
+    </div>;
 };
 
 // Value Bet Highlights Component
@@ -369,12 +322,10 @@ export const ValueBetHighlights: React.FC<ValueBetHighlightsProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [bankroll, setBankroll] = useState(1000); // Default bankroll for Kelly calculator
   const [showCalculator, setShowCalculator] = useState(false);
-
   const fetchValueBets = useCallback(async () => {
     try {
       setError(null);
       const result = await MarketIntegrationService.getValueBets(maxResults);
-      
       if (result.success && result.valueBets) {
         // Filter by minimum expected value
         const filteredBets = result.valueBets.filter(bet => bet.expected_value >= minExpectedValue);
@@ -389,15 +340,12 @@ export const ValueBetHighlights: React.FC<ValueBetHighlightsProps> = ({
       setIsLoading(false);
     }
   }, [maxResults, minExpectedValue]);
-
   useEffect(() => {
     fetchValueBets();
   }, [maxResults, minExpectedValue, fetchValueBets]);
-
   const calculateKellyBet = (kellyFraction: number) => {
     return (bankroll * kellyFraction).toFixed(2);
   };
-
   const getValueBetSummary = (bet: ValueBet) => {
     return `Value Bet Details
 Bookmaker: ${bet.bookmaker}
@@ -408,14 +356,11 @@ Expected Value: ${(bet.expected_value * 100).toFixed(2)}%
 Confidence: ${bet.confidence.toFixed(1)}%
 Kelly Fraction: ${(bet.kelly_fraction * 100).toFixed(2)}%`;
   };
-
   const getTopValueBets = () => {
     return valueBets.slice(0, 5); // Top 5 for highlights
   };
-
   if (isLoading) {
-    return (
-      <Card className="w-full">
+    return <Card className="w-full">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Target className="h-5 w-5" />
@@ -427,13 +372,10 @@ Kelly Fraction: ${(bet.kelly_fraction * 100).toFixed(2)}%`;
             <Loader2 className="h-8 w-8 animate-spin" />
           </div>
         </CardContent>
-      </Card>
-    );
+      </Card>;
   }
-
   if (error) {
-    return (
-      <Card className="w-full">
+    return <Card className="w-full">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Target className="h-5 w-5" />
@@ -446,13 +388,10 @@ Kelly Fraction: ${(bet.kelly_fraction * 100).toFixed(2)}%`;
             <AlertDescription>{error}</AlertDescription>
           </Alert>
         </CardContent>
-      </Card>
-    );
+      </Card>;
   }
-
   if (valueBets.length === 0) {
-    return (
-      <Card className="w-full">
+    return <Card className="w-full">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Target className="h-5 w-5" />
@@ -466,38 +405,27 @@ Kelly Fraction: ${(bet.kelly_fraction * 100).toFixed(2)}%`;
             <p className="text-sm">Try lowering your minimum expected value threshold.</p>
           </div>
         </CardContent>
-      </Card>
-    );
+      </Card>;
   }
-
   const topBets = getTopValueBets();
-
-  return (
-    <Card className="w-full">
+  return <Card className="w-full">
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2">
             <Target className="h-5 w-5" />
             Value Bet Highlights ({valueBets.length} found)
           </CardTitle>
-          {showKellyCalculator && (
-            <Button
-              onClick={() => setShowCalculator(!showCalculator)}
-              size="sm"
-              variant="outline"
-            >
+          {showKellyCalculator && <Button onClick={() => setShowCalculator(!showCalculator)} size="sm" variant="outline">
               <Calculator className="mr-2 h-4 w-4" />
               Kelly Calculator
-            </Button>
-          )}
+            </Button>}
         </div>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Top Value Bets */}
         <div className="space-y-3">
           <h4 className="font-semibold">Top Value Bets</h4>
-          {topBets.map((valueBet, index) => (
-            <div key={valueBet.id} className="flex items-center justify-between p-3 border rounded-lg">
+          {topBets.map((valueBet, index) => <div key={valueBet.id} className="flex items-center justify-between p-3 border rounded-lg">
               <div className="flex items-center gap-3">
                 <span className="text-lg font-bold text-gray-400">#{index + 1}</span>
                 <div>
@@ -514,39 +442,23 @@ Kelly Fraction: ${(bet.kelly_fraction * 100).toFixed(2)}%`;
                 <div className="text-sm text-gray-600">
                   {valueBet.bookmaker_odds.toFixed(2)} odds
                 </div>
-                {showCalculator && showCalculator && (
-                  <div className="text-sm font-semibold text-blue-600">
+                {showCalculator && showCalculator && <div className="text-sm font-semibold text-blue-600">
                     ${calculateKellyBet(valueBet.kelly_fraction)} bet
-                  </div>
-                )}
+                  </div>}
               </div>
-              <CopyButton
-                text={getValueBetSummary(valueBet)}
-                size="sm"
-                variant="ghost"
-                successMessage="Value bet details copied"
-              >
+              <CopyButton text={getValueBetSummary(valueBet)} size="sm" variant="ghost" successMessage="Value bet details copied">
                 <Copy className="h-4 w-4" />
               </CopyButton>
-            </div>
-          ))}
+            </div>)}
         </div>
 
         {/* Kelly Calculator */}
-        {showKellyCalculator && showCalculator && (
-          <div className="space-y-4 p-4 border rounded-lg bg-gray-50">
+        {showKellyCalculator && showCalculator && <div className="space-y-4 p-4 border rounded-lg bg-gray-50">
             <h4 className="font-semibold">Kelly Calculator</h4>
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="text-sm font-medium">Bankroll ($)</label>
-                <input
-                  type="number"
-                  value={bankroll}
-                  onChange={(e) => setBankroll(parseFloat(e.target.value) || 0)}
-                  className="w-full mt-1 px-3 py-2 border rounded-md"
-                  min="0"
-                  step="100"
-                />
+                <input type="number" value={bankroll} onChange={e => setBankroll(parseFloat(e.target.value) || 0)} className="w-full mt-1 px-3 py-2 border rounded-md" min="0" step="100" />
               </div>
               <div className="text-sm text-gray-600 space-y-1">
                 <p>• Bet size = Kelly % × Bankroll</p>
@@ -554,8 +466,7 @@ Kelly Fraction: ${(bet.kelly_fraction * 100).toFixed(2)}%`;
                 <p>• Consider fractional Kelly (50-75%)</p>
               </div>
             </div>
-          </div>
-        )}
+          </div>}
 
         {/* Summary Stats */}
         <div className="grid grid-cols-3 gap-4 p-4 border rounded-lg bg-blue-50">
@@ -587,6 +498,5 @@ Kelly Fraction: ${(bet.kelly_fraction * 100).toFixed(2)}%`;
           </Button>
         </div>
       </CardContent>
-    </Card>
-  );
+    </Card>;
 };

@@ -8,14 +8,12 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { CopyButton, CopyBadge } from "@/components/common";
 import { cn } from "@/lib/utils";
 import type { JobSummary } from "@/types/jobs";
-
 const JOB_LABELS: Record<string, string> = {
   fetch_upcoming_fixtures: "Közelgő mérkőzések frissítése",
   run_daily_predictions: "Napi predikció futtatás",
   update_team_stats: "Csapat statisztika frissítés",
-  cleanup_old_logs: "Régi logok karbantartása",
+  cleanup_old_logs: "Régi logok karbantartása"
 };
-
 interface JobStatusCardProps {
   job: JobSummary;
   onToggle: (enabled: boolean) => void;
@@ -26,17 +24,36 @@ interface JobStatusCardProps {
   isToggling: boolean;
   isRunning: boolean;
 }
-
-function resolveStatus(job: JobSummary): { label: string; variant: "success" | "warning" | "error" | "info" | "disabled" } {
-  if (!job.enabled) return { label: "Kikapcsolva", variant: "disabled" };
+function resolveStatus(job: JobSummary): {
+  label: string;
+  variant: "success" | "warning" | "error" | "info" | "disabled";
+} {
+  if (!job.enabled) return {
+    label: "Kikapcsolva",
+    variant: "disabled"
+  };
   const lastStatus = job.last_log?.status;
-  if (lastStatus === "running") return { label: "Fut", variant: "warning" };
-  if (lastStatus === "error") return { label: "Hiba", variant: "error" };
-  if (job.is_due) return { label: "Futás esedékes", variant: "warning" };
-  if (lastStatus === "success") return { label: "Sikeres", variant: "success" };
-  return { label: "Várakozik", variant: "info" };
+  if (lastStatus === "running") return {
+    label: "Fut",
+    variant: "warning"
+  };
+  if (lastStatus === "error") return {
+    label: "Hiba",
+    variant: "error"
+  };
+  if (job.is_due) return {
+    label: "Futás esedékes",
+    variant: "warning"
+  };
+  if (lastStatus === "success") return {
+    label: "Sikeres",
+    variant: "success"
+  };
+  return {
+    label: "Várakozik",
+    variant: "info"
+  };
 }
-
 function getStatusBadgeClass(variant: "success" | "warning" | "error" | "info" | "disabled") {
   switch (variant) {
     case "success":
@@ -51,7 +68,6 @@ function getStatusBadgeClass(variant: "success" | "warning" | "error" | "info" |
       return "bg-primary/10 text-primary border border-primary/30";
   }
 }
-
 function formatDateTime(value: string | null, fallback = "N/A") {
   if (!value) return fallback;
   try {
@@ -61,17 +77,17 @@ function formatDateTime(value: string | null, fallback = "N/A") {
     return fallback;
   }
 }
-
 function formatRelative(value: string | null) {
   if (!value) return "Még nem futott";
   try {
-    return formatDistanceToNow(new Date(value), { addSuffix: true });
+    return formatDistanceToNow(new Date(value), {
+      addSuffix: true
+    });
   } catch (error) {
     console.error("Failed to format distance", value, error);
     return "Ismeretlen";
   }
 }
-
 function formatDuration(durationMs: number | null): string {
   if (!durationMs || durationMs <= 0) return "-";
   if (durationMs < 1000) return `${durationMs} ms`;
@@ -81,21 +97,17 @@ function formatDuration(durationMs: number | null): string {
   const remainingSeconds = Math.round(seconds % 60);
   return `${minutes} p ${remainingSeconds} mp`;
 }
-
 function formatSuccessRate(stats: JobSummary["stats"]): string {
   if (!stats || stats.total_runs === 0) return "-";
-  const rate = (stats.success_runs / stats.total_runs) * 100;
+  const rate = stats.success_runs / stats.total_runs * 100;
   return `${Math.round(rate)}%`;
 }
-
 function formatJobType(jobType: string): string {
   return jobType.split("_").map(part => part[0]?.toUpperCase() + part.slice(1)).join(" ");
 }
-
 function resolveDisplayName(job: JobSummary) {
   return JOB_LABELS[job.job_name] ?? job.job_name.split("_").map(part => part[0]?.toUpperCase() + part.slice(1)).join(" ");
 }
-
 function resolveDescription(job: JobSummary) {
   const configDescription = job.config?.description;
   if (typeof configDescription === "string" && configDescription.length > 0) {
@@ -103,7 +115,6 @@ function resolveDescription(job: JobSummary) {
   }
   return "Automatizált háttérfeladat";
 }
-
 export default function JobStatusCard({
   job,
   onToggle,
@@ -112,14 +123,12 @@ export default function JobStatusCard({
   onEdit,
   onDelete,
   isToggling,
-  isRunning,
+  isRunning
 }: JobStatusCardProps) {
   const status = resolveStatus(job);
   const badgeClass = getStatusBadgeClass(status.variant);
   const successRate = formatSuccessRate(job.stats);
-
-  return (
-    <Card data-testid="job-card" className="bg-card/60 border-border/80 backdrop-blur">
+  return <Card data-testid="job-card" className="bg-card/60 border-border/80 backdrop-blur">
       <CardHeader className="space-y-3">
         <div className="flex items-start justify-between gap-4">
           <div className="space-y-1">
@@ -142,22 +151,12 @@ export default function JobStatusCard({
             <span>Utolsó futás:</span>
             <span className="text-foreground font-medium">{formatRelative(job.last_run_at)}</span>
           </div>
-          <CopyBadge 
-            text={job.id} 
-            showIcon={true}
-            className="font-mono text-xs"
-            aria-label={`Copy job ID: ${job.id}`}
-          >
+          <CopyBadge text={job.id} showIcon={true} className="font-mono text-xs" aria-label={`Copy job ID: ${job.id}`}>
             ID: {job.id.slice(0, 8)}...
           </CopyBadge>
         </div>
         <div className="flex items-center gap-3 text-sm text-muted-foreground">
-          <CopyBadge 
-            text={job.cron_expression} 
-            showIcon={true}
-            className="font-mono text-xs"
-            aria-label={`Copy cron expression: ${job.cron_expression}`}
-          >
+          <CopyBadge text={job.cron_expression} showIcon={true} className="font-mono text-xs" aria-label={`Copy cron expression: ${job.cron_expression}`}>
             Cron: {job.cron_expression}
           </CopyBadge>
         </div>
@@ -167,9 +166,7 @@ export default function JobStatusCard({
           <div className="rounded-lg border border-border/60 bg-muted/20 p-4 space-y-2">
             <p className="text-xs text-muted-foreground uppercase tracking-wide">Következő tervezett futás</p>
             <p className="font-medium text-foreground">{formatDateTime(job.next_run_at, job.enabled ? "Ütemezés alatt" : "Kikapcsolva")}</p>
-            {job.is_due && job.enabled && (
-              <p className="text-xs text-amber-500">Az ütemezett időpont elérkezett – a job futtatásra vár.</p>
-            )}
+            {job.is_due && job.enabled && <p className="text-xs text-amber-500">Az ütemezett időpont elérkezett – a job futtatásra vár.</p>}
           </div>
           <div className="rounded-lg border border-border/60 bg-muted/20 p-4 space-y-2">
             <p className="text-xs text-muted-foreground uppercase tracking-wide">Teljesítmény</p>
@@ -187,34 +184,20 @@ export default function JobStatusCard({
                 <p className="font-medium text-foreground">{job.stats.total_runs}</p>
               </div>
             </div>
-            {job.last_log && job.last_log.status !== "running" && (
-              <div className="flex items-center justify-between">
+            {job.last_log && job.last_log.status !== "running" && <div className="flex items-center justify-between">
                 <p className="text-xs text-muted-foreground">
                   Utolsó futás: {job.last_log.records_processed ?? 0} rekord feldolgozva {job.last_log.duration_ms ? `(${formatDuration(job.last_log.duration_ms)})` : ""}
                 </p>
-                {job.last_log.message && (
-                  <CopyButton
-                    text={job.last_log.message}
-                    size="sm"
-                    variant="ghost"
-                    successMessage="Log message copied to clipboard"
-                  >
+                {job.last_log.message && <CopyButton text={job.last_log.message} size="sm" variant="ghost" successMessage="Log message copied to clipboard">
                     <Copy className="w-3 h-3 mr-1" />
                     Copy Log
-                  </CopyButton>
-                )}
-              </div>
-            )}
+                  </CopyButton>}
+              </div>}
           </div>
         </div>
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <Switch
-              data-testid="job-toggle"
-              checked={job.enabled}
-              disabled={isToggling || isRunning}
-              onCheckedChange={(value) => onToggle(value)}
-            />
+            <Switch data-testid="job-toggle" checked={job.enabled} disabled={isToggling || isRunning} onCheckedChange={value => onToggle(value)} />
             <div>
               <p className="text-sm font-medium text-foreground">Automatikus futtatás</p>
               <p className="text-xs text-muted-foreground">
@@ -226,63 +209,42 @@ export default function JobStatusCard({
       </CardContent>
       <CardFooter className="flex items-center justify-between">
         <div className="flex gap-2">
-          <Button
-            size="sm"
-            onClick={onRun}
-            disabled={isRunning || isToggling}
-            className="inline-flex items-center gap-2"
-          >
-            {isRunning ? (
-              <>
+          <Button size="sm" onClick={onRun} disabled={isRunning || isToggling} className="inline-flex items-center gap-2">
+            {isRunning ? <>
                 <Loader2 className="w-4 h-4 animate-spin" />
                 Running...
-              </>
-            ) : (
-              <>
+              </> : <>
                 <Play className="w-4 h-4" />
                 Run Now
-              </>
-            )}
+              </>}
           </Button>
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={onViewLogs}
-            className="inline-flex items-center gap-2"
-          >
+          <Button size="sm" variant="outline" onClick={onViewLogs} className="inline-flex items-center gap-2">
             <FileText className="w-4 h-4" />
             View Logs
           </Button>
         </div>
         <div className="flex items-center gap-2">
-          {(onEdit || onDelete) && (
-            <DropdownMenu>
+          {(onEdit || onDelete) && <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="sm">
                   <MoreHorizontal className="w-4 h-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                {onEdit && (
-                  <DropdownMenuItem onClick={onEdit}>
+                {onEdit && <DropdownMenuItem onClick={onEdit}>
                     <Edit className="w-4 h-4 mr-2" />
                     Edit
-                  </DropdownMenuItem>
-                )}
-                {onDelete && (
-                  <DropdownMenuItem onClick={onDelete} className="text-destructive">
+                  </DropdownMenuItem>}
+                {onDelete && <DropdownMenuItem onClick={onDelete} className="text-destructive">
                     <Trash2 className="w-4 h-4 mr-2" />
                     Delete
-                  </DropdownMenuItem>
-                )}
+                  </DropdownMenuItem>}
               </DropdownMenuContent>
-            </DropdownMenu>
-          )}
+            </DropdownMenu>}
           <div className="text-xs text-muted-foreground">
             Last updated: {formatDateTime(job.last_log?.started_at ?? null, "No data")}
           </div>
         </div>
       </CardFooter>
-    </Card>
-  );
+    </Card>;
 }

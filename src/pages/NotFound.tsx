@@ -4,18 +4,14 @@ import PageLayout from "@/components/layout/PageLayout";
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
-
 const NotFound = () => {
   const location = useLocation();
   const navigate = useNavigate();
   useDocumentTitle("404 Not Found • WinMix TipsterHub");
-
   useEffect(() => {
     console.error("404 Error: User attempted to access non-existent route:", location.pathname);
   }, [location.pathname]);
-
-  return (
-    <PageLayout>
+  return <PageLayout>
       <PageHeader title="Page not found" description={`The page "${location.pathname}" does not exist.`} />
       <div className="flex flex-col items-center justify-center py-16">
         <div className="text-7xl font-bold text-foreground/80 mb-4">404</div>
@@ -25,8 +21,6 @@ const NotFound = () => {
           <Button onClick={() => navigate('/')}>Go Home</Button>
         </div>
       </div>
-    </PageLayout>
-  );
+    </PageLayout>;
 };
-
 export default NotFound;

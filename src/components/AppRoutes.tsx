@@ -80,7 +80,7 @@ const ProtectedRoute: React.FC<{
     return <Navigate to="/unauthorized" replace />;
   }
 
-  return <AppLayout showSidebar={showSidebar}>{children}</AppLayout>;
+  return <AppLayout showSidebar={showSidebar} useOutlet={false}>{children}</AppLayout>;
 };
 
 // Public route wrapper
@@ -88,7 +88,7 @@ const PublicRoute: React.FC<{
   children: React.ReactNode;
   showSidebar?: boolean;
 }> = ({ children, showSidebar = false }) => (
-  <AppLayout showSidebar={showSidebar}>{children}</AppLayout>
+  <AppLayout showSidebar={showSidebar} useOutlet={false}>{children}</AppLayout>
 );
 
 // Smart home route

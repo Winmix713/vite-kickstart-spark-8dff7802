@@ -1,8 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Sidebar from '@/components/navigation/Sidebar';
-import TopBar from '@/components/TopBar';
-import Footer from '@/components/Footer';
 import RecentPredictions from '@/components/dashboard/RecentPredictions';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
@@ -120,13 +117,8 @@ const PredictionsView: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen">
-      <Sidebar />
-      <TopBar />
-      
-      <main className="relative">
-        <div className="ml-0 md:ml-[84px] py-10 sm:py-14">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div className="py-10 sm:py-14">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             {/* Header Section */}
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
               <div>
@@ -184,10 +176,6 @@ const PredictionsView: React.FC = () => {
             )}
           </div>
         </div>
-      </main>
-      
-      <Footer />
-    </div>
   );
 };
 

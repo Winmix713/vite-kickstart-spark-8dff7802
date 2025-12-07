@@ -2,7 +2,7 @@ import * as React from 'react';
 import ReactGA from 'react-ga4';
 
 // utils
-import { lazy, Suspense, useEffect, useRef } from 'react';
+import { lazy, Suspense, useEffect, useRef, useMemo } from 'react';
 import { StyleSheetManager, ThemeProvider } from 'styled-components';
 import { ThemeProvider as MuiThemeProvider, createTheme } from '@mui/material/styles';
 import { preventDefault } from '@utils/helpers';
@@ -30,7 +30,7 @@ import { useWindowSize } from 'react-use';
 import useAuthRoute from '@hooks/useAuthRoute';
 
 // components
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, useLocation } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import LoadingScreen from '@components/LoadingScreen';
 import Sidebar from '@layout/Sidebar';
@@ -60,64 +60,90 @@ const SignUp = lazy(() => import('@pages/SignUp'));
 const Settings = lazy(() => import('@pages/Settings'));
 
 const App = () => {
-    // FIX 1: Removed TypeScript generic <HTMLDivElement>
     const appRef = useRef(null);
     const { theme, direction } = useThemeProvider();
     const { width } = useWindowSize();
-    
+    const location = useLocation();
     const isAuthRoute = useAuthRoute();
 
-    // Google Analytics init
-    const gaKey = import.meta.env.VITE_PUBLIC_GA;
+    // Google Analytics inicializálás - csak egyszer fut le
     useEffect(() => {
-         if (gaKey) ReactGA.initialize(gaKey);
-    }, [gaKey]);
+        const gaKey = import.meta.env.VITE_PUBLIC_GA;
+        if (gaKey) {
+            ReactGA.initialize(gaKey);
+        }
+    }, []);
 
-    // auto RTL support for Material-UI components and styled-components
-    const plugins = direction === 'rtl' ? [rtlPlugin] : [];
+    // RTL pluginok memoizálása
+    const plugins = useMemo(() => 
+        direction === 'rtl' ? [rtlPlugin] : [], 
+        [direction]
+    );
 
-    // FIX 2: Removed "as 'ltr' | 'rtl'"
-    const muiTheme = createTheme({
-        direction: direction,
-    });
+    // MUI téma memoizálása
+    const muiTheme = useMemo(() => 
+        createTheme({ direction }), 
+        [direction]
+    );
 
-    const cacheRtl = createCache({
-        key: direction === 'rtl' ? 'muirtl' : 'muiltr',
-        stylisPlugins: plugins,
-    });
+    // Emotion cache memoizálása
+    const emotionCache = useMemo(() => 
+        createCache({
+            key: direction === 'rtl' ? 'muirtl' : 'muiltr',
+            stylisPlugins: plugins,
+        }), 
+        [direction, plugins]
+    );
 
+    // Toast pozíció memoizálása
+    const toastPosition = useMemo(() => 
+        direction === 'ltr' ? 'top-right' : 'top-left', 
+        [direction]
+    );
+
+    // Scroll to top route változáskor
     useEffect(() => {
-        // scroll to top on route change
         if (appRef.current) {
             appRef.current.scrollTo(0, 0);
         }
+    }, [location.pathname]);
+
+    // preventDefault inicializálása - csak egyszer
+    useEffect(() => {
         preventDefault();
     }, []);
 
+    // Mobil nézet ellenőrzése
+    const isMobile = width < 768;
+
     return (
-        <CacheProvider value={cacheRtl}>
+        <CacheProvider value={emotionCache}>
             <MuiThemeProvider theme={muiTheme}>
                 <SidebarProvider>
-                    <ThemeProvider theme={{ theme: theme }}>
+                    <ThemeProvider theme={{ theme }}>
                         <ThemeStyles />
-                        <ToastContainer theme={theme} autoClose={2500} position={direction === 'ltr' ? 'top-right' : 'top-left'} />
+                        <ToastContainer 
+                            theme={theme} 
+                            autoClose={2500} 
+                            position={toastPosition} 
+                        />
                         <StyleSheetManager stylisPlugins={plugins}>
-                            <div className={`app ${isAuthRoute ? 'fluid' : ''}`} ref={appRef}>
+                            <div 
+                                className={`app ${isAuthRoute ? 'fluid' : ''}`} 
+                                ref={appRef}
+                            >
                                 <ScrollToTop />
-                                {
-                                    !isAuthRoute && (
-                                        <>
-                                            <Sidebar />
-                                            {width < 768 && <Navbar />}
-                                            {width < 768 && <BottomNav />}
-                                        </>
-                                    )
-                                }
+                                {!isAuthRoute && (
+                                    <>
+                                        <Sidebar />
+                                        {isMobile && <Navbar />}
+                                        {isMobile && <BottomNav />}
+                                    </>
+                                )}
                                 <div className="app_container">
                                     <div className="app_container-content d-flex flex-column flex-1">
                                         <Suspense fallback={<LoadingScreen />}>
                                             <Routes>
-                                                <Route path="*" element={<PageNotFound />} />
                                                 <Route path="/" element={<ClubSummary />} />
                                                 <Route path="/game-summary" element={<GameSummary />} />
                                                 <Route path="/championships" element={<Championships />} />
@@ -135,6 +161,7 @@ const App = () => {
                                                 <Route path="/login" element={<Login />} />
                                                 <Route path="/sign-up" element={<SignUp />} />
                                                 <Route path="/settings" element={<Settings />} />
+                                                <Route path="*" element={<PageNotFound />} />
                                             </Routes>
                                         </Suspense>
                                     </div>
@@ -147,6 +174,6 @@ const App = () => {
             </MuiThemeProvider>
         </CacheProvider>
     );
-}
+};
 
 export default App;

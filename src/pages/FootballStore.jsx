@@ -1,0 +1,52 @@
+import { useMemo } from 'react';
+import { useWindowSize } from 'react-use';
+import loadable from '@loadable/component';
+
+// layout components
+import PageHeader from '@layout/PageHeader';
+import AppGrid from '@layout/AppGrid';
+import Trigger from '@layout/StoreSidebar/Trigger';
+
+// widgets
+import StoreCategories from '@widgets/StoreCategories';
+import StorePriceFilter from '@widgets/StorePriceFilter';
+import StoreSizesSelector from '@widgets/StoreSizesSelector';
+import StoreColors from '@widgets/StoreColors';
+import SimpleProductsGroup from '@widgets/SimpleProductsGroup';
+import ProductRowCardList from '@widgets/ProductRowCardList';
+import ProductVertical from '@widgets/ProductVertical';
+
+// Dynamic import for sidebar
+const StoreSidebar = loadable(() => import('@layout/StoreSidebar'));
+
+const FootballStore = () => {
+    const { width } = useWindowSize();
+    const isMobile = width < 768;
+
+    const desktopWidgets = useMemo(() => ({
+        categories: <StoreCategories/>,
+        qty: <StorePriceFilter/>,
+        sizes: <StoreSizesSelector/>,
+        colors: <StoreColors/>,
+        products_group: <SimpleProductsGroup/>,
+        products_list: <ProductRowCardList/>,
+        product_vertical: <ProductVertical/>
+    }), []);
+
+    const mobileWidgets = useMemo(() => ({
+        trigger: <Trigger/>,
+        products_group: <SimpleProductsGroup/>,
+        products_list: <ProductRowCardList/>,
+        product_vertical: <ProductVertical/>
+    }), []);
+
+    return (
+        <>
+            <PageHeader title="Football store"/>
+            <AppGrid id="football_store" widgets={isMobile ? mobileWidgets : desktopWidgets}/>
+            {isMobile && <StoreSidebar/>}
+        </>
+    )
+}
+
+export default FootballStore;

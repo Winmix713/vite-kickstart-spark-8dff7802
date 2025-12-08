@@ -9,11 +9,13 @@ import {
 } from './styles';
 // components
 import Logo from '@components/Logo';
-import {NavLink, useLocation} from 'react-router-dom';
+import {NavLink, useLocation, useNavigate} from 'react-router-dom';
 // hooks
 import {useSidebar} from '@contexts/sidebarContext';
 import {useWindowSize} from 'react-use';
 import {useEffect, useState} from 'react';
+import {useAuth} from '@contexts/AuthContext';
+import {toast} from 'react-toastify';
 // constants
 import LINKS from '@constants/links';
 
@@ -22,6 +24,8 @@ const Sidebar = () => {
     const [expanded, setExpanded] = useState(undefined);
     const {pathname} = useLocation();
     const {width} = useWindowSize();
+    const { user, profile, signOut } = useAuth();
+    const navigate = useNavigate();
 
     // manually handle accordion expansion
     const handleChange = (panel) => (event, isExpanded) => {
@@ -33,6 +37,17 @@ const Sidebar = () => {
         width < 1280 && setExpanded(undefined);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [pathname]);
+
+    const handleSignOut = async () => {
+        try {
+            await signOut();
+            toast.success('Signed out successfully');
+            navigate('/login');
+        } catch (error) {
+            console.error('Sign out error:', error);
+            toast.error(error.message || 'Failed to sign out');
+        }
+    }
 
     return (
         <StyledDrawer
@@ -75,13 +90,39 @@ const Sidebar = () => {
                     ))
                 }
             </nav>
-            <SingleLink className={pathname === '/settings' ? 'pinned active' : 'pinned'} as="div">
-                <NavLink to="/settings">
-                    <Link className={`${pathname === '/settings' ? 'active' : ''} h4`}>
-                        <i className="icon icon-sliders"/> Settings
-                    </Link>
-                </NavLink>
-            </SingleLink>
+            <div style={{display: 'flex', flexDirection: 'column', gap: '8px', paddingTop: '16px', borderTop: '1px solid var(--border)'}}>
+                <SingleLink className={pathname === '/settings' ? 'active' : ''} as="div">
+                    <NavLink to="/settings">
+                        <Link className={`${pathname === '/settings' ? 'active' : ''} h4`}>
+                            <i className="icon icon-sliders"/> Settings
+                        </Link>
+                    </NavLink>
+                </SingleLink>
+                {user && (
+                    <div style={{display: 'flex', flexDirection: 'column', gap: '8px', padding: '8px', borderTop: '1px solid var(--border)', marginTop: '8px'}}>
+                        <div style={{fontSize: '12px', color: 'var(--text-secondary)', padding: '0 8px'}}>
+                            {profile?.full_name ? profile.full_name : user.email}
+                        </div>
+                        <button 
+                            onClick={handleSignOut}
+                            style={{
+                                padding: '8px 12px',
+                                backgroundColor: 'var(--widget)',
+                                border: '1px solid var(--border)',
+                                borderRadius: '4px',
+                                cursor: 'pointer',
+                                fontSize: '14px',
+                                color: 'var(--text)',
+                                transition: 'all 0.3s ease'
+                            }}
+                            onMouseOver={(e) => e.target.style.backgroundColor = 'var(--border)'}
+                            onMouseOut={(e) => e.target.style.backgroundColor = 'var(--widget)'}
+                        >
+                            Sign Out
+                        </button>
+                    </div>
+                )}
+            </div>
         </StyledDrawer>
     );
 }

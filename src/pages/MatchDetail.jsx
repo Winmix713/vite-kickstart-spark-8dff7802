@@ -1,0 +1,206 @@
+import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { ArrowLeft, Brain, TrendingUp } from 'lucide-react';
+import { format } from 'date-fns';
+
+// Layout
+import PageHeader from '@layout/PageHeader';
+import AppGrid from '@layout/AppGrid';
+import WidgetGroup from '@components/WidgetGroup';
+
+// Services
+import { supabase } from '@/integrations/supabase/client';
+
+const MatchInfoWidget = ({ match, loading }) => {
+  if (loading) {
+    return (
+      <WidgetGroup>
+        <div className="rounded-2xl bg-card ring-1 ring-border overflow-hidden p-6 text-muted-foreground">
+          Loading match details...
+        </div>
+      </WidgetGroup>
+    );
+  }
+
+  if (!match) {
+    return (
+      <WidgetGroup>
+        <div className="rounded-2xl bg-card ring-1 ring-border overflow-hidden p-6 text-muted-foreground">
+          Match not found
+        </div>
+      </WidgetGroup>
+    );
+  }
+
+  return (
+    <WidgetGroup>
+      <div className="rounded-2xl bg-card ring-1 ring-border overflow-hidden p-6">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+          <div>
+            <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">
+              {match.league?.name}
+            </div>
+            <h2 className="text-2xl font-bold text-foreground">
+              {match.home_team?.name} vs {match.away_team?.name}
+            </h2>
+            <p className="text-sm text-muted-foreground mt-2">
+              {format(new Date(match.match_date), 'EEEE, MMMM do, yyyy')}
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="px-3 py-1 rounded-lg text-sm font-semibold bg-primary/10 text-primary">
+              {match.status}
+            </span>
+            {match.home_score !== undefined && (
+              <div className="text-3xl font-bold text-foreground">
+                {match.home_score} - {match.away_score}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </WidgetGroup>
+  );
+};
+
+const PredictionWidget = ({ prediction, loading }) => {
+  if (loading) {
+    return (
+      <WidgetGroup>
+        <div className="rounded-2xl bg-card ring-1 ring-border overflow-hidden p-6 text-muted-foreground">
+          Loading predictions...
+        </div>
+      </WidgetGroup>
+    );
+  }
+
+  if (!prediction) {
+    return (
+      <WidgetGroup>
+        <div className="rounded-2xl bg-card ring-1 ring-border overflow-hidden p-6 text-muted-foreground">
+          No predictions available
+        </div>
+      </WidgetGroup>
+    );
+  }
+
+  return (
+    <WidgetGroup>
+      <div className="rounded-2xl bg-card ring-1 ring-border overflow-hidden p-6">
+        <div className="flex items-center gap-2 mb-4">
+          <Brain className="w-5 h-5 text-primary" />
+          <h3 className="text-lg font-semibold">Prediction</h3>
+        </div>
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <span className="text-muted-foreground">Predicted Outcome:</span>
+            <span className="font-semibold text-foreground">{prediction.predicted_outcome}</span>
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="text-muted-foreground">Confidence:</span>
+            <span className="font-semibold text-primary">{Math.round(prediction.confidence_score)}%</span>
+          </div>
+          {prediction.btts_prediction !== undefined && (
+            <div className="flex items-center justify-between">
+              <span className="text-muted-foreground">Both Teams to Score:</span>
+              <span className="font-semibold text-foreground">{prediction.btts_prediction ? 'Yes' : 'No'}</span>
+            </div>
+          )}
+          {prediction.was_correct !== undefined && (
+            <div className="flex items-center justify-between pt-4 border-t border-border">
+              <span className="text-muted-foreground">Result:</span>
+              <span className={`font-semibold ${prediction.was_correct ? 'text-green-500' : 'text-red-500'}`}>
+                {prediction.was_correct ? '✓ Correct' : '✗ Incorrect'}
+              </span>
+            </div>
+          )}
+        </div>
+      </div>
+    </WidgetGroup>
+  );
+};
+
+const MatchDetailPage = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [match, setMatch] = useState(null);
+  const [prediction, setPrediction] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const fetchMatch = useCallback(async () => {
+    if (!id) return;
+    try {
+      setLoading(true);
+      setError(null);
+
+      const { data, error: matchError } = await supabase
+        .from('matches')
+        .select(`
+          id,
+          match_date,
+          status,
+          home_score,
+          away_score,
+          home_team:teams!matches_home_team_id_fkey(id, name),
+          away_team:teams!matches_away_team_id_fkey(id, name),
+          league:leagues(name)
+        `)
+        .eq('id', id)
+        .single();
+
+      if (matchError) throw matchError;
+      setMatch(data);
+
+      const { data: predData } = await supabase
+        .from('predictions')
+        .select('id, predicted_outcome, confidence_score, btts_prediction, actual_outcome, was_correct')
+        .eq('match_id', id)
+        .single();
+
+      if (predData) {
+        setPrediction(predData);
+      }
+    } catch (err) {
+      console.error('Error fetching match:', err);
+      setError('Failed to load match details');
+    } finally {
+      setLoading(false);
+    }
+  }, [id]);
+
+  useEffect(() => {
+    fetchMatch();
+  }, [fetchMatch]);
+
+  const widgets = useMemo(() => ({
+    info: <MatchInfoWidget match={match} loading={loading} />,
+    prediction: <PredictionWidget prediction={prediction} loading={loading} />,
+  }), [match, prediction, loading]);
+
+  return (
+    <>
+      <div className="mb-4">
+        <button 
+          onClick={() => navigate(-1)}
+          className="flex items-center gap-2 text-primary hover:text-primary/90 transition font-medium mb-4"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back
+        </button>
+        <PageHeader 
+          title="Match Detail" 
+          metaDescription="Detailed match information and predictions"
+        />
+      </div>
+      {error && (
+        <div className="mb-6 p-4 rounded-lg border border-red-500/20 bg-red-500/10 text-red-500 text-sm">
+          {error}
+        </div>
+      )}
+      <AppGrid id="match_detail_page" widgets={widgets} />
+    </>
+  );
+};
+
+export default MatchDetailPage;

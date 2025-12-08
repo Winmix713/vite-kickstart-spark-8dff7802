@@ -1,0 +1,35 @@
+import { useMemo } from 'react';
+
+// Layout
+import PageHeader from '@layout/PageHeader';
+import AppGrid from '@layout/AppGrid';
+import WidgetGroup from '@components/WidgetGroup';
+
+// Components
+import { Phase9Dashboard } from '@/components/phase9';
+
+const Phase9Widget = () => {
+  return (
+    <WidgetGroup>
+      <Phase9Dashboard />
+    </WidgetGroup>
+  );
+};
+
+const Phase9Page = () => {
+  const widgets = useMemo(() => ({
+    dashboard: <Phase9Widget />,
+  }), []);
+
+  return (
+    <>
+      <PageHeader 
+        title="Phase 9" 
+        metaDescription="Collaborative market intelligence and advanced features"
+      />
+      <AppGrid id="phase9_page" widgets={widgets} />
+    </>
+  );
+};
+
+export default Phase9Page;

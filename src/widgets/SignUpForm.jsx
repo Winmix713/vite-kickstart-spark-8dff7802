@@ -1,17 +1,20 @@
 // components
 import PasswordInput from '@components/PasswordInput';
 import Spring from '@components/Spring';
-import {Fragment} from 'react';
+import {Fragment, useState} from 'react';
 import {toast} from 'react-toastify';
 
 // hooks
 import {useForm, Controller} from 'react-hook-form';
+import {useAuth} from '@contexts/AuthContext';
+import {useNavigate} from 'react-router-dom';
 
 // utils
 import classNames from 'classnames';
 
 const SignUpForm = ({standalone = true}) => {
-    const {register, handleSubmit, formState: {errors}, control, watch} = useForm({
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const {register, handleSubmit, formState: {errors}, control, watch, reset} = useForm({
         defaultValues: {
             firstName: '',
             lastName: '',
@@ -20,12 +23,28 @@ const SignUpForm = ({standalone = true}) => {
             passwordConfirm: ''
         }
     });
+    const { signUp } = useAuth();
+    const navigate = useNavigate();
 
     const Wrapper = standalone ? Fragment : Spring;
     const wrapperProps = standalone ? {} : {className: 'card card-padded'};
 
-    const onSubmit = (data) => {
-        toast.success(`Account created! Please check your email ${data.email} to confirm your account.`)
+    const onSubmit = async (data) => {
+        setIsSubmitting(true);
+        try {
+            const fullName = `${data.firstName} ${data.lastName}`.trim();
+            await signUp(data.email, data.password, fullName);
+            toast.success(`Account created! Please check your email ${data.email} to confirm your account.`);
+            reset();
+            setTimeout(() => {
+                navigate('/login');
+            }, 2000);
+        } catch (error) {
+            console.error('Sign up error:', error);
+            toast.error(error.message || 'Failed to create account. Please try again.');
+        } finally {
+            setIsSubmitting(false);
+        }
     }
 
     return (
@@ -76,7 +95,9 @@ const SignUpForm = ({standalone = true}) => {
                                 )}
                     />
                 </div>
-                <button type="submit" className="btn btn--sm">Create account</button>
+                <button type="submit" className="btn btn--sm" disabled={isSubmitting}>
+                    {isSubmitting ? 'Creating account...' : 'Create account'}
+                </button>
             </form>
         </Wrapper>
     )

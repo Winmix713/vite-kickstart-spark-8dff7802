@@ -4,22 +4,35 @@ import {toast} from 'react-toastify';
 
 // hooks
 import {useForm} from 'react-hook-form';
+import {useState} from 'react';
+import {useAuth} from '@contexts/AuthContext';
 
 // utils
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 
 const ResetPasswordPopup = ({open, onClose}) => {
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const {register, handleSubmit, formState: {errors}, reset} = useForm();
+    const { resetPassword } = useAuth();
 
     const handleClose = () => {
         reset();
         onClose();
     }
 
-    const onSubmit = data => {
-        toast.info(`New password was sent to ${data.email}`);
-        handleClose();
+    const onSubmit = async (data) => {
+        setIsSubmitting(true);
+        try {
+            await resetPassword(data.email);
+            toast.success(`Password reset link sent to ${data.email}`);
+            handleClose();
+        } catch (error) {
+            console.error('Reset password error:', error);
+            toast.error(error.message || 'Failed to send reset email. Please try again.');
+        } finally {
+            setIsSubmitting(false);
+        }
     }
 
     return (
@@ -36,8 +49,11 @@ const ResetPasswordPopup = ({open, onClose}) => {
                         <input className={classNames('field', {'field--error': errors.email})}
                                type="text"
                                placeholder="example@domain.com"
-                               {...register('email', {required: true, pattern: /^\S+@\S+$/i})}/>
-                        <button className="btn">Send</button>
+                               {...register('email', {required: true, pattern: /^\S+@\S+$/i})}
+                               disabled={isSubmitting}/>
+                        <button className="btn" disabled={isSubmitting}>
+                            {isSubmitting ? 'Sending...' : 'Send'}
+                        </button>
                     </form>
                     <p className="text-12">
                         If you don't receive an email within a few minutes, please check your spam folder.

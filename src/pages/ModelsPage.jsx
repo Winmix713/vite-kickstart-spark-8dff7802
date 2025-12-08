@@ -3,11 +3,13 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { RefreshCcw, Play, Pause, Trash2, Edit, Plus, Settings, Activity, Zap, Shield } from 'lucide-react';
 import { toast } from 'sonner';
 import { Pie, PieChart, Cell, Tooltip, ResponsiveContainer } from 'recharts';
+import classNames from 'classnames';
 
 // Layout
 import PageHeader from '@layout/PageHeader';
 import AppGrid from '@layout/AppGrid';
 import WidgetGroup from '@components/WidgetGroup';
+import Popup from '@components/Popup';
 
 // Hooks
 import { useDocumentTitle } from '@hooks/useDocumentTitle';
@@ -474,7 +476,128 @@ export default function ModelsPage() {
         title="Model Management" 
         metaDescription="AI models with champion/challenger framework and A/B testing"
       />
+      
+      <div className="flex justify-end gap-3 px-6 mb-4">
+        <button className="btn btn--outline btn--sm" onClick={testSelection}>
+          <RefreshCcw className="w-4 h-4 mr-2 inline" />
+          Test Selection
+        </button>
+        <button className="btn btn--sm" onClick={() => setIsCreateDialogOpen(true)}>
+          <Plus className="w-4 h-4 mr-2 inline" />
+          Add Model
+        </button>
+      </div>
+
       <AppGrid id="models_page" widgets={widgets} />
+
+      <Popup open={isCreateDialogOpen || isEditDialogOpen} onClose={() => { setIsCreateDialogOpen(false); setIsEditDialogOpen(false); }}>
+        <div className="p-5" style={{ minWidth: '500px' }}>
+          <h2 className="text-xl font-bold mb-4">{isEditDialogOpen ? 'Edit Model' : 'Register New Model'}</h2>
+          
+          <div className="flex flex-col gap-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">Model Name</label>
+                <input 
+                  className="field w-full" 
+                  value={form.model_name} 
+                  onChange={(e) => setForm((f) => ({ ...f, model_name: e.target.value }))} 
+                  placeholder="HeuristicEngine" 
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Version</label>
+                <input 
+                  className="field w-full" 
+                  value={form.model_version} 
+                  onChange={(e) => setForm((f) => ({ ...f, model_version: e.target.value }))} 
+                  placeholder="1.0.0" 
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">Type</label>
+                <select 
+                  className="field w-full" 
+                  value={form.model_type} 
+                  onChange={(e) => setForm((f) => ({ ...f, model_type: e.target.value }))}
+                >
+                  <option value="champion">Champion</option>
+                  <option value="challenger">Challenger</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Traffic Allocation (%)</label>
+                <input 
+                  type="number" 
+                  min="0" 
+                  max="100" 
+                  className="field w-full" 
+                  value={form.traffic_allocation} 
+                  onChange={(e) => setForm((f) => ({ ...f, traffic_allocation: parseInt(e.target.value) || 10 }))} 
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-1">Algorithm</label>
+              <input 
+                className="field w-full" 
+                value={form.algorithm} 
+                onChange={(e) => setForm((f) => ({ ...f, algorithm: e.target.value }))} 
+                placeholder="GradientBoostedHeuristics" 
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-1">Description</label>
+              <textarea 
+                className="field w-full" 
+                value={form.description} 
+                onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} 
+                placeholder="Model description and purpose..." 
+                rows={3}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-1">Hyperparameters (JSON)</label>
+              <textarea 
+                className="field w-full font-mono text-sm" 
+                value={form.hyperparameters} 
+                onChange={(e) => setForm((f) => ({ ...f, hyperparameters: e.target.value }))} 
+                placeholder='{"learning_rate": 0.1}' 
+                rows={4} 
+              />
+            </div>
+
+            <div className="flex items-center gap-2">
+              <input 
+                type="checkbox" 
+                id="is-active"
+                checked={form.is_active}
+                onChange={(e) => setForm((f) => ({ ...f, is_active: e.target.checked }))}
+              />
+              <label htmlFor="is-active" className="text-sm font-medium">Active</label>
+            </div>
+          </div>
+
+          <div className="flex justify-end gap-3 mt-6">
+            <button className="btn btn--outline" onClick={() => { setIsCreateDialogOpen(false); setIsEditDialogOpen(false); }}>
+              Cancel
+            </button>
+            <button 
+              className="btn" 
+              onClick={() => isEditDialogOpen ? updateMutation.mutate({ id: selectedModel?.id, data: form }) : registerMutation.mutate()}
+              disabled={registerMutation.isPending || updateMutation.isPending || !form.model_name || !form.model_version}
+            >
+              {isEditDialogOpen ? 'Update' : 'Register'}
+            </button>
+          </div>
+        </div>
+      </Popup>
     </>
   );
 }

@@ -9,12 +9,15 @@ import SwiperControls from '@ui/SwiperControls';
 import {useEffect, useState} from 'react';
 import {useThemeProvider} from '@contexts/themeContext';
 
-// data placeholder
-import brand_products from '@db/brand_products';
+// hooks
+import { useFeaturedProducts } from '@hooks/useProducts';
 
 const BrandProducts = () => {
     const {direction} = useThemeProvider();
     const [swiper, setSwiper] = useState(null);
+    
+    // Get featured products from Supabase
+    const { data: products, isLoading, error } = useFeaturedProducts(10);
 
     useEffect(() => {
         if (swiper) {
@@ -22,6 +25,39 @@ const BrandProducts = () => {
             swiper.update();
         }
     }, [swiper, direction]);
+
+    // Show loading state
+    if (isLoading) {
+        return (
+            <Spring className="h-2 h-100 p-relative">
+                <div className="flex items-center justify-center h-32">
+                    <div className="text-gray-500">Loading products...</div>
+                </div>
+            </Spring>
+        );
+    }
+
+    // Show error state
+    if (error) {
+        return (
+            <Spring className="h-2 h-100 p-relative">
+                <div className="flex items-center justify-center h-32">
+                    <div className="text-red-500">Error loading products: {error.message}</div>
+                </div>
+            </Spring>
+        );
+    }
+
+    // Show empty state
+    if (!products || products.length === 0) {
+        return (
+            <Spring className="h-2 h-100 p-relative">
+                <div className="flex items-center justify-center h-32">
+                    <div className="text-gray-500">No products available</div>
+                </div>
+            </Spring>
+        );
+    }
 
     return (
         <Spring className="h-2 h-100 p-relative">
@@ -38,7 +74,7 @@ const BrandProducts = () => {
                     disableOnInteraction: false,
                     pauseOnMouseEnter: true
                 }}
-                loop
+                loop={products.length > 1}
                 breakpoints={{
                     767: {
                         slidesPerView: 2,
@@ -52,8 +88,8 @@ const BrandProducts = () => {
                 }}
             >
                 {
-                    brand_products.map((product, index) => (
-                        <SwiperSlide key={index}
+                    products.map((product, index) => (
+                        <SwiperSlide key={product.id}
                                      style={{margin: direction === 'ltr' ? '0 24px 0 0' : '0 0 0 24px'}}>
                             <ProductColumnCard product={product}/>
                         </SwiperSlide>

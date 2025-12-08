@@ -7,12 +7,15 @@ import ResetPasswordPopup from '@components/ResetPasswordPopup';
 import {useForm, Controller} from 'react-hook-form';
 import {useNavigate} from 'react-router-dom';
 import {useState} from 'react';
+import {useAuth} from '@contexts/AuthContext';
+import {toast} from 'react-toastify';
 
 // utils
 import classNames from 'classnames';
 
 const LoginForm = () => {
     const [open, setOpen] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const {register, handleSubmit, formState: {errors}, control} = useForm({
         defaultValues: {
             email: '',
@@ -21,8 +24,21 @@ const LoginForm = () => {
         }
     });
     const navigate = useNavigate();
+    const { signIn } = useAuth();
 
-    const onSubmit = () => navigate('/');
+    const onSubmit = async (data) => {
+        setIsSubmitting(true);
+        try {
+            await signIn(data.email, data.password);
+            toast.success('Logged in successfully!');
+            navigate('/');
+        } catch (error) {
+            console.error('Login error:', error);
+            toast.error(error.message || 'Failed to log in. Please check your credentials.');
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
 
     const handleResetPassword = e => {
         e.preventDefault();
@@ -66,10 +82,10 @@ const LoginForm = () => {
                     </div>
                 </div>
                 <div className="d-flex justify-content-between align-items-center">
-                    <button className="btn btn--sm" type="submit" onClick={handleSubmit(onSubmit)}>
-                        Submit
+                    <button className="btn btn--sm" type="submit" onClick={handleSubmit(onSubmit)} disabled={isSubmitting}>
+                        {isSubmitting ? 'Logging in...' : 'Submit'}
                     </button>
-                    <button className="text-button text-button--sm" onClick={handleResetPassword}>
+                    <button className="text-button text-button--sm" onClick={handleResetPassword} disabled={isSubmitting}>
                         Reset password
                     </button>
                 </div>

@@ -10,7 +10,7 @@ import LoadingScreen from '@components/LoadingScreen';
 
 // hooks
 import {useThemeProvider} from '@contexts/themeContext';
-import { useLeagueTable } from '@hooks/useTeams';
+import { useLeagueStandings } from '@/hooks/useWinmixQuery';
 
 // assets
 import english_premier from '@assets/clubs/english_premier.webp';
@@ -48,21 +48,18 @@ const TableHeader = styled(StyledRow)`
 const LeagueStandings = ({ leagueId = 'default-league-id' }) => {
     const {direction} = useThemeProvider();
     
-    // Use real data from Supabase
-    const { data: teamsWithStats, isLoading, error } = useLeagueTable(leagueId);
-
-    // Fallback to empty array while loading
-    const tableData = teamsWithStats || [];
+    // Use real data from WinMix API
+    const { data: standings, isLoading, error } = useLeagueStandings(leagueId);
 
     // Transform data to match expected format
-    const transformedData = tableData.map((team, index) => ({
-      name: team.name,
-      color: team.short_name.toLowerCase().replace(' ', '-'),
-      pts: team.points,
-      w: team.wins,
-      d: team.draws,
-      l: team.losses,
-      logo_url: team.logo_url
+    const transformedData = (standings || []).map((standing) => ({
+      name: standing.team.name,
+      color: standing.team.short_name.toLowerCase().replace(' ', '-'),
+      pts: standing.stats.points,
+      w: standing.stats.won,
+      d: standing.stats.drawn,
+      l: standing.stats.lost,
+      logo_url: standing.team.logo_url
     }));
 
     // Show loading state

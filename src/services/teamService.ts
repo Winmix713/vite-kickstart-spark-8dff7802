@@ -175,5 +175,30 @@ export const teamService = {
         const goalDiffB = b.goals_scored - b.goals_conceded
         return goalDiffB - goalDiffA
       })
+  },
+
+  async getTeamsByCountry(country: string): Promise<Team[]> {
+    const { data, error } = await supabase
+      .from('teams')
+      .select('*')
+      .eq('country', country)
+      .order('name', { ascending: true })
+    
+    if (error) throw error
+    return data || []
+  },
+
+  async getAllCountries(): Promise<string[]> {
+    const { data, error } = await supabase
+      .from('teams')
+      .select('country')
+      .not('country', 'is', null)
+      .order('country', { ascending: true })
+    
+    if (error) throw error
+    
+    // Extract unique countries
+    const countries = [...new Set((data || []).map(team => team.country))]
+    return countries
   }
 }

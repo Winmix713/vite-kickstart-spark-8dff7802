@@ -19,8 +19,9 @@ import {useThemeProvider} from '@contexts/themeContext';
 // utils
 import moment from 'moment';
 
-// events
-import schedule from '@db/schedule';
+// hooks
+import { useAllEvents } from '@hooks/useEvents';
+import LoadingScreen from '@components/LoadingScreen';
 
 const EventsCalendar = () => {
     const {direction} = useThemeProvider();
@@ -29,6 +30,9 @@ const EventsCalendar = () => {
     const [currentDate, setCurrentDate] = useState(moment().toDate());
     const [currentTime, setCurrentTime] = useState(moment().format('HH:mm'));
     const {width} = useWindowSize();
+    
+    // Get events from Supabase
+    const { data: events, isLoading, error } = useAllEvents();
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -80,6 +84,37 @@ const EventsCalendar = () => {
         }
     }
 
+    // Show loading state
+    if (isLoading) {
+        return (
+            <Spring className="card h-fit card-padded">
+                <div className="flex items-center justify-center h-32">
+                    <LoadingScreen />
+                </div>
+            </Spring>
+        );
+    }
+
+    // Show error state
+    if (error) {
+        return (
+            <Spring className="card h-fit card-padded">
+                <div className="text-center text-red-500 p-4">
+                    Error loading events: {error.message}
+                </div>
+            </Spring>
+        );
+    }
+
+    // Transform events to match expected format
+    const transformedEvents = (events || []).map(event => ({
+        name: event.title,
+        start: new Date(event.start_time),
+        end: new Date(event.end_time),
+        allDay: event.is_all_day,
+        type: event.type || 'other'
+    }));
+
     const config = {
         as: Calendar,
         className: currentView,
@@ -94,7 +129,7 @@ const EventsCalendar = () => {
         min: moment().startOf('year').set({hour: 8, minute: 0}).toDate(),
         max: moment().endOf('year').set({hour: 22, minute: 0}).toDate(),
         step: 30,
-        events: schedule,
+        events: transformedEvents,
         formats: {
             timeGutterFormat: 'HH:mm',
             dayFormat: getDayFormat(),

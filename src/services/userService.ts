@@ -1,7 +1,7 @@
-import { supabase } from '@/lib/supabase'
-import type { Database } from '@/lib/supabase'
+import { supabase } from '@/integrations/supabase/client'
+import type { Database } from '@/integrations/supabase/types'
 
-type Profile = Database['public']['Tables']['profiles']['Row']
+type Profile = Database['public']['Tables']['user_profiles']['Row']
 
 interface CreateProfileInput {
   id: string
@@ -18,7 +18,7 @@ export const userService = {
     if (!user) return null
 
     const { data, error } = await supabase
-      .from('profiles')
+      .from('user_profiles')
       .select('*')
       .eq('id', user.id)
       .single()
@@ -32,7 +32,7 @@ export const userService = {
 
   async getUserProfile(id: string): Promise<Profile | null> {
     const { data, error } = await supabase
-      .from('profiles')
+      .from('user_profiles')
       .select('*')
       .eq('id', id)
       .single()
@@ -46,7 +46,7 @@ export const userService = {
 
   async updateUserProfile(id: string, profileData: Partial<CreateProfileInput>): Promise<Profile> {
     const { data, error } = await supabase
-      .from('profiles')
+      .from('user_profiles')
       .update({
         ...profileData,
         updated_at: new Date().toISOString()
@@ -61,7 +61,7 @@ export const userService = {
 
   async getAllUsers(): Promise<Profile[]> {
     const { data, error } = await supabase
-      .from('profiles')
+      .from('user_profiles')
       .select('*')
       .order('created_at', { ascending: false })
     
@@ -71,7 +71,7 @@ export const userService = {
 
   async updateUserRole(id: string, role: 'admin' | 'user' | 'analyst'): Promise<Profile> {
     const { data, error } = await supabase
-      .from('profiles')
+      .from('user_profiles')
       .update({
         role,
         updated_at: new Date().toISOString()

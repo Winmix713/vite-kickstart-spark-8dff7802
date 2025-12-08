@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase'
+import { supabase } from '@/integrations/supabase/client'
 
 export interface DashboardStats {
   totalUsers: number
@@ -9,11 +9,11 @@ export interface DashboardStats {
   avgResponseTime: number
 }
 
-// Get total number of users from profiles table
+// Get total number of users from user_profiles table
 export async function getTotalUsers(): Promise<number> {
   try {
     const { count, error } = await supabase
-      .from('profiles')
+      .from('user_profiles')
       .select('*', { count: 'exact', head: true })
 
     if (error) {

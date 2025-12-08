@@ -17,7 +17,7 @@ const mockSupabase = {
   },
 }
 
-vi.mock('@/lib/supabase', () => ({
+vi.mock('@/integrations/supabase/client', () => ({
   supabase: mockSupabase,
 }))
 
@@ -492,7 +492,7 @@ describe('AuthProvider Integration Tests', () => {
       authStateCallback!('SIGNED_IN', mockSession)
 
       await waitFor(() => {
-        expect(mockSupabase.from).toHaveBeenCalledWith('profiles')
+        expect(mockSupabase.from).toHaveBeenCalledWith('user_profiles')
         expect(mockSupabase.from().upsert).toHaveBeenCalledWith({
           id: 'test-user-id',
           email: 'test@example.com',

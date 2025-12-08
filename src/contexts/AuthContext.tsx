@@ -28,16 +28,74 @@ interface AuthProviderProps {
 
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null)
+  const [profile, setProfile] = useState<UserProfile | null>(null)
   const [session, setSession] = useState<Session | null>(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  // Fetch user profile from database
+  const fetchUserProfile = async (userId: string, userEmail?: string) => {
+    try {
+      const { data: profileData, error: profileError } = await supabase
+        .from('user_profiles')
+        .select('*')
+        .eq('id', userId)
+        .single()
+
+      if (profileError) {
+        if (profileError.code === 'PGRST116') {
+          // Profile doesn't exist, create one
+          const newProfile: UserProfile = {
+            id: userId,
+            email: userEmail || '',
+            full_name: null,
+            role: 'user',
+            avatar_url: null,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          }
+          
+          const { error: insertError } = await supabase
+            .from('user_profiles')
+            .insert([newProfile])
+          
+          if (insertError) {
+            console.error('Error creating profile:', insertError)
+            setError('Failed to create user profile')
+          } else {
+            setProfile(newProfile)
+          }
+        } else {
+          console.error('Error fetching profile:', profileError)
+          setError('Failed to load user profile')
+        }
+      } else {
+        setProfile(profileData as UserProfile)
+      }
+    } catch (err) {
+      console.error('Unexpected error loading profile:', err)
+      setError('Unexpected error loading profile')
+    }
+  }
 
   useEffect(() => {
     // Get initial session
     const getSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      setSession(session)
-      setUser(session?.user ?? null)
-      setLoading(false)
+      try {
+        const { data: { session } } = await supabase.auth.getSession()
+        setSession(session)
+        setUser(session?.user ?? null)
+        
+        if (session?.user) {
+          await fetchUserProfile(session.user.id, session.user.email)
+        }
+        
+        setLoading(false)
+      } catch (err) {
+        console.error('Error getting session:', err)
+        setError('Failed to load session')
+        setLoading(false)
+      }
     }
 
     getSession()
@@ -47,22 +105,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
       async (event, session) => {
         setSession(session)
         setUser(session?.user ?? null)
-        setLoading(false)
+        setError(null)
 
-        // Create or update profile on sign up
-        if (event === 'SIGNED_IN' && session?.user) {
-          const { error } = await supabase
-            .from('profiles')
-            .upsert({
-              id: session.user.id,
-              email: session.user.email!,
-              role: 'user'
-            })
-          
-          if (error) {
-            console.error('Error creating profile:', error)
-          }
+        if (session?.user) {
+          await fetchUserProfile(session.user.id, session.user.email)
+        } else {
+          setProfile(null)
         }
+        
+        setLoading(false)
       }
     )
 
@@ -107,8 +158,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const value = {
     user,
+    profile,
     session,
     loading,
+    error,
     signUp,
     signIn,
     signOut,

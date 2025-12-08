@@ -40,6 +40,8 @@ import BottomNav from '@layout/BottomNav';
 import Navbar from '@layout/Navbar';
 import ShoppingCart from '@widgets/ShoppingCart';
 import ScrollToTop from '@components/ScrollToTop';
+import ProtectedRoute from '@components/ProtectedRoute';
+import RoleGate from '@components/RoleGate';
 
 // pages
 const ClubSummary = lazy(() => import('@pages/ClubSummary'));
@@ -163,27 +165,30 @@ const App = () => {
                                             <div className="app_container-content d-flex flex-column flex-1">
                                                 <Suspense fallback={<LoadingScreen />}>
                                                     <Routes>
-                                                        <Route path="/" element={<ClubSummary />} />
-                                                        <Route path="/game-summary" element={<GameSummary />} />
-                                                        <Route path="/championships" element={<Championships />} />
-                                                        <Route path="/league-overview" element={<LeagueOverview />} />
-                                                        <Route path="/fans-community" element={<FansCommunity />} />
-                                                        <Route path="/statistics" element={<Statistics />} />
-                                                        <Route path="/match-summary" element={<MatchSummary />} />
-                                                        <Route path="/match-overview" element={<MatchOverview />} />
-                                                        <Route path="/player-profile" element={<PlayerProfile />} />
-                                                        <Route path="/schedule" element={<Schedule />} />
-                                                        <Route path="/tickets" element={<Tickets />} />
-                                                        <Route path="/football-store" element={<FootballStore />} />
-                                                        <Route path="/brand-store" element={<BrandStore />} />
-                                                        <Route path="/product" element={<Product />} />
+                                                        {/* Public routes */}
                                                         <Route path="/login" element={<Login />} />
                                                         <Route path="/sign-up" element={<SignUp />} />
-                                                        <Route path="/settings" element={<Settings />} />
-                                                        
-                                                        {/* WinMixPro Admin Routes */}
-                                                        <Route path="/winmixpro/admin/*" element={<WinmixProAdmin />} />
-                                                        
+
+                                                        {/* Protected routes */}
+                                                        <Route path="/" element={<ProtectedRoute><ClubSummary /></ProtectedRoute>} />
+                                                        <Route path="/game-summary" element={<ProtectedRoute><GameSummary /></ProtectedRoute>} />
+                                                        <Route path="/championships" element={<ProtectedRoute><Championships /></ProtectedRoute>} />
+                                                        <Route path="/league-overview" element={<ProtectedRoute><LeagueOverview /></ProtectedRoute>} />
+                                                        <Route path="/fans-community" element={<ProtectedRoute><FansCommunity /></ProtectedRoute>} />
+                                                        <Route path="/statistics" element={<ProtectedRoute><Statistics /></ProtectedRoute>} />
+                                                        <Route path="/match-summary" element={<ProtectedRoute><MatchSummary /></ProtectedRoute>} />
+                                                        <Route path="/match-overview" element={<ProtectedRoute><MatchOverview /></ProtectedRoute>} />
+                                                        <Route path="/player-profile" element={<ProtectedRoute><PlayerProfile /></ProtectedRoute>} />
+                                                        <Route path="/schedule" element={<ProtectedRoute><Schedule /></ProtectedRoute>} />
+                                                        <Route path="/tickets" element={<ProtectedRoute><Tickets /></ProtectedRoute>} />
+                                                        <Route path="/football-store" element={<ProtectedRoute><FootballStore /></ProtectedRoute>} />
+                                                        <Route path="/brand-store" element={<ProtectedRoute><BrandStore /></ProtectedRoute>} />
+                                                        <Route path="/product" element={<ProtectedRoute><Product /></ProtectedRoute>} />
+                                                        <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+
+                                                        {/* Admin Routes */}
+                                                        <Route path="/winmixpro/admin/*" element={<ProtectedRoute><RoleGate allowedRoles={['admin']}><WinmixProAdmin /></RoleGate></ProtectedRoute>} />
+
                                                         <Route path="*" element={<PageNotFound />} />
                                                     </Routes>
                                                 </Suspense>

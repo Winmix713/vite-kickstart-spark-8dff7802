@@ -1,96 +1,41 @@
 const LINKS = [
     {
-        title: 'Dashboard',
+        title: 'Irányítópult',
         icon: 'table',
         pages: [
-            {
-                title: 'Club summary',
-                path: '/'
-            },
-            {
-                title: 'Game summary',
-                path: '/game-summary'
-            },
-            {
-                title: 'Championships',
-                path: '/championships'
-            },
-            {
-                title: 'League overview',
-                path: '/league-overview'
-            },
-            {
-                title: 'Fans community',
-                path: '/fans-community'
-            },
-            {
-                title: 'Statistics',
-                path: '/statistics'
-            },
-            {
-                title: 'Error page',
-                path: '/404'
-            }
+            { title: 'Dashboard', path: '/' },
+            { title: 'Predikciók', path: '/predictions' },
+            { title: 'Elemzések', path: '/analytics' }
         ]
     },
     {
-        title: 'Matches',
+        title: 'Bajnokságok',
         icon: 'calendar',
         pages: [
-            {
-                title: 'Match summary',
-                path: '/match-summary'
-            },
-            {
-                title: 'Match overview',
-                path: '/match-overview'
-            }
+            { title: 'Összes bajnokság', path: '/leagues' },
+            { title: 'Mérkőzések', path: '/matches' },
+            { title: 'Közelgő meccsek', path: '/upcoming' },
+            { title: 'Cross-League', path: '/cross-league' }
         ]
     },
     {
-        title: 'Profile',
+        title: 'AI Rendszer',
+        icon: 'gear-solid',
+        pages: [
+            { title: 'Modellek', path: '/models' },
+            { title: 'Feladatok', path: '/jobs' },
+            { title: 'Monitoring', path: '/monitoring' }
+        ]
+    },
+    {
+        title: 'Fiók',
         icon: 'users',
         pages: [
-            {
-                title: 'Login',
-                path: '/login'
-            },
-            {
-                title: 'Sign up',
-                path: '/sign-up'
-            },
-            {
-                title: 'Player profile',
-                path: '/player-profile'
-            },
-            {
-                title: 'Schedule',
-                path: '/schedule'
-            },
-            {
-                title: 'Tickets',
-                path: '/tickets'
-            }
-        ]
-    },
-    {
-        title: 'E-commerce',
-        icon: 'cart',
-        pages: [
-            {
-                title: 'Football store',
-                path: '/football-store'
-            },
-            {
-                title: 'Brand store',
-                path: '/brand-store'
-            },
-            {
-                title: 'Product details',
-                path: '/product'
-            }
+            { title: 'Bejelentkezés', path: '/login' },
+            { title: 'Regisztráció', path: '/sign-up' },
+            { title: 'Csapat profil', path: '/team-profile' }
         ]
     }
 ];
 
-export default LINKS
+export default LINKS;

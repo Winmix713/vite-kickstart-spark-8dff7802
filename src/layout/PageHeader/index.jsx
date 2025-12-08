@@ -2,119 +2,219 @@
 import styles from './styles.module.scss';
 
 // components
-import {Helmet} from 'react-helmet';
-import RangeSlider from '@ui/RangeSlider';
+import { Helmet } from 'react-helmet';
 import SidebarTrigger from '@ui/SidebarTrigger';
 import User from './User';
 import Search from './Search';
 import TruncatedText from '@components/TruncatedText';
+import AdminQuickActions from './AdminQuickActions';
 
 // hooks
-import {useWindowSize} from 'react-use';
-import {useThemeProvider} from '@contexts/themeContext';
-import {useShopProvider} from '@contexts/shopContext';
+import { useWindowSize } from 'react-use';
+import { useThemeProvider } from '@contexts/themeContext';
+import { useShopProvider } from '@contexts/shopContext';
 import useMeasure from 'react-use-measure';
 import useStoreRoute from '@hooks/useStoreRoute';
+import { useMemo, memo, useCallback } from 'react';
 
 // utils
 import PropTypes from 'prop-types';
 
-const TabletHeader = ({title}) => {
-    const [ref, {width}] = useMeasure();
+// Constants
+const BREAKPOINTS = {
+  MOBILE: 768,
+  TABLET: 1280,
+  LARGE_DESKTOP: 1920
+};
 
-    return (
-        <div className={`${styles.tablet} d-flex align-items-center justify-content-between g-20`}>
-            <div className="d-flex align-items-center flex-1 g-30">
-                <SidebarTrigger/>
-                <div className="flex-1" ref={ref}>
-                    <TruncatedText className={`${styles.title} h2`} text={title} width={width} lines={1}/>
-                </div>
-            </div>
-            <div className="d-flex align-items-center g-20">
-                <Search/>
-                <User/>
-            </div>
+const CART_ITEMS_MOCK = 2; // TODO: Replace with actual cart state
+
+/**
+ * Mobile Header Component - renders title only
+ */
+const MobileHeader = memo(({ title }) => (
+  <h1 className={`${styles.title} h2`}>{title}</h1>
+));
+
+MobileHeader.displayName = 'MobileHeader';
+MobileHeader.propTypes = {
+  title: PropTypes.string.isRequired
+};
+
+/**
+ * Tablet Header Component - simplified layout for tablet devices
+ */
+const TabletHeader = memo(({ title }) => {
+  const [ref, { width }] = useMeasure();
+
+  return (
+    <div className={`${styles.tablet} d-flex align-items-center justify-content-between g-20`}>
+      <div className="d-flex align-items-center flex-1 g-30">
+        <SidebarTrigger />
+        <div className="flex-1" ref={ref}>
+          <TruncatedText 
+            className={`${styles.title} h2`} 
+            text={title} 
+            width={width} 
+            lines={1}
+          />
         </div>
-    )
-}
+      </div>
+      <div className="d-flex align-items-center g-20">
+        <Search />
+        <User />
+      </div>
+    </div>
+  );
+});
 
-const DesktopHeader = ({title}) => {
-    const {width} = useWindowSize();
-    const {theme, toggleTheme, fontScale, changeFontScale, direction, toggleDirection} = useThemeProvider();
-    const {setCartOpen} = useShopProvider();
-    const [ref, {width: titleWidth}] = useMeasure();
-    const isStoreRoute = useStoreRoute();
+TabletHeader.displayName = 'TabletHeader';
+TabletHeader.propTypes = {
+  title: PropTypes.string.isRequired
+};
 
-    return (
-        <div className={`${styles.desktop} d-flex justify-content-between align-items-center g-20`}>
-            <div className="d-flex align-items-center flex-1 g-30">
-                {width < 1920 && <SidebarTrigger/>}
-                <div className="flex-1" ref={ref}>
-                    <TruncatedText className={`${styles.title} h2`} text={title} width={titleWidth} lines={1}/>
-                </div>
-            </div>
-            <div className="d-flex align-items-center">
-                <Search/>
-                <div className="d-flex g-30" style={{margin: '0 50px'}}>
-                    <button className={`${styles.control} h5`} onClick={toggleTheme}>
-                        <i className={`icon-${theme === 'light' ? 'moon' : 'sun'}`}/>
-                        Theme
-                    </button>
-                    <button className={`${styles.control} h5`} onClick={toggleDirection}>
-                        <i className="icon icon-book-regular"/>
-                        {direction === 'ltr' ? 'RTL' : 'LTR'}
-                    </button>
-                    <div className="d-flex g-16">
-                        <span className={`${styles.control} h5`}>
-                            <i className="icon-text"/> Font size
-                        </span>
-                        <RangeSlider value={fontScale}
-                                     onChange={e => changeFontScale(e.target.value)}
-                                     min={1}
-                                     max={1.06}
-                                     step={0.01}/>
-                    </div>
-                    {
-                        isStoreRoute &&
-                        <button className={`${styles.control} ${styles[direction]} h5`}
-                                onClick={() => setCartOpen(true)}>
-                            <i className="icon icon-bag-solid"/>
-                            <span className={styles.control_indicator}/>
-                            Cart (2 items)
-                        </button>
-                    }
-                </div>
-                <User/>
-            </div>
+/**
+ * Theme Toggle Button Component
+ */
+const ThemeToggleButton = memo(({ theme, onToggle }) => (
+  <button 
+    className={`${styles.control} h5`} 
+    onClick={onToggle}
+    aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`}
+  >
+    <i className={`icon-${theme === 'light' ? 'moon' : 'sun'}`} />
+    Theme
+  </button>
+));
+
+ThemeToggleButton.displayName = 'ThemeToggleButton';
+ThemeToggleButton.propTypes = {
+  theme: PropTypes.string.isRequired,
+  onToggle: PropTypes.func.isRequired
+};
+
+/**
+ * Cart Button Component
+ */
+const CartButton = memo(({ itemCount, onClick }) => (
+  <button 
+    className={`${styles.control} h5`}
+    onClick={onClick}
+    aria-label={`Shopping cart with ${itemCount} items`}
+  >
+    <i className="icon icon-bag-solid" />
+    {itemCount > 0 && <span className={styles.control_indicator} />}
+    Cart {itemCount > 0 && `(${itemCount} ${itemCount === 1 ? 'item' : 'items'})`}
+  </button>
+));
+
+CartButton.displayName = 'CartButton';
+CartButton.propTypes = {
+  itemCount: PropTypes.number.isRequired,
+  onClick: PropTypes.func.isRequired
+};
+
+/**
+ * Desktop Header Component - full featured layout for desktop devices
+ */
+const DesktopHeader = memo(({ title }) => {
+  const { width } = useWindowSize();
+  const { theme, toggleTheme } = useThemeProvider();
+  const { setCartOpen, cartItems = [] } = useShopProvider();
+  const [ref, { width: titleWidth }] = useMeasure();
+  const isStoreRoute = useStoreRoute();
+
+  const shouldShowSidebarTrigger = useMemo(
+    () => width < BREAKPOINTS.LARGE_DESKTOP,
+    [width]
+  );
+
+  const cartItemCount = useMemo(
+    () => cartItems.length || CART_ITEMS_MOCK,
+    [cartItems]
+  );
+
+  const handleCartOpen = useCallback(() => {
+    setCartOpen(true);
+  }, [setCartOpen]);
+
+  return (
+    <div className={`${styles.desktop} d-flex justify-content-between align-items-center g-20`}>
+      <div className="d-flex align-items-center flex-1 g-30">
+        {shouldShowSidebarTrigger && <SidebarTrigger />}
+        <div className="flex-1" ref={ref}>
+          <TruncatedText 
+            className={`${styles.title} h2`} 
+            text={title} 
+            width={titleWidth} 
+            lines={1}
+          />
         </div>
-    )
-}
+      </div>
+      
+      <div className="d-flex align-items-center">
+        <Search />
+        
+        <div className={`${styles.quick_actions} d-flex g-30`} style={{ margin: '0 50px' }}>
+          <ThemeToggleButton theme={theme} onToggle={toggleTheme} />
+          <AdminQuickActions />
+          {isStoreRoute && (
+            <CartButton itemCount={cartItemCount} onClick={handleCartOpen} />
+          )}
+        </div>
+        
+        <User />
+      </div>
+    </div>
+  );
+});
 
-const PageHeader = ({title}) => {
-    const {width} = useWindowSize();
+DesktopHeader.displayName = 'DesktopHeader';
+DesktopHeader.propTypes = {
+  title: PropTypes.string.isRequired
+};
 
-    return (
-        <>
-            <Helmet>
-                <title>{title} | Liga Soccer React Dashboard Template</title>
-            </Helmet>
-            {
-                width < 1280 ?
-                    (
-                        width < 768 ?
-                            <h1 className={`${styles.title} h2`}>{title}</h1>
-                            :
-                            <TabletHeader title={title}/>
-                    )
-                    :
-                    <DesktopHeader title={title}/>
-            }
-        </>
-    )
-}
+/**
+ * Main PageHeader Component - responsive header with SEO support
+ * @param {string} title - Page title
+ * @param {string} metaDescription - Optional meta description for SEO
+ * @param {string} metaKeywords - Optional meta keywords for SEO
+ */
+const PageHeader = ({ 
+  title, 
+  metaDescription = '', 
+  metaKeywords = '' 
+}) => {
+  const { width } = useWindowSize();
+
+  const headerComponent = useMemo(() => {
+    if (width < BREAKPOINTS.MOBILE) {
+      return <MobileHeader title={title} />;
+    }
+    if (width < BREAKPOINTS.TABLET) {
+      return <TabletHeader title={title} />;
+    }
+    return <DesktopHeader title={title} />;
+  }, [width, title]);
+
+  return (
+    <>
+      <Helmet>
+        <title>{title} | Liga Soccer React Dashboard</title>
+        {metaDescription && <meta name="description" content={metaDescription} />}
+        {metaKeywords && <meta name="keywords" content={metaKeywords} />}
+        <meta property="og:title" content={`${title} | Liga Soccer React Dashboard`} />
+        {metaDescription && <meta property="og:description" content={metaDescription} />}
+      </Helmet>
+      {headerComponent}
+    </>
+  );
+};
 
 PageHeader.propTypes = {
-    title: PropTypes.string.isRequired
-}
+  title: PropTypes.string.isRequired,
+  metaDescription: PropTypes.string,
+  metaKeywords: PropTypes.string
+};
 
-export default PageHeader
+export default memo(PageHeader)

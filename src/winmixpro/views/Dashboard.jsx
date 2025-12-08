@@ -1,0 +1,34 @@
+import React from 'react';
+import WidgetGroup from '@/components/WidgetGroup';
+import PredictionCard from '../components/PredictionCard'; // Corrected import path
+import MatchesOverview from '@/widgets/MatchesOverview';
+import TeamStatsSlider from '@/widgets/TeamStatsSlider';
+import { predictions } from '../data/predictions';
+
+const Dashboard = () => {
+  return (
+    <div>
+      <h1>WinMix Pro</h1>
+      <p>Your personal sports betting assistant.</p>
+
+      <WidgetGroup title="Recent Predictions">
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
+          {predictions.map((p, i) => (
+            <PredictionCard key={i} prediction={p} index={i} />
+          ))}
+        </div>
+      </WidgetGroup>
+
+      <WidgetGroup title="Match Insights">
+        <MatchesOverview />
+      </WidgetGroup>
+
+      <WidgetGroup title="Team Form">
+        <TeamStatsSlider />
+      </WidgetGroup>
+
+    </div>
+  );
+};
+
+export default Dashboard;

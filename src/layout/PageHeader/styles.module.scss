@@ -1,103 +1,268 @@
+// Variables
+$gap-sm: 13px;
+$gap-md: 15px;
+$gap-lg: 30px;
+$border-radius-full: 50%;
+$transition-base: 0.3s ease;
+
+// Search Component
 .search {
-    display: flex;
-    flex-direction: row-reverse;
-    align-items: center;
-    gap: 13px;
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  gap: $gap-sm;
+  transition: all $transition-base;
 
-    &.light {
-        input {
-            color: var(--text);
-        }
-    }
-
-    &.dark {
-        input {
-            color: #fff;
-        }
-    }
-
+  &.light {
     input {
-        max-width: 140px;
-        width: 100%;
+      color: var(--text);
+      
+      &::placeholder {
+        color: rgba(var(--text-rgb), 0.5);
+      }
     }
+  }
 
-    label {
-        font-size: 1rem;
-        line-height: 1;
-        color: var(--highlight);
+  &.dark {
+    input {
+      color: #fff;
+      
+      &::placeholder {
+        color: rgba(255, 255, 255, 0.5);
+      }
     }
+  }
+
+  input {
+    max-width: 140px;
+    width: 100%;
+    transition: max-width $transition-base, border-color $transition-base;
+
+    &:focus {
+      max-width: 200px;
+      outline: none;
+      border-color: var(--highlight);
+    }
+  }
+
+  label {
+    font-size: 1rem;
+    line-height: 1;
+    color: var(--highlight);
+    cursor: pointer;
+    transition: color $transition-base;
+
+    &:hover {
+      color: var(--highlight-hover, var(--highlight));
+    }
+  }
 }
 
+// Control Button Component
 .control {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    color: var(--text);
-    position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text);
+  position: relative;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: all $transition-base;
+  user-select: none;
 
+  &:hover {
+    background: rgba(var(--highlight-rgb, 26, 115, 232), 0.1);
+    
     i {
-        color: var(--highlight);
-        font-size: 16px;
+      transform: scale(1.1);
     }
+  }
 
-    &.ltr .control_indicator {
-        left: 10px;
-    }
+  &:active {
+    transform: scale(0.95);
+  }
 
-    &.rtl .control_indicator {
-        right: 10px;
-    }
+  &:focus-visible {
+    outline: 2px solid var(--highlight);
+    outline-offset: 2px;
+  }
 
-    &_indicator {
-        position: absolute;
-        background: var(--highlight-invert);
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        top: 10px;
-    }
+  i {
+    color: var(--highlight);
+    font-size: 16px;
+    transition: all $transition-base;
+  }
+
+  // RTL/LTR Support
+  &.ltr .control_indicator {
+    left: 10px;
+  }
+
+  &.rtl .control_indicator {
+    right: 10px;
+  }
+
+  // Notification Indicator
+  &_indicator {
+    position: absolute;
+    background: var(--highlight-invert);
+    width: 8px;
+    height: 8px;
+    border-radius: $border-radius-full;
+    top: 10px;
+    animation: pulse 2s infinite;
+    box-shadow: 0 0 0 0 rgba(var(--highlight-invert-rgb, 255, 0, 0), 0.7);
+  }
 }
 
+// Avatar Component
 .avatar {
-    position: relative;
+  position: relative;
+  cursor: pointer;
 
-    img {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-    }
+  img {
+    width: 50px;
+    height: 50px;
+    border-radius: $border-radius-full;
+    object-fit: cover;
+    border: 2px solid transparent;
+    transition: all $transition-base;
+  }
 
-    &_cart {
-        position: absolute;
-        right: 0;
-        bottom: 0;
-        width: 20px;
-        height: 20px;
-        background: var(--highlight);
-        border-radius: 50%;
-        font-size: 10px;
-        color: var(--header-invert);
-    }
+  &:hover img {
+    border-color: var(--highlight);
+    transform: scale(1.05);
+  }
+
+  // Cart Badge
+  &_cart {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 20px;
+    height: 20px;
+    background: var(--highlight);
+    border-radius: $border-radius-full;
+    font-size: 10px;
+    color: var(--header-invert);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    border: 2px solid var(--widget);
+  }
 }
 
+// Navbar Base
 .navbar {
-    padding: 15px 25px;
-    background: var(--widget);
-    border-bottom: 1px solid var(--border);
+  padding: 15px 25px;
+  background: var(--widget);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(10px);
+  transition: all $transition-base;
 }
 
+// Title Styles
 .title {
-    margin: 10px 0 30px;
+  margin: 10px 0 30px;
+  color: var(--text);
+  font-weight: 600;
+  transition: color $transition-base;
 }
 
+// Tablet Layout
 .tablet {
-    margin-bottom: 30px;
+  margin-bottom: 30px;
+  animation: fadeIn 0.3s ease-in;
 
-    .title {
-        margin: 0;
-    }
+  .title {
+    margin: 0;
+  }
 }
 
+// Desktop Layout
 .desktop {
-    margin-bottom: 40px;
+  margin-bottom: 40px;
+  animation: fadeIn 0.3s ease-in;
+}
+
+// Quick Actions Container
+.quick_actions {
+  display: flex;
+  align-items: center;
+  gap: $gap-md;
+  padding: 0;
+  margin: 0;
+}
+
+// Animations
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(var(--highlight-invert-rgb, 255, 0, 0), 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(var(--highlight-invert-rgb, 255, 0, 0), 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(var(--highlight-invert-rgb, 255, 0, 0), 0);
+  }
+}
+
+// Responsive Adjustments
+@media (max-width: 1279px) {
+  .desktop {
+    margin-bottom: 30px;
+  }
+}
+
+@media (max-width: 767px) {
+  .title {
+    margin: 10px 0 20px;
+    font-size: 1.5rem;
+  }
+
+  .navbar {
+    padding: 12px 20px;
+  }
+}
+
+// Dark mode specific adjustments
+[data-theme='dark'] {
+  .control {
+    &:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+  }
+
+  .navbar {
+    backdrop-filter: blur(10px) brightness(0.8);
+  }
+}
+
+// Accessibility
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

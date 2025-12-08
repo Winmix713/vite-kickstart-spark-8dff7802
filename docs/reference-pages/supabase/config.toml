@@ -1,0 +1,149 @@
+project_id = "wclutzbojatqtxwlvtab"
+
+# =============================================================================
+# CRON JOBS CONFIGURATION
+# =============================================================================
+# Scheduled tasks that run automatically at specified intervals
+
+[cron.retrain-suggestion-check]
+schedule = "0 * * * *"  # Run every hour at minute 0
+method = "POST"
+
+# =============================================================================
+# JWT VERIFICATION CONFIGURATION
+# =============================================================================
+# This section explicitly configures JWT verification for all Edge Functions.
+# - verify_jwt = false: Public endpoints (unauthenticated access)
+# - verify_jwt = true: Protected endpoints (require valid JWT token)
+#
+# All functions are explicitly listed to prevent falling back to insecure defaults.
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# PUBLIC FUNCTIONS (unauthenticated access)
+# -----------------------------------------------------------------------------
+# These functions are intentionally public and do not require authentication
+
+[functions.get-predictions]
+verify_jwt = false
+
+# -----------------------------------------------------------------------------
+# PROTECTED FUNCTIONS (require authentication)
+# -----------------------------------------------------------------------------
+# All functions below require a valid JWT token from authenticated users.
+# Additional role-based access control (RBAC) is enforced within each function.
+
+# Admin Operations
+[functions.admin-import-env]
+verify_jwt = true
+
+[functions.admin-import-matches-csv]
+verify_jwt = true
+
+# Prediction & Analysis
+[functions.analyze-match]
+verify_jwt = true
+
+[functions.predictions-track]
+verify_jwt = true
+
+[functions.predictions-update-results]
+verify_jwt = true
+
+[functions.submit-feedback]
+verify_jwt = true
+
+# Job Management
+[functions.jobs-create]
+verify_jwt = true
+
+[functions.jobs-delete]
+verify_jwt = true
+
+[functions.jobs-list]
+verify_jwt = true
+
+[functions.jobs-logs]
+verify_jwt = true
+
+[functions.jobs-scheduler]
+verify_jwt = true
+
+[functions.jobs-toggle]
+verify_jwt = true
+
+[functions.jobs-trigger]
+verify_jwt = true
+
+[functions.jobs-update]
+verify_jwt = true
+
+# Pattern Detection & Analysis
+[functions.patterns-detect]
+verify_jwt = true
+
+[functions.patterns-team]
+verify_jwt = true
+
+[functions.patterns-verify]
+verify_jwt = true
+
+[functions.meta-patterns-apply]
+verify_jwt = true
+
+[functions.meta-patterns-discover]
+verify_jwt = true
+
+# Model Management
+[functions.models-auto-prune]
+verify_jwt = true
+
+[functions.models-compare]
+verify_jwt = true
+
+[functions.models-performance]
+verify_jwt = true
+
+# Cross-League Intelligence
+[functions.cross-league-analyze]
+verify_jwt = true
+
+[functions.cross-league-correlations]
+verify_jwt = true
+
+# Monitoring & Health
+[functions.monitoring-alerts]
+verify_jwt = true
+
+[functions.monitoring-computation-graph]
+verify_jwt = true
+
+[functions.monitoring-health]
+verify_jwt = true
+
+[functions.monitoring-metrics]
+verify_jwt = true
+
+# AI Chat
+[functions.ai-chat]
+verify_jwt = false
+
+# Phase 9: Collaborative Intelligence
+[functions.phase9-collaborative-intelligence]
+verify_jwt = true
+
+[functions.phase9-market-integration]
+verify_jwt = true
+
+[functions.phase9-self-improving-system]
+verify_jwt = true
+
+[functions.phase9-temporal-decay]
+verify_jwt = true
+
+# Model Retraining Suggestions
+[functions.retrain-suggestion-check]
+verify_jwt = false
+
+[functions.retrain-suggestion-action]
+verify_jwt = true

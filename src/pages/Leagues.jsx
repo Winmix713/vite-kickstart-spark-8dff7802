@@ -1,0 +1,111 @@
+import { useMemo, useState } from 'react';
+
+// layout components
+import PageHeader from '@layout/PageHeader';
+import AppGrid from '@layout/AppGrid';
+
+// components
+import WidgetGroup from '@components/WidgetGroup';
+
+const leagueStandingsData = {
+  angol: [
+    { position: 1, team: "Liverpool", played: 12, won: 9, drawn: 2, lost: 1, points: 29 },
+    { position: 2, team: "Manchester Kék", played: 12, won: 8, drawn: 3, lost: 1, points: 27 },
+    { position: 3, team: "London Ágyúk", played: 12, won: 7, drawn: 4, lost: 1, points: 25 },
+    { position: 4, team: "Chelsea", played: 12, won: 7, drawn: 3, lost: 2, points: 24 },
+    { position: 5, team: "Aston Oroszlán", played: 12, won: 6, drawn: 3, lost: 3, points: 21 },
+    { position: 6, team: "Tottenham", played: 12, won: 6, drawn: 2, lost: 4, points: 20 },
+    { position: 7, team: "Newcastle", played: 12, won: 5, drawn: 4, lost: 3, points: 19 },
+    { position: 8, team: "Brighton", played: 12, won: 5, drawn: 3, lost: 4, points: 18 },
+  ],
+  spanyol: [
+    { position: 1, team: "Madrid Fehér", played: 12, won: 9, drawn: 2, lost: 1, points: 29 },
+    { position: 2, team: "Barcelona", played: 12, won: 8, drawn: 3, lost: 1, points: 27 },
+    { position: 3, team: "Madrid Piros", played: 12, won: 7, drawn: 3, lost: 2, points: 24 },
+    { position: 4, team: "Girona", played: 12, won: 6, drawn: 4, lost: 2, points: 22 },
+    { position: 5, team: "Bilbao", played: 12, won: 6, drawn: 3, lost: 3, points: 21 },
+    { position: 6, team: "San Sebastian", played: 12, won: 5, drawn: 4, lost: 3, points: 19 },
+    { position: 7, team: "Valencia", played: 12, won: 5, drawn: 3, lost: 4, points: 18 },
+    { position: 8, team: "Sevilla Piros", played: 12, won: 4, drawn: 5, lost: 3, points: 17 },
+  ]
+};
+
+const StandingsWidget = () => {
+    const [league, setLeague] = useState("angol");
+    const standings = leagueStandingsData[league];
+
+    return (
+        <WidgetGroup>
+            <div className="flex justify-center mb-4">
+              <button
+                onClick={() => setLeague("angol")}
+                className={`px-4 py-2 rounded-md text-sm font-semibold transition ${
+                  league === "angol"
+                    ? "bg-card text-foreground ring-1 ring-border shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                Angol Bajnokság
+              </button>
+              <button
+                onClick={() => setLeague("spanyol")}
+                className={`px-4 py-2 rounded-md text-sm font-semibold transition ${
+                  league === "spanyol"
+                    ? "bg-card text-foreground ring-1 ring-border shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                Spanyol Bajnokság
+              </button>
+            </div>
+            <div className="rounded-2xl bg-card ring-1 ring-border overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b border-border bg-muted/30">
+                        <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground">#</th>
+                        <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground">Csapat</th>
+                        <th className="px-4 py-3 text-center text-xs font-semibold text-muted-foreground">M</th>
+                        <th className="px-4 py-3 text-center text-xs font-semibold text-muted-foreground">Gy</th>
+                        <th className="px-4 py-3 text-center text-xs font-semibold text-muted-foreground">D</th>
+                        <th className="px-4 py-3 text-center text-xs font-semibold text-muted-foreground">V</th>
+                        <th className="px-4 py-3 text-center text-xs font-semibold text-muted-foreground">P</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {standings.map((team) => (
+                        <tr
+                          key={team.position}
+                          className="border-b border-border hover:bg-muted/30 transition"
+                        >
+                          <td className="px-4 py-3 text-sm text-muted-foreground">{team.position}</td>
+                          <td className="px-4 py-3 text-sm font-semibold text-foreground">{team.team}</td>
+                          <td className="px-4 py-3 text-center text-sm text-muted-foreground">{team.played}</td>
+                          <td className="px-4 py-3 text-center text-sm text-muted-foreground">{team.won}</td>
+                          <td className="px-4 py-3 text-center text-sm text-muted-foreground">{team.drawn}</td>
+                          <td className="px-4 py-3 text-center text-sm text-muted-foreground">{team.lost}</td>
+                          <td className="px-4 py-3 text-center text-sm font-bold text-primary">{team.points}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+            </div>
+        </WidgetGroup>
+    )
+}
+
+const LeaguesPage = () => {
+    const widgets = useMemo(() => ({
+        standings: <StandingsWidget />
+    }), []);
+
+    return (
+        <>
+            <PageHeader title="Bajnoki tabella" />
+            <AppGrid id="leagues_page" widgets={widgets}/>
+        </>
+    )
+}
+
+export default LeaguesPage;

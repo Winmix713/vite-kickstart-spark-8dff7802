@@ -1,22 +1,24 @@
 {
     "compilerOptions": {
-        "jsx": "react",
-        "baseUrl": "./src",
-        "paths": {
-            "@components/*": [ "components/*"],
-            "@ui/*": [ "ui/*" ],
-            "@pages/*": [ "pages/*" ],
-            "@assets/*": [ "assets/*" ],
-            "@styles/*": [ "styles/*" ],
-            "@db/*": [ "db/*" ],
-            "@hooks/*": [ "hooks/*" ],
-            "@layout/*": [ "layout/*" ],
-            "@fonts/*": [ "fonts/*" ],
-            "@utils/*": [ "utils/*" ],
-            "@widgets/*": [ "widgets/*" ],
-            "@contexts/*": [ "contexts/*" ],
-            "@constants/*": [ "constants/*" ],
-            "@features/*": [ "features/*" ]
-        }
-    }
-}
+      "jsx": "react",
+      "baseUrl": "./src",
+      "paths": {
+        "@components/*": ["components/*"],
+        "@ui/*": ["ui/*"],
+        "@pages/*": ["pages/*"],
+        "@assets/*": ["assets/*"],
+        "@styles/*": ["styles/*"],
+        "@db/*": ["db/*"],
+        "@hooks/*": ["hooks/*"],
+        "@layout/*": ["layout/*"],
+        "@fonts/*": ["fonts/*"],
+        "@utils/*": ["utils/*"],
+        "@widgets/*": ["widgets/*"],
+        "@contexts/*": ["contexts/*"],
+        "@constants/*": ["constants/*"],
+        "@features/*": ["features/*"]
+      }
+    },
+    "exclude": ["node_modules", "**/node_modules/*"]
+  }
+  

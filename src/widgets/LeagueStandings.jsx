@@ -6,15 +6,14 @@ import theme from 'styled-theming';
 import Spring from '@components/Spring';
 import LeagueHeader from '@components/LeagueHeader';
 import TeamScoreRow, {StyledRow} from '@components/TeamScoreRow';
+import LoadingScreen from '@components/LoadingScreen';
 
 // hooks
 import {useThemeProvider} from '@contexts/themeContext';
+import { useLeagueTable } from '@hooks/useTeams';
 
 // assets
 import english_premier from '@assets/clubs/english_premier.webp';
-
-// data placeholder
-import league_standings from '@db/league_standings';
 
 const TableHeader = styled(StyledRow)`
   display: flex;
@@ -46,9 +45,47 @@ const TableHeader = styled(StyledRow)`
   }
 `;
 
-const LeagueStandings = () => {
+const LeagueStandings = ({ leagueId = 'default-league-id' }) => {
     const {direction} = useThemeProvider();
-    const tableData = league_standings.sort((a, b) => b.pts - a.pts);
+    
+    // Use real data from Supabase
+    const { data: teamsWithStats, isLoading, error } = useLeagueTable(leagueId);
+
+    // Fallback to empty array while loading
+    const tableData = teamsWithStats || [];
+
+    // Transform data to match expected format
+    const transformedData = tableData.map((team, index) => ({
+      name: team.name,
+      color: team.short_name.toLowerCase().replace(' ', '-'),
+      pts: team.points,
+      w: team.wins,
+      d: team.draws,
+      l: team.losses,
+      logo_url: team.logo_url
+    }));
+
+    // Show loading state
+    if (isLoading) {
+        return (
+            <Spring className="card d-flex flex-column g-20 card-padded">
+                <div className="flex items-center justify-center h-32">
+                    <LoadingScreen />
+                </div>
+            </Spring>
+        );
+    }
+
+    // Show error state
+    if (error) {
+        return (
+            <Spring className="card d-flex flex-column g-20 card-padded">
+                <div className="text-center text-red-500">
+                    Error loading league standings: {error.message}
+                </div>
+            </Spring>
+        );
+    }
 
     return (
         <Spring className="card d-flex flex-column g-20 card-padded">
@@ -67,10 +104,15 @@ const LeagueStandings = () => {
                 </TableHeader>
                 <div className="d-flex flex-column g-1">
                     {
-                        tableData.map((item, index) => (
-                            <TeamScoreRow key={index} data={item} index={index} variant="league"/>
+                        transformedData.map((item, index) => (
+                            <TeamScoreRow key={item.name} data={item} index={index} variant="league"/>
                         ))
                     }
+                    {transformedData.length === 0 && (
+                        <div className="text-center text-gray-500 py-4">
+                            No team data available
+                        </div>
+                    )}
                 </div>
             </div>
         </Spring>

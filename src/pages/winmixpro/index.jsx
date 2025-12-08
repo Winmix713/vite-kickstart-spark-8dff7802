@@ -1,0 +1,89 @@
+import React from 'react';
+import { Link, Routes, Route } from 'react-router-dom';
+
+// pages
+import AdminDashboard from './AdminDashboard';
+import AdminFeatures from './AdminFeatures';
+import AdminDesign from './AdminDesign';
+import AdminComponents from './AdminComponents';
+
+// components
+import Spring from '@components/Spring';
+
+const AdminLayout = ({ children }) => {
+    const currentPath = window.location.pathname;
+
+    return (
+        <div className="admin-layout flex gap-6 p-6">
+            <div className="admin-layout__sidebar w-64 flex-shrink-0">
+                <Spring className="card card-padded">
+                    <div className="space-y-4">
+                        <h2 className="text-xl font-bold text-white">WinMixPro Admin</h2>
+                        <nav className="space-y-2">
+                            <Link to="/winmixpro/admin" className="block">
+                                <button 
+                                    className={`btn w-full justify-start ${currentPath === '/winmixpro/admin' ? 'btn--primary' : 'btn--outline'}`}
+                                >
+                                    Irányítópult
+                                </button>
+                            </Link>
+                            <Link to="/winmixpro/admin/features" className="block">
+                                <button 
+                                    className={`btn w-full justify-start ${currentPath === '/winmixpro/admin/features' ? 'btn--primary' : 'btn--outline'}`}
+                                >
+                                    Funkciók
+                                </button>
+                            </Link>
+                            <Link to="/winmixpro/admin/design" className="block">
+                                <button 
+                                    className={`btn w-full justify-start ${currentPath === '/winmixpro/admin/design' ? 'btn--primary' : 'btn--outline'}`}
+                                >
+                                    Terv
+                                </button>
+                            </Link>
+                            <Link to="/winmixpro/admin/components" className="block">
+                                <button 
+                                    className={`btn w-full justify-start ${currentPath === '/winmixpro/admin/components' ? 'btn--primary' : 'btn--outline'}`}
+                                >
+                                    Komponensek
+                                </button>
+                            </Link>
+                        </nav>
+                    </div>
+                </Spring>
+            </div>
+            <div className="admin-layout__content flex-1">
+                {children}
+            </div>
+        </div>
+    );
+};
+
+const WinmixProAdmin = () => {
+    return (
+        <Routes>
+            <Route path="/" element={
+                <AdminLayout>
+                    <AdminDashboard />
+                </AdminLayout>
+            } />
+            <Route path="/features" element={
+                <AdminLayout>
+                    <AdminFeatures />
+                </AdminLayout>
+            } />
+            <Route path="/design" element={
+                <AdminLayout>
+                    <AdminDesign />
+                </AdminLayout>
+            } />
+            <Route path="/components" element={
+                <AdminLayout>
+                    <AdminComponents />
+                </AdminLayout>
+            } />
+        </Routes>
+    );
+};
+
+export default WinmixProAdmin;

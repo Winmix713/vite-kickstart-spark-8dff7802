@@ -100,3 +100,20 @@ export const useUpdateMatchStatus = () => {
     },
   })
 }
+
+export const useKnockoutMatches = (stage?: string) => {
+  return useQuery({
+    queryKey: [...matchKeys.list('knockout'), stage].filter(Boolean),
+    queryFn: () => matchService.getKnockoutMatches(stage),
+    staleTime: 1000 * 60 * 15, // 15 minutes for knockout matches
+  })
+}
+
+export const useMatchStatistics = (matchId?: string) => {
+  return useQuery({
+    queryKey: [...matchKeys.list('statistics'), matchId].filter(Boolean),
+    queryFn: () => matchService.getMatchStatistics(matchId || ''),
+    enabled: !!matchId,
+    staleTime: 1000 * 60 * 30, // 30 minutes for statistics
+  })
+}

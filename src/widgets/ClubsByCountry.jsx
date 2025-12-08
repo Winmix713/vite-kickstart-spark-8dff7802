@@ -8,24 +8,76 @@ import ScrollContainer from '@components/ScrollContainer';
 import {useState} from 'react';
 import useMeasure from 'react-use-measure';
 
-// data placeholder
-import clubs_by_country from '@db/clubs_by_country';
+// hooks
+import { useTeamsByCountry, useAllCountries } from '@hooks/useTeams';
+import LoadingScreen from '@components/LoadingScreen';
 
 const ClubsByCountry = () => {
-    const countries = clubs_by_country.map(item => item.country);
-    const [country, setCountry] = useState(countries[0]);
-    const clubs = clubs_by_country.find(item => item.country === country).clubs;
+    const [country, setCountry] = useState('');
     const [ref, {height}] = useMeasure();
+    
+    // Get countries and teams from Supabase
+    const { data: countries, isLoading: countriesLoading } = useAllCountries();
+    const { data: teams, isLoading: teamsLoading, error: teamsError } = useTeamsByCountry(country);
+
+    // Set initial country when countries are loaded
+    const selectedCountry = country || (countries && countries.length > 0 ? countries[0] : '');
+
+    // Show loading state
+    if (countriesLoading || (teamsLoading && country)) {
+        return (
+            <Spring className="card h-4">
+                <div className="flex items-center justify-center h-32">
+                    <LoadingScreen />
+                </div>
+            </Spring>
+        );
+    }
+
+    // Show error state
+    if (teamsError) {
+        return (
+            <Spring className="card h-4">
+                <div className="text-center text-red-500 p-4">
+                    Error loading teams: {teamsError.message}
+                </div>
+            </Spring>
+        );
+    }
+
+    // Show empty state
+    if (!countries || countries.length === 0) {
+        return (
+            <Spring className="card h-4">
+                <div className="text-center text-gray-500 p-4">
+                    No countries available
+                </div>
+            </Spring>
+        );
+    }
+
+    const clubs = teams || [];
 
     return (
         <Spring className="card h-4">
-            <SelectionList options={countries} active={country} setActive={setCountry} innerRef={ref}/>
+            <SelectionList 
+                options={countries} 
+                active={selectedCountry} 
+                setActive={setCountry} 
+                innerRef={ref}
+            />
             <ScrollContainer height={height}>
                 <div className="track d-flex flex-column g-20" style={{padding: 20}}>
                     {
-                        clubs.map((club, index) => (
-                            <ClubCard key={`${club.name}-${country}`} country={country} club={club} index={index}/>
-                        ))
+                        clubs.length > 0 ? (
+                            clubs.map((club, index) => (
+                                <ClubCard key={`${club.id}-${selectedCountry}`} country={selectedCountry} club={club} index={index}/>
+                            ))
+                        ) : (
+                            <div className="text-center text-gray-500 py-8">
+                                No teams available for {selectedCountry}
+                            </div>
+                        )
                     }
                 </div>
             </ScrollContainer>

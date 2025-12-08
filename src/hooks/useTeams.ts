@@ -88,3 +88,20 @@ export const useDeleteTeam = () => {
     },
   })
 }
+
+export const useTeamsByCountry = (country: string) => {
+  return useQuery({
+    queryKey: [...teamKeys.list('by-country'), country],
+    queryFn: () => teamService.getTeamsByCountry(country),
+    enabled: !!country,
+    staleTime: 1000 * 60 * 15, // 15 minutes
+  })
+}
+
+export const useAllCountries = () => {
+  return useQuery({
+    queryKey: teamKeys.list('all-countries'),
+    queryFn: teamService.getAllCountries,
+    staleTime: 1000 * 60 * 60, // 1 hour for countries list
+  })
+}

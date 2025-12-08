@@ -9,6 +9,7 @@ import AdminComponents from './AdminComponents';
 
 // components
 import Spring from '@components/Spring';
+import RoleGate from '@components/RoleGate';
 
 const AdminLayout = ({ children }) => {
     const currentPath = window.location.pathname;
@@ -61,28 +62,30 @@ const AdminLayout = ({ children }) => {
 
 const WinmixProAdmin = () => {
     return (
-        <Routes>
-            <Route path="/" element={
-                <AdminLayout>
-                    <AdminDashboard />
-                </AdminLayout>
-            } />
-            <Route path="/features" element={
-                <AdminLayout>
-                    <AdminFeatures />
-                </AdminLayout>
-            } />
-            <Route path="/design" element={
-                <AdminLayout>
-                    <AdminDesign />
-                </AdminLayout>
-            } />
-            <Route path="/components" element={
-                <AdminLayout>
-                    <AdminComponents />
-                </AdminLayout>
-            } />
-        </Routes>
+        <RoleGate allowedRoles={['admin', 'analyst']}>
+            <Routes>
+                <Route path="/" element={
+                    <AdminLayout>
+                        <AdminDashboard />
+                    </AdminLayout>
+                } />
+                <Route path="/features" element={
+                    <AdminLayout>
+                        <AdminFeatures />
+                    </AdminLayout>
+                } />
+                <Route path="/design" element={
+                    <AdminLayout>
+                        <AdminDesign />
+                    </AdminLayout>
+                } />
+                <Route path="/components" element={
+                    <AdminLayout>
+                        <AdminComponents />
+                    </AdminLayout>
+                } />
+            </Routes>
+        </RoleGate>
     );
 };
 

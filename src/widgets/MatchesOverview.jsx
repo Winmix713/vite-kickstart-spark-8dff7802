@@ -11,7 +11,7 @@ import LoadingScreen from '@components/LoadingScreen';
 // hooks
 import useMeasure from 'react-use-measure';
 import {useState, useEffect, useRef} from 'react';
-import { useLiveMatches, useFinishedMatches } from '@hooks/useMatches';
+import { useLiveMatches, useFinishedMatches } from '@/hooks/useWinmixQuery';
 
 const MatchesOverview = () => {
     const [activeTab, setActiveTab] = useState('live');

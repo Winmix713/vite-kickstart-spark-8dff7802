@@ -2,10 +2,13 @@ import React, { createContext, useContext, useEffect, useState } from 'react'
 import { User, Session } from '@supabase/supabase-js'
 import { supabase } from '@/lib/supabase'
 
+export type UserRole = 'user' | 'analyst' | 'admin'
+
 interface AuthContextType {
   user: User | null
   session: Session | null
   loading: boolean
+  role: UserRole | null
   signUp: (email: string, password: string, fullName?: string) => Promise<any>
   signIn: (email: string, password: string) => Promise<any>
   signOut: () => Promise<void>

@@ -28,6 +28,16 @@ const LINKS = [
         ]
     },
     {
+        title: 'WinMixPro Admin',
+        icon: 'cog',
+        pages: [
+            { title: 'Irányítópult', path: '/winmixpro/admin' },
+            { title: 'Funkciók', path: '/winmixpro/admin/features' },
+            { title: 'Terv', path: '/winmixpro/admin/design' },
+            { title: 'Komponensek', path: '/winmixpro/admin/components' }
+        ]
+    },
+    {
         title: 'Fiók',
         icon: 'users',
         pages: [

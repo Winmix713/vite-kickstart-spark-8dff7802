@@ -1,5 +1,6 @@
 import * as React from 'react';
 import ReactGA from 'react-ga4';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 // utils
 import { lazy, Suspense, useEffect, useRef, useMemo } from 'react';
@@ -24,6 +25,7 @@ import 'swiper/css/pagination';
 // contexts
 import { SidebarProvider } from '@contexts/sidebarContext';
 import { useThemeProvider } from '@contexts/themeContext';
+import { AuthProvider } from '@contexts/AuthContext';
 
 // hooks
 import { useWindowSize } from 'react-use';
@@ -58,6 +60,21 @@ const Product = lazy(() => import('@pages/Product'));
 const Login = lazy(() => import('@pages/Login'));
 const SignUp = lazy(() => import('@pages/SignUp'));
 const Settings = lazy(() => import('@pages/Settings'));
+
+// winmixpro admin pages
+const WinmixProAdmin = lazy(() => import('@pages/winmixpro'));
+
+// Create React Query client
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 3,
+      retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
+      staleTime: 1000 * 60 * 5, // 5 minutes
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 const App = () => {
     const appRef = useRef(null);
@@ -117,62 +134,70 @@ const App = () => {
     const isMobile = width < 768;
 
     return (
-        <CacheProvider value={emotionCache}>
-            <MuiThemeProvider theme={muiTheme}>
-                <SidebarProvider>
-                    <ThemeProvider theme={{ theme }}>
-                        <ThemeStyles />
-                        <ToastContainer 
-                            theme={theme} 
-                            autoClose={2500} 
-                            position={toastPosition} 
-                        />
-                        <StyleSheetManager stylisPlugins={plugins}>
-                            <div 
-                                className={`app ${isAuthRoute ? 'fluid' : ''}`} 
-                                ref={appRef}
-                            >
-                                <ScrollToTop />
-                                {!isAuthRoute && (
-                                    <>
-                                        <Sidebar />
-                                        {isMobile && <Navbar />}
-                                        {isMobile && <BottomNav />}
-                                    </>
-                                )}
-                                <div className="app_container">
-                                    <div className="app_container-content d-flex flex-column flex-1">
-                                        <Suspense fallback={<LoadingScreen />}>
-                                            <Routes>
-                                                <Route path="/" element={<ClubSummary />} />
-                                                <Route path="/game-summary" element={<GameSummary />} />
-                                                <Route path="/championships" element={<Championships />} />
-                                                <Route path="/league-overview" element={<LeagueOverview />} />
-                                                <Route path="/fans-community" element={<FansCommunity />} />
-                                                <Route path="/statistics" element={<Statistics />} />
-                                                <Route path="/match-summary" element={<MatchSummary />} />
-                                                <Route path="/match-overview" element={<MatchOverview />} />
-                                                <Route path="/player-profile" element={<PlayerProfile />} />
-                                                <Route path="/schedule" element={<Schedule />} />
-                                                <Route path="/tickets" element={<Tickets />} />
-                                                <Route path="/football-store" element={<FootballStore />} />
-                                                <Route path="/brand-store" element={<BrandStore />} />
-                                                <Route path="/product" element={<Product />} />
-                                                <Route path="/login" element={<Login />} />
-                                                <Route path="/sign-up" element={<SignUp />} />
-                                                <Route path="/settings" element={<Settings />} />
-                                                <Route path="*" element={<PageNotFound />} />
-                                            </Routes>
-                                        </Suspense>
+        <QueryClientProvider client={queryClient}>
+            <AuthProvider>
+                <CacheProvider value={emotionCache}>
+                    <MuiThemeProvider theme={muiTheme}>
+                        <SidebarProvider>
+                            <ThemeProvider theme={{ theme }}>
+                                <ThemeStyles />
+                                <ToastContainer 
+                                    theme={theme} 
+                                    autoClose={2500} 
+                                    position={toastPosition} 
+                                />
+                                <StyleSheetManager stylisPlugins={plugins}>
+                                    <div 
+                                        className={`app ${isAuthRoute ? 'fluid' : ''}`} 
+                                        ref={appRef}
+                                    >
+                                        <ScrollToTop />
+                                        {!isAuthRoute && (
+                                            <>
+                                                <Sidebar />
+                                                {isMobile && <Navbar />}
+                                                {isMobile && <BottomNav />}
+                                            </>
+                                        )}
+                                        <div className="app_container">
+                                            <div className="app_container-content d-flex flex-column flex-1">
+                                                <Suspense fallback={<LoadingScreen />}>
+                                                    <Routes>
+                                                        <Route path="/" element={<ClubSummary />} />
+                                                        <Route path="/game-summary" element={<GameSummary />} />
+                                                        <Route path="/championships" element={<Championships />} />
+                                                        <Route path="/league-overview" element={<LeagueOverview />} />
+                                                        <Route path="/fans-community" element={<FansCommunity />} />
+                                                        <Route path="/statistics" element={<Statistics />} />
+                                                        <Route path="/match-summary" element={<MatchSummary />} />
+                                                        <Route path="/match-overview" element={<MatchOverview />} />
+                                                        <Route path="/player-profile" element={<PlayerProfile />} />
+                                                        <Route path="/schedule" element={<Schedule />} />
+                                                        <Route path="/tickets" element={<Tickets />} />
+                                                        <Route path="/football-store" element={<FootballStore />} />
+                                                        <Route path="/brand-store" element={<BrandStore />} />
+                                                        <Route path="/product" element={<Product />} />
+                                                        <Route path="/login" element={<Login />} />
+                                                        <Route path="/sign-up" element={<SignUp />} />
+                                                        <Route path="/settings" element={<Settings />} />
+                                                        
+                                                        {/* WinMixPro Admin Routes */}
+                                                        <Route path="/winmixpro/admin/*" element={<WinmixProAdmin />} />
+                                                        
+                                                        <Route path="*" element={<PageNotFound />} />
+                                                    </Routes>
+                                                </Suspense>
+                                            </div>
+                                        </div>
+                                        <ShoppingCart isPopup />
                                     </div>
-                                </div>
-                                <ShoppingCart isPopup />
-                            </div>
-                        </StyleSheetManager>
-                    </ThemeProvider>
-                </SidebarProvider>
-            </MuiThemeProvider>
-        </CacheProvider>
+                                </StyleSheetManager>
+                            </ThemeProvider>
+                        </SidebarProvider>
+                    </MuiThemeProvider>
+                </CacheProvider>
+            </AuthProvider>
+        </QueryClientProvider>
     );
 };
 

@@ -1,0 +1,217 @@
+import React, { useState } from 'react';
+import { useFeatureManager } from '@hooks/useFeatureManager';
+
+// components
+import Spring from '@components/Spring';
+import TabButton from '@ui/TabButton';
+import Switch from '@ui/Switch';
+
+const AdminFeatures = () => {
+    const { 
+        features, 
+        updateFeature, 
+        toggleFeature, 
+        setRollout, 
+        deleteFeature,
+        enableAll, 
+        disableAll,
+        exportAsJSON,
+        importFromJSON 
+    } = useFeatureManager();
+
+    const [activeCategory, setActiveCategory] = useState('all');
+    const [searchTerm, setSearchTerm] = useState('');
+    const [showImportDialog, setShowImportDialog] = useState(false);
+    const [importText, setImportText] = useState('');
+
+    // Get unique categories
+    const categories = ['all', ...new Set(features.map(f => f.category))];
+    
+    // Filter features
+    const filteredFeatures = features.filter(feature => {
+        const matchesCategory = activeCategory === 'all' || feature.category === activeCategory;
+        const matchesSearch = feature.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                             feature.description.toLowerCase().includes(searchTerm.toLowerCase());
+        return matchesCategory && matchesSearch;
+    });
+
+    // Group features by category for count display
+    const categoryCounts = categories.reduce((acc, cat) => {
+        acc[cat] = cat === 'all' ? features.length : features.filter(f => f.category === cat).length;
+        return acc;
+    }, {});
+
+    const handleExport = () => {
+        const json = exportAsJSON();
+        const blob = new Blob([json], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `feature-flags-${new Date().toISOString().split('T')[0]}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    };
+
+    const handleImport = () => {
+        try {
+            importFromJSON(importText);
+            setShowImportDialog(false);
+            setImportText('');
+            alert('Funkciók sikeresen importálva!');
+        } catch (error) {
+            alert(`Hiba az importálás során: ${error.message}`);
+        }
+    };
+
+    return (
+        <div className="space-y-6">
+            {/* Header */}
+            <div className="flex items-center justify-between">
+                <div>
+                    <h1 className="text-2xl font-bold text-white">Funkciók</h1>
+                    <p className="text-gray-400">Funkciókapcsolók és rollout kezelése</p>
+                </div>
+                <div className="flex gap-2">
+                    <button 
+                        onClick={enableAll}
+                        className="btn btn--outline"
+                    >
+                        Összes engedélyezése
+                    </button>
+                    <button 
+                        onClick={disableAll}
+                        className="btn btn--outline"
+                    >
+                        Összes letiltása
+                    </button>
+                    <button 
+                        onClick={handleExport}
+                        className="btn btn--primary"
+                    >
+                        Exportálás
+                    </button>
+                    <button 
+                        onClick={() => setShowImportDialog(true)}
+                        className="btn btn--primary"
+                    >
+                        Importálás
+                    </button>
+                </div>
+            </div>
+
+            {/* Search and Filters */}
+            <Spring className="card card-padded">
+                <div className="flex flex-col gap-4">
+                    {/* Search */}
+                    <input
+                        type="text"
+                        placeholder="Keresés funkciók között..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="input w-full"
+                    />
+                    
+                    {/* Category Filter */}
+                    <div className="flex flex-wrap gap-2">
+                        {categories.map(category => (
+                            <button
+                                key={category}
+                                onClick={() => setActiveCategory(category)}
+                                className={`btn ${activeCategory === category ? 'btn--primary' : 'btn--outline'}`}
+                            >
+                                {category === 'all' ? 'Összes' : category}
+                                <span className="badge badge--secondary ml-2">
+                                    {categoryCounts[category]}
+                                </span>
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            </Spring>
+
+            {/* Features List */}
+            <div className="grid gap-4">
+                {filteredFeatures.map((feature) => (
+                    <Spring key={feature.id} className="card card-padded">
+                        <div className="flex items-center justify-between">
+                            <div className="flex-1">
+                                <div className="flex items-center gap-2 mb-2">
+                                    <h3 className="text-lg font-semibold text-white">{feature.name}</h3>
+                                    <span className={`badge ${feature.enabled ? 'badge--primary' : 'badge--secondary'}`}>
+                                        {feature.enabled ? 'Engedélyezve' : 'Letiltva'}
+                                    </span>
+                                </div>
+                                <p className="text-gray-400 mb-2">{feature.description}</p>
+                                <span className="badge badge--outline">{feature.category}</span>
+                            </div>
+                            
+                            <div className="flex items-center gap-4">
+                                {/* Rollout Slider */}
+                                {feature.enabled && (
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-sm text-gray-400">Rollout:</span>
+                                        <input
+                                            type="range"
+                                            min="0"
+                                            max="100"
+                                            step="5"
+                                            value={feature.rollout}
+                                            onChange={(e) => setRollout(feature.id, parseInt(e.target.value))}
+                                            className="w-24"
+                                        />
+                                        <span className="text-sm text-gray-400 w-8">{feature.rollout}%</span>
+                                    </div>
+                                )}
+                                
+                                {/* Toggle */}
+                                <div className="flex items-center">
+                                    <Switch
+                                        checked={feature.enabled}
+                                        onChange={() => toggleFeature(feature.id)}
+                                        id={`feature-${feature.id}`}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </Spring>
+                ))}
+            </div>
+
+            {filteredFeatures.length === 0 && (
+                <Spring className="card card-padded text-center">
+                    <p className="text-gray-400">Nincs találat a megadott szűrőkkel.</p>
+                </Spring>
+            )}
+
+            {/* Import Dialog */}
+            {showImportDialog && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <Spring className="card card-padded max-w-md w-full mx-4">
+                        <h3 className="text-lg font-bold text-white mb-4">Funkciók importálása</h3>
+                        <textarea
+                            value={importText}
+                            onChange={(e) => setImportText(e.target.value)}
+                            placeholder="Illessze be a JSON tartalmat..."
+                            className="w-full h-40 p-3 bg-gray-800 text-white rounded border border-gray-600"
+                        />
+                        <div className="flex gap-2 mt-4">
+                            <button onClick={handleImport} className="btn btn--primary">
+                                Importálás
+                            </button>
+                            <button 
+                                onClick={() => setShowImportDialog(false)} 
+                                className="btn btn--outline"
+                            >
+                                Mégse
+                            </button>
+                        </div>
+                    </Spring>
+                </div>
+            )}
+        </div>
+    );
+};
+
+export default AdminFeatures;

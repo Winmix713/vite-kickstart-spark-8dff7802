@@ -1,0 +1,166 @@
+.header {
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--divider);
+}
+
+.title {
+  margin: 0 0 8px 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.season {
+  font-size: 13px;
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.table {
+  margin-bottom: 16px;
+}
+
+.tableHeader,
+.tableRow {
+  display: grid;
+  grid-template-columns: 40px 1fr 35px 35px 35px 35px 50px;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  font-size: 13px;
+}
+
+.tableHeader {
+  font-weight: 600;
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: var(--widget);
+  border-radius: 6px;
+  margin-bottom: 4px;
+}
+
+.tableRow {
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  margin-bottom: 2px;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    border-radius: 0 3px 3px 0;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  &:hover {
+    background: var(--widget);
+    transform: translateX(2px);
+  }
+
+  &.champions {
+    &::before {
+      background: #4CAF50;
+      opacity: 1;
+    }
+  }
+
+  &.europa {
+    &::before {
+      background: #FF9800;
+      opacity: 1;
+    }
+  }
+}
+
+.posCol {
+  text-align: center;
+  font-weight: 600;
+}
+
+.position {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--widget);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.teamCol {
+  font-weight: 500;
+  color: var(--text);
+}
+
+.teamName {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.statCol {
+  text-align: center;
+  color: var(--text-light);
+  font-size: 13px;
+}
+
+.ptsCol {
+  text-align: center;
+  font-weight: 600;
+}
+
+.points {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 8px;
+  background: var(--accent);
+  color: white;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.legend {
+  display: flex;
+  gap: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--divider);
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legendDot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+
+  &.championsLegend {
+    background: #4CAF50;
+  }
+
+  &.europaLegend {
+    background: #FF9800;
+  }
+}
+
+.legendLabel {
+  font-size: 12px;
+  color: var(--text-light);
+}

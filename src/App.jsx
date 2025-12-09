@@ -65,6 +65,9 @@ const Settings = lazy(() => import('@pages/Settings'));
 // winmixpro admin pages
 const WinmixProAdmin = lazy(() => import('@pages/winmixpro'));
 
+// CMS Runtime Renderer
+const PublishedPage = lazy(() => import('@pages/public/PublishedPage'));
+
 // Create React Query client
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -162,6 +165,12 @@ const App = () => {
                             <Route path="/login" element={<Login />} />
                             <Route path="/sign-up" element={<SignUp />} />
                             
+                            {/* Public runtime renderer (CMS Phase 4) */}
+                            <Route 
+                              path="/p/:slug" 
+                              element={<PublishedPage />} 
+                            />
+
                             {/* Protected routes */}
                             <Route 
                               path="/" 

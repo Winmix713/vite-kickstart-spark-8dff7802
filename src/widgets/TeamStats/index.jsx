@@ -50,6 +50,26 @@ TeamStats.meta = {
     teamId: { type: 'string', default: 'bayern' },
     season: { type: 'string', default: '2024' },
   },
+  styleVariants: [
+    {
+      slug: 'default',
+      label: 'Default',
+      description: 'Standard team stats display',
+      supportedTokens: ['colors', 'spacing', 'radii', 'shadows'],
+    },
+    {
+      slug: 'compact',
+      label: 'Compact',
+      description: 'Reduced padding for space-constrained layouts',
+      supportedTokens: ['colors', 'spacing'],
+    },
+    {
+      slug: 'minimal',
+      label: 'Minimal',
+      description: 'Clean display without borders or shadows',
+      supportedTokens: ['colors'],
+    },
+  ],
 };
 
 export default TeamStats;

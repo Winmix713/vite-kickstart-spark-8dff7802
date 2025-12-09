@@ -5,6 +5,8 @@ import { getWidgetById } from '../registry/widgetRegistry';
 interface WidgetRendererProps {
   type: string;
   props?: Record<string, any>;
+  variant?: string;
+  instanceId?: string;
 }
 
 interface ErrorFallbackProps {
@@ -83,14 +85,35 @@ const UnknownWidgetFallback: React.FC<{ type: string }> = ({ type }) => {
   );
 };
 
-export const WidgetRenderer: React.FC<WidgetRendererProps> = ({ type, props = {} }) => {
+export const WidgetRenderer: React.FC<WidgetRendererProps> = ({ 
+  type, 
+  props = {}, 
+  variant = 'default',
+  instanceId 
+}) => {
   const widgetDef = getWidgetById(type);
 
   if (!widgetDef) {
     return <UnknownWidgetFallback type={type} />;
   }
 
-  const { Component } = widgetDef;
+  const { Component, styleVariants = [] } = widgetDef;
+
+  // Get the variant configuration
+  const variantConfig = styleVariants.find(v => v.slug === variant);
+  
+  // Build class names for the widget
+  let className = 'cms-widget-' + variant;
+  if (variantConfig?.cssClass) {
+    className += ' ' + variantConfig.cssClass;
+  }
+  
+  // Merge variant props if they exist
+  const mergedProps = {
+    ...props,
+    'data-cms-variant': variant,
+    'data-cms-instance-id': instanceId,
+  };
 
   return (
     <ErrorBoundary
@@ -101,7 +124,9 @@ export const WidgetRenderer: React.FC<WidgetRendererProps> = ({ type, props = {}
       }}
     >
       <Suspense fallback={<LoadingFallback />}>
-        <Component {...props} />
+        <div className={className}>
+          <Component {...mergedProps} />
+        </div>
       </Suspense>
     </ErrorBoundary>
   );

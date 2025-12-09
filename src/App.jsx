@@ -12,6 +12,7 @@ import { createCache } from '@emotion/cache';
 // styles
 import ThemeStyles from '@styles/theme';
 import './style.scss';
+import '@cms/theme/theme.css';
 
 // libs styles
 import 'react-toastify/dist/ReactToastify.min.css';

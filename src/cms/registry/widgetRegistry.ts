@@ -1,5 +1,14 @@
 import React from 'react';
 
+export interface WidgetStyleVariant {
+  slug: string;
+  label: string;
+  description?: string;
+  supportedTokens?: string[];
+  cssClass?: string;
+  overrides?: Record<string, any>;
+}
+
 export interface WidgetDefinition {
   id: string;
   name: string;
@@ -8,6 +17,7 @@ export interface WidgetDefinition {
   defaultSize: { w: number; h: number };
   props: Record<string, any>;
   Component: React.FC<any>;
+  styleVariants?: WidgetStyleVariant[];
 }
 
 // Use Vite's glob import to auto-discover all widget components
@@ -40,6 +50,7 @@ Object.entries(widgetModules).forEach(([path, module]: [string, any]) => {
         defaultSize: meta.defaultSize || { w: 2, h: 2 },
         props: meta.props || {},
         Component: Component,
+        styleVariants: meta.styleVariants || [],
       };
       
       widgetRegistry.push(widgetDef);

@@ -17,7 +17,9 @@
         "@contexts/*": ["contexts/*"],
         "@constants/*": ["constants/*"],
         "@features/*": ["features/*"],
-        "@services/*": ["services/*"]
+        "@services/*": ["services/*"],
+        "@cms/*": ["cms/*"],
+        "@integrations/*": ["integrations/*"]
       }
     },
     "exclude": ["node_modules", "**/node_modules/*"]

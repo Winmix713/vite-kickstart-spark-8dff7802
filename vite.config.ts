@@ -33,6 +33,7 @@ const ALIASES = {
   "@features": path.resolve(__dirname, "./src/features"),
   "@providers": path.resolve(__dirname, "./src/providers"),
   "@services": path.resolve(__dirname, "./src/services"),
+  "@cms": path.resolve(__dirname, "./src/cms"),
 };
 
 export default defineConfig(({ mode }): UserConfig => {

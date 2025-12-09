@@ -1,6 +1,6 @@
-import React, { Suspense } from 'react';
-import { ErrorBoundary } from 'react-error-boundary';
-import { getWidgetById } from '../registry/widgetRegistry';
+import React, { Suspense } from "react";
+import { ErrorBoundary } from "react-error-boundary";
+import { getWidgetById } from "../registry/widgetRegistry";
 
 interface WidgetRendererProps {
   type: string;
@@ -14,34 +14,37 @@ interface ErrorFallbackProps {
   resetErrorBoundary: () => void;
 }
 
-const ErrorFallback: React.FC<ErrorFallbackProps> = ({ error, resetErrorBoundary }) => {
+const ErrorFallback: React.FC<ErrorFallbackProps> = ({
+  error,
+  resetErrorBoundary,
+}) => {
   return (
-    <div 
-      role="alert" 
+    <div
+      role="alert"
       style={{
-        padding: '20px',
-        backgroundColor: '#fee',
-        border: '1px solid #fcc',
-        borderRadius: '8px',
-        color: '#c33',
+        padding: "20px",
+        backgroundColor: "#fee",
+        border: "1px solid #fcc",
+        borderRadius: "8px",
+        color: "#c33",
       }}
     >
-      <h3 style={{ margin: '0 0 10px 0', fontSize: '16px', fontWeight: 'bold' }}>
+      <h3
+        style={{ margin: "0 0 10px 0", fontSize: "16px", fontWeight: "bold" }}
+      >
         Widget Error
       </h3>
-      <p style={{ margin: '0 0 10px 0', fontSize: '14px' }}>
-        {error.message}
-      </p>
+      <p style={{ margin: "0 0 10px 0", fontSize: "14px" }}>{error.message}</p>
       <button
         onClick={resetErrorBoundary}
         style={{
-          padding: '8px 16px',
-          backgroundColor: '#c33',
-          color: 'white',
-          border: 'none',
-          borderRadius: '4px',
-          cursor: 'pointer',
-          fontSize: '14px',
+          padding: "8px 16px",
+          backgroundColor: "#c33",
+          color: "white",
+          border: "none",
+          borderRadius: "4px",
+          cursor: "pointer",
+          fontSize: "14px",
         }}
       >
         Retry
@@ -54,9 +57,9 @@ const LoadingFallback: React.FC = () => {
   return (
     <div
       style={{
-        padding: '20px',
-        textAlign: 'center',
-        color: '#666',
+        padding: "20px",
+        textAlign: "center",
+        color: "#666",
       }}
     >
       Loading widget...
@@ -68,28 +71,30 @@ const UnknownWidgetFallback: React.FC<{ type: string }> = ({ type }) => {
   return (
     <div
       style={{
-        padding: '20px',
-        backgroundColor: '#ffc',
-        border: '1px solid #cc9',
-        borderRadius: '8px',
-        color: '#663',
+        padding: "20px",
+        backgroundColor: "#ffc",
+        border: "1px solid #cc9",
+        borderRadius: "8px",
+        color: "#663",
       }}
     >
-      <h3 style={{ margin: '0 0 10px 0', fontSize: '16px', fontWeight: 'bold' }}>
+      <h3
+        style={{ margin: "0 0 10px 0", fontSize: "16px", fontWeight: "bold" }}
+      >
         Unknown Widget
       </h3>
-      <p style={{ margin: 0, fontSize: '14px' }}>
+      <p style={{ margin: 0, fontSize: "14px" }}>
         Widget type "{type}" not found in registry.
       </p>
     </div>
   );
 };
 
-export const WidgetRenderer: React.FC<WidgetRendererProps> = ({ 
-  type, 
-  props = {}, 
-  variant = 'default',
-  instanceId 
+export const WidgetRenderer: React.FC<WidgetRendererProps> = ({
+  type,
+  props = {},
+  variant = "default",
+  instanceId,
 }) => {
   const widgetDef = getWidgetById(type);
 
@@ -100,19 +105,19 @@ export const WidgetRenderer: React.FC<WidgetRendererProps> = ({
   const { Component, styleVariants = [] } = widgetDef;
 
   // Get the variant configuration
-  const variantConfig = styleVariants.find(v => v.slug === variant);
-  
+  const variantConfig = styleVariants.find((v) => v.slug === variant);
+
   // Build class names for the widget
-  let className = 'cms-widget-' + variant;
+  let className = "cms-widget-" + variant;
   if (variantConfig?.cssClass) {
-    className += ' ' + variantConfig.cssClass;
+    className += " " + variantConfig.cssClass;
   }
-  
+
   // Merge variant props if they exist
   const mergedProps = {
     ...props,
-    'data-cms-variant': variant,
-    'data-cms-instance-id': instanceId,
+    "data-cms-variant": variant,
+    "data-cms-instance-id": instanceId,
   };
 
   return (
@@ -120,7 +125,7 @@ export const WidgetRenderer: React.FC<WidgetRendererProps> = ({
       FallbackComponent={ErrorFallback}
       onReset={() => {
         // Optional: Add any cleanup or reset logic here
-        console.log('Resetting widget error boundary');
+        console.log("Resetting widget error boundary");
       }}
     >
       <Suspense fallback={<LoadingFallback />}>

@@ -1,1 +1,81 @@
- // styling import styled from 'styled-components'; // components import Spring from '@/components/Spring'; import PropTypes from 'prop-types'; // Define colors based on status const statusColors = { pending: 'var(--grey)', correct: 'var(--green)', incorrect: 'var(--red)', }; const StyledCard = styled.div' background: var(--widget-bg); border-radius: 8px; padding: 20px; box-shadow: var(--shadow); border-left: 5px solid ${props => statusColors[props.status] || 'var(--grey)'}; display: flex; flex-direction: column; gap: 15px; '; const Teams = styled.div' display: flex; justify-content: space-between; align-items: center; font-size: 1.2rem; font-weight: bold; '; const Outcome = styled.div' font-size: 1rem; color: var(--text-light); '; const Confidence = styled.div' font-size: 1rem; font-weight: bold; '; const PredictionCard = ({ prediction, index }) => { const { match, outcome, confidence, status } = prediction; const teams = match.split(' vs. '); const team1 = teams[0] || 'Team 1'; const team2 = teams[1] || 'Team 2'; return ( <Spring type="slideUp" index={index}> <StyledCard status={status}> <Teams> <span>{team1}</span> <span>vs</span> <span>{team2}</span> </Teams> <Outcome> <strong>Prediction:</strong> {outcome} </Outcome> <Confidence> <strong>Confidence:</strong> {Math.round(confidence * 100)}% </Confidence> </StyledCard> </Spring> ); }; PredictionCard.propTypes = { prediction: PropTypes.shape({ match: PropTypes.string.isRequired, outcome: PropTypes.string.isRequired, confidence: PropTypes.number.isRequired, status: PropTypes.oneOf(['pending', 'correct', 'incorrect']).isRequired, }).isRequired, index: PropTypes.number, }; export default PredictionCard; 
+
+// styling
+import styled from 'styled-components';
+
+// components
+import Spring from '@/components/Spring';
+import PropTypes from 'prop-types';
+
+// Define colors based on status
+const statusColors = {
+    pending: 'var(--grey)',
+    correct: 'var(--green)',
+    incorrect: 'var(--red)',
+};
+
+const StyledCard = styled.div`
+  background: var(--widget-bg);
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: var(--shadow);
+  border-left: 5px solid ${props => statusColors[props.status] || 'var(--grey)'};
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+`;
+
+const Teams = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.2rem;
+    font-weight: bold;
+`;
+
+const Outcome = styled.div`
+    font-size: 1rem;
+    color: var(--text-light);
+`;
+
+const Confidence = styled.div`
+    font-size: 1rem;
+    font-weight: bold;
+`;
+
+
+const PredictionCard = ({ prediction, index }) => {
+    const { match, outcome, confidence, status } = prediction;
+    const teams = match.split(' vs. ');
+    const team1 = teams[0] || 'Team 1';
+    const team2 = teams[1] || 'Team 2';
+
+    return (
+        <Spring type="slideUp" index={index}>
+            <StyledCard status={status}>
+                <Teams>
+                    <span>{team1}</span>
+                    <span>vs</span>
+                    <span>{team2}</span>
+                </Teams>
+                <Outcome>
+                    <strong>Prediction:</strong> {outcome}
+                </Outcome>
+                <Confidence>
+                    <strong>Confidence:</strong> {Math.round(confidence * 100)}%
+                </Confidence>
+            </StyledCard>
+        </Spring>
+    );
+};
+
+PredictionCard.propTypes = {
+    prediction: PropTypes.shape({
+        match: PropTypes.string.isRequired,
+        outcome: PropTypes.string.isRequired,
+        confidence: PropTypes.number.isRequired,
+        status: PropTypes.oneOf(['pending', 'correct', 'incorrect']).isRequired,
+    }).isRequired,
+    index: PropTypes.number,
+};
+
+export default PredictionCard;

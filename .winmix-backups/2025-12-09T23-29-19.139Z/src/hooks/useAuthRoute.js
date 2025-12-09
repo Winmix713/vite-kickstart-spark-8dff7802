@@ -1,0 +1,1 @@
+import { useLocation } from 'react-router-dom'; const useAuthRoute = () => { const location = useLocation(); // Return true if the current path is login or sign-up return['/login', '/sign-up'].includes(location.pathname); }; export default useAuthRoute;

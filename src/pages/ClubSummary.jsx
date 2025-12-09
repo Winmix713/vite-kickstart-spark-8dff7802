@@ -1,1 +1,44 @@
-import { useMemo } from 'react'; // layout components import PageHeader from '@layout/PageHeader'; import AppGrid from '@layout/AppGrid'; // widgets import TeamStats from '@widgets/TeamStats'; import Points from '@widgets/Points'; import Attendance from '@widgets/Attendance'; import TrainingPaceChart from '@widgets/TrainingPaceChart'; import MatchLiveReport from '@widgets/MatchLiveReport'; import TeamFullInfo from '@widgets/TeamFullInfo'; import TeamResults from '@widgets/TeamResults'; import LeagueStandings from '@widgets/LeagueStandings'; // components import WidgetGroup from '@components/WidgetGroup'; const ClubSummary = () => { const widgets = useMemo(() => ({ team_stats: <TeamStats/>, attendance: ( <WidgetGroup> <Points/> <Attendance/> </WidgetGroup> ), training_pace: <TrainingPaceChart/>, live_report: <MatchLiveReport/>, team_full_info: <TeamFullInfo id="bayern"/>, team_results: <TeamResults/>, league_standings: <LeagueStandings/> }), []); return ( <> <PageHeader title="Club summary"/> <AppGrid id="club_summary" widgets={widgets}/> </> ) } export default ClubSummary;
+import { useMemo } from 'react';
+
+// layout components
+import PageHeader from '@layout/PageHeader';
+import AppGrid from '@layout/AppGrid';
+
+// widgets
+import TeamStats from '@widgets/TeamStats';
+import Points from '@widgets/Points';
+import Attendance from '@widgets/Attendance';
+import TrainingPaceChart from '@widgets/TrainingPaceChart';
+import MatchLiveReport from '@widgets/MatchLiveReport';
+import TeamFullInfo from '@widgets/TeamFullInfo';
+import TeamResults from '@widgets/TeamResults';
+import LeagueStandings from '@widgets/LeagueStandings';
+
+// components
+import WidgetGroup from '@components/WidgetGroup';
+
+const ClubSummary = () => {
+    const widgets = useMemo(() => ({
+        team_stats: <TeamStats/>,
+        attendance: (
+            <WidgetGroup>
+                <Points/>
+                <Attendance/>
+            </WidgetGroup>
+        ),
+        training_pace: <TrainingPaceChart/>,
+        live_report: <MatchLiveReport/>,
+        team_full_info: <TeamFullInfo id="bayern"/>,
+        team_results: <TeamResults/>,
+        league_standings: <LeagueStandings/>
+    }), []);
+
+    return (
+        <>
+            <PageHeader title="Club summary"/>
+            <AppGrid id="club_summary" widgets={widgets}/>
+        </>
+    )
+}
+
+export default ClubSummary;

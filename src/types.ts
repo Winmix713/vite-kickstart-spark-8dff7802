@@ -1,0 +1,2 @@
+// Type definitions placeholder for TypeScript configuration
+export {};

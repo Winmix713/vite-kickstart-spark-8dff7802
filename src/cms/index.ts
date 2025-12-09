@@ -1,21 +1,24 @@
-export { 
-  widgetRegistry, 
-  getWidgetById, 
-  getWidgetsByCategory, 
-  getCategories 
-} from './registry/widgetRegistry';
+export {
+  widgetRegistry,
+  getWidgetById,
+  getWidgetsByCategory,
+  getCategories,
+} from "./registry/widgetRegistry";
 
-export type { WidgetDefinition, WidgetStyleVariant } from './registry/widgetRegistry';
+export type {
+  WidgetDefinition,
+  WidgetStyleVariant,
+} from "./registry/widgetRegistry";
 
-export { WidgetRenderer } from './runtime/WidgetRenderer';
-export { default as WidgetRendererDefault } from './runtime/WidgetRenderer';
+export { WidgetRenderer } from "./runtime/WidgetRenderer";
+export { default as WidgetRendererDefault } from "./runtime/WidgetRenderer";
 
 // Theme exports
-export { 
+export {
   CmsThemeProvider,
   useCmsTheme,
-  useCmsThemeSafe
-} from './theme/ThemeProvider';
+  useCmsThemeSafe,
+} from "./theme/ThemeProvider";
 
 export {
   colorPalette,
@@ -31,6 +34,6 @@ export {
   getThemeVariantNames,
   getWidgetStyleVariant,
   getWidgetStyleVariantSlugs,
-} from './theme/tokens';
+} from "./theme/tokens";
 
-export { default as PropsEditor } from './runtime/PropsEditor';
+export { default as PropsEditor } from "./runtime/PropsEditor";

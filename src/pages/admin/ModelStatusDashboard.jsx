@@ -1,1 +1,67 @@
-import { useMemo } from 'react'; // Layout import PageHeader from '@layout/PageHeader'; import AppGrid from '@layout/AppGrid'; import WidgetGroup from '@components/WidgetGroup'; const ModelPerformanceWidget = () => { const models = [ { id: 1, name: 'Deep Neural Network v3', accuracy: 87.5, status: 'active' }, { id: 2, name: 'Gradient Boosting v2', accuracy: 84.2, status: 'active' }, { id: 3, name: 'Random Forest v4', accuracy: 81.8, status: 'active' }, { id: 4, name: 'SVM Classifier v1', accuracy: 78.5, status: 'testing' }, ]; return ( <WidgetGroup> <div className="rounded-2xl bg-card ring-1 ring-border overflow-hidden"> <div className="p-6 border-b border-border"> <h3 className="text-lg font-semibold">Model Performance</h3> </div> <div className="divide-y divide-border"> {models.map(model => ( <div key={model.id} className="p-4"> <div className="flex items-center justify-between mb-3"> <div> <div className="font-medium text-foreground">{model.name}</div> <div className="text-xs text-muted-foreground">Accuracy%</div> </div> <span className={'px-2 py-1 rounded text-xs font-semibold ${ model.status === 'active' ? 'bg-green-500/20 text-green-500' : 'bg-blue-500/20 text-blue-500' }'}> {model.status} </span> </div> <div className="w-full bg-muted/30 rounded-full h-2"> <div className="bg-gradient-to-r from-green-500 to-blue-500 h-2 rounded-full" style={{ width: '${model.accuracy}%' }} /> </div> </div> ))} </div> </div> </WidgetGroup> ); }; const ModelStatusDashboardPageComponent = () => { const widgets = useMemo(() => ({ models: <ModelPerformanceWidget />, }), []); return ( <> <PageHeader title="Model Status Dashboard" metaDescription="Monitor ML model performance and status" /> <AppGrid id="model_status_page" widgets={widgets} /> </> ); }; export default ModelStatusDashboardPageComponent; 
+import { useMemo } from 'react';
+
+// Layout
+import PageHeader from '@layout/PageHeader';
+import AppGrid from '@layout/AppGrid';
+import WidgetGroup from '@components/WidgetGroup';
+
+const ModelPerformanceWidget = () => {
+  const models = [
+    { id: 1, name: 'Deep Neural Network v3', accuracy: 87.5, status: 'active' },
+    { id: 2, name: 'Gradient Boosting v2', accuracy: 84.2, status: 'active' },
+    { id: 3, name: 'Random Forest v4', accuracy: 81.8, status: 'active' },
+    { id: 4, name: 'SVM Classifier v1', accuracy: 78.5, status: 'testing' },
+  ];
+
+  return (
+    <WidgetGroup>
+      <div className="rounded-2xl bg-card ring-1 ring-border overflow-hidden">
+        <div className="p-6 border-b border-border">
+          <h3 className="text-lg font-semibold">Model Performance</h3>
+        </div>
+
+        <div className="divide-y divide-border">
+          {models.map(model => (
+            <div key={model.id} className="p-4">
+              <div className="flex items-center justify-between mb-3">
+                <div>
+                  <div className="font-medium text-foreground">{model.name}</div>
+                  <div className="text-xs text-muted-foreground">Accuracy: {model.accuracy}%</div>
+                </div>
+                <span className={`px-2 py-1 rounded text-xs font-semibold ${
+                  model.status === 'active' ? 'bg-green-500/20 text-green-500' : 'bg-blue-500/20 text-blue-500'
+                }`}>
+                  {model.status}
+                </span>
+              </div>
+              <div className="w-full bg-muted/30 rounded-full h-2">
+                <div 
+                  className="bg-gradient-to-r from-green-500 to-blue-500 h-2 rounded-full" 
+                  style={{ width: `${model.accuracy}%` }}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </WidgetGroup>
+  );
+};
+
+const ModelStatusDashboardPageComponent = () => {
+  const widgets = useMemo(() => ({
+    models: <ModelPerformanceWidget />,
+  }), []);
+
+  return (
+    <>
+      <PageHeader 
+        title="Model Status Dashboard" 
+        metaDescription="Monitor ML model performance and status"
+      />
+      <AppGrid id="model_status_page" widgets={widgets} />
+    </>
+  );
+};
+
+export default ModelStatusDashboardPageComponent;

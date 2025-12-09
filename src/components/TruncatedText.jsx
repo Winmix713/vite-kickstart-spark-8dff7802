@@ -1,1 +1,30 @@
-import { useThemeProvider } from PropTypes from 'prop-types'; const TruncatedText = ({text, lines = 2, width, className}) => { const {fontScale} = useThemeProvider(); const style = { display: '-webkit-box', WebkitLineClamp: lines, WebkitBoxOrient: 'vertical', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: width ? '${width}px' : '100%', }; return ( <span className={className ? className : ''} style={style}> {text} </span> ); }; TruncatedText.propTypes = { text: PropTypes.string.isRequired, lines: PropTypes.number, width: PropTypes.number, className: PropTypes.string, }; export default TruncatedText; 
+import {useThemeProvider} from '@contexts/themeContext';
+import PropTypes from 'prop-types';
+
+const TruncatedText = ({text, lines = 2, width, className}) => {
+    const {fontScale} = useThemeProvider();
+
+    const style = {
+        display: '-webkit-box',
+        WebkitLineClamp: lines,
+        WebkitBoxOrient: 'vertical',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        maxWidth: width ? `${width}px` : '100%',
+    };
+
+    return (
+        <span className={className ? className : ''} style={style}>
+            {text}
+        </span>
+    );
+};
+
+TruncatedText.propTypes = {
+    text: PropTypes.string.isRequired,
+    lines: PropTypes.number,
+    width: PropTypes.number,
+    className: PropTypes.string,
+};
+
+export default TruncatedText;

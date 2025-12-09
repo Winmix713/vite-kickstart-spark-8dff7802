@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 
 /**
  * StyledComponentsProvider - Professional wrapper for styled-components configuration
- *
+ * 
  * Features:
  * - Optimized style injection with memoization
  * - Full SSR support with hydration handling
@@ -12,7 +12,7 @@ import PropTypes from 'prop-types';
  * - Shadow DOM compatibility
  * - Development vs production optimizations
  * - Type-safe prop validation
- *
+ * 
  * @component
  * @example
  * ```jsx
@@ -21,14 +21,14 @@ import PropTypes from 'prop-types';
  * </StyledComponentsProvider>
  * ```
  */
-const StyledComponentsProvider = ({
+const StyledComponentsProvider = ({ 
   children,
   disableVendorPrefixes = false,
   enableCSSOMInjection = true,
   target,
   sheet,
   namespace,
-  shouldForwardProp,
+  shouldForwardProp
 }) => {
   // Environment detection with additional checks
   const isBrowser = useMemo(
@@ -41,6 +41,7 @@ const StyledComponentsProvider = ({
     const baseConfig = {
       // Vendor prefixes: disable in production for smaller bundles
       disableVendorPrefixes,
+      
       // CSSOM injection: faster in production, insertRule better for debugging
       enableCSSOMInjection: isBrowser ? enableCSSOMInjection : false,
     };
@@ -49,12 +50,15 @@ const StyledComponentsProvider = ({
     if (target !== undefined) {
       baseConfig.target = target;
     }
+
     if (sheet !== undefined) {
       baseConfig.sheet = sheet;
     }
+
     if (namespace !== undefined) {
       baseConfig.namespace = namespace;
     }
+
     if (shouldForwardProp !== undefined) {
       baseConfig.shouldForwardProp = shouldForwardProp;
     }
@@ -67,7 +71,7 @@ const StyledComponentsProvider = ({
     target,
     sheet,
     namespace,
-    shouldForwardProp,
+    shouldForwardProp
   ]);
 
   // Early return for SSR without StyleSheetManager wrapper issues
@@ -85,21 +89,27 @@ const StyledComponentsProvider = ({
 StyledComponentsProvider.propTypes = {
   /** React children to wrap with styled-components configuration */
   children: PropTypes.node.isRequired,
+  
   /** Disable vendor prefixes for smaller bundle size (useful in modern browsers) */
   disableVendorPrefixes: PropTypes.bool,
+  
   /** Enable CSSOM injection for better performance (browser only) */
   enableCSSOMInjection: PropTypes.bool,
+  
   /** Custom DOM node for style injection (useful for Shadow DOM) */
   target: PropTypes.oneOfType([
     PropTypes.instanceOf(typeof HTMLElement !== 'undefined' ? HTMLElement : Object),
-    PropTypes.object,
+    PropTypes.object
   ]),
+  
   /** Custom ServerStyleSheet instance for SSR */
   sheet: PropTypes.object,
+  
   /** Namespace for generated class names to avoid collisions */
   namespace: PropTypes.string,
+  
   /** Custom shouldForwardProp predicate for prop filtering */
-  shouldForwardProp: PropTypes.func,
+  shouldForwardProp: PropTypes.func
 };
 
 export default StyledComponentsProvider;

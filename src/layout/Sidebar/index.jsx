@@ -1,1 +1,130 @@
-// styled components import { Link, SingleLink, StyledAccordion, StyledAccordionDetails, StyledAccordionSummary, StyledDrawer } from './styles'; // components import Logo from '@components/Logo'; import {NavLink, useLocation, useNavigate} from 'react-router-dom'; // hooks import { useSidebar } from {useWindowSize} from 'react-use'; import { useEffect, useState } from {useAuth} from '@contexts/AuthContext'; import {toast} from 'react-toastify'; // constants import LINKS from '@constants/links'; const Sidebar = () => { const {open, setOpen} = useSidebar(); const[expanded, setExpanded] = useState(undefined); const {pathname} = useLocation(); const {width} = useWindowSize(); const { user, profile, signOut } = useAuth(); const navigate = useNavigate(); // manually handle accordion expansion const handleChange = (panel) => (event, isExpanded) => { setExpanded(isExpanded ? panel : false); } // collapse opened accordion on route change when the drawer is temporary useEffect(() => { width < 1280 && setExpanded(undefined); // eslint-disable-next-line react-hooks/exhaustive-deps }, [pathname]); const handleSignOut = async () => { try { await signOut(); toast.success('Signed out successfully'); navigate('/login'); } catch (error) { console.error('Sign out error:', error); toast.error(error.message || 'Failed to sign out'); } } return ( <StyledDrawer variant={width < 1920 ? 'temporary' : 'permanent'} anchor="left" open={open} onOpen={() => setOpen(true)} onClose={() => setOpen(false)} sx={{ '& .MuiDrawer-paper' }} className="main-sidebar"> <div className="logo-wrapper"> <Logo size="sm"/> </div> <nav className="d-flex flex-column g-8 flex-1"> { LINKS.map((link, index) => ( <StyledAccordion key={link.title} expanded={expanded === 'panel${index}'} onChange={handleChange('panel${index}')}> <StyledAccordionSummary> <Link className={'${expanded === 'panel${index}' ? 'active' : ''} h4'}> <i className={'icon icon-${link.icon}'}/> {link.title} </Link> <i className="icon icon-chevron-down"/> </StyledAccordionSummary> <StyledAccordionDetails> { link.pages.map(page => ( <NavLink to={page.path} key={page.title}> {page.title} </NavLink> )) } </StyledAccordionDetails> </StyledAccordion> )) } </nav> <div style={{display: 'flex', flexDirection: 'column', gap: '8px', paddingTop: '16px', borderTop: '1px solid var(--border)'}}> <SingleLink className={pathname === '/settings' ? 'active' : ''} as="div"> <NavLink to="/settings"> <Link className={'${pathname === '/settings' ? 'active' : ''} h4'}> <i className="icon icon-sliders"/> Settings </Link> </NavLink> </SingleLink> {user && ( <div style={{display: 'flex', flexDirection: 'column', gap: '8px', padding: '8px', borderTop: '1px solid var(--border)', marginTop: '8px'}}> <div style={{fontSize: '12px', color: 'var(--text-secondary)', padding: '0 8px'}}> {profile?.full_name ? profile.full_name : user.email} </div> <button onClick={handleSignOut} style={{ padding: '8px 12px', backgroundColor: 'var(--widget)', border: '1px solid var(--border)', borderRadius: '4px', cursor: 'pointer', fontSize: '14px', color: 'var(--text)', transition: 'all 0.3s ease' }} onMouseOver={(e) => e.target.style.backgroundColor = 'var(--border)'} onMouseOut={(e) => e.target.style.backgroundColor = 'var(--widget)'} > Sign Out </button> </div> )} </div> </StyledDrawer> ); } export default Sidebar;
+// styled components
+import {
+    Link,
+    SingleLink,
+    StyledAccordion,
+    StyledAccordionDetails,
+    StyledAccordionSummary,
+    StyledDrawer
+} from './styles';
+// components
+import Logo from '@components/Logo';
+import {NavLink, useLocation, useNavigate} from 'react-router-dom';
+// hooks
+import {useSidebar} from '@contexts/sidebarContext';
+import {useWindowSize} from 'react-use';
+import {useEffect, useState} from 'react';
+import {useAuth} from '@contexts/AuthContext';
+import {toast} from 'react-toastify';
+// constants
+import LINKS from '@constants/links';
+
+const Sidebar = () => {
+    const {open, setOpen} = useSidebar();
+    const [expanded, setExpanded] = useState(undefined);
+    const {pathname} = useLocation();
+    const {width} = useWindowSize();
+    const { user, profile, signOut } = useAuth();
+    const navigate = useNavigate();
+
+    // manually handle accordion expansion
+    const handleChange = (panel) => (event, isExpanded) => {
+        setExpanded(isExpanded ? panel : false);
+    }
+
+    // collapse opened accordion on route change when the drawer is temporary
+    useEffect(() => {
+        width < 1280 && setExpanded(undefined);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [pathname]);
+
+    const handleSignOut = async () => {
+        try {
+            await signOut();
+            toast.success('Signed out successfully');
+            navigate('/login');
+        } catch (error) {
+            console.error('Sign out error:', error);
+            toast.error(error.message || 'Failed to sign out');
+        }
+    }
+
+    return (
+        <StyledDrawer
+            variant={width < 1920 ? 'temporary' : 'permanent'}
+            anchor="left"
+            open={open}
+            onOpen={() => setOpen(true)}
+            onClose={() => setOpen(false)}
+            sx={{
+                '& .MuiDrawer-paper': {
+                    width: 250,
+                }
+            }}
+            className="main-sidebar">
+            <div className="logo-wrapper">
+                <Logo size="sm"/>
+            </div>
+            <nav className="d-flex flex-column g-8 flex-1">
+                {
+                    LINKS.map((link, index) => (
+                        <StyledAccordion key={link.title}
+                                         expanded={expanded === `panel${index}`}
+                                         onChange={handleChange(`panel${index}`)}>
+                            <StyledAccordionSummary>
+                                <Link className={`${expanded === `panel${index}` ? 'active' : ''} h4`}>
+                                    <i className={`icon icon-${link.icon}`}/> {link.title}
+                                </Link>
+                                <i className="icon icon-chevron-down"/>
+                            </StyledAccordionSummary>
+                            <StyledAccordionDetails>
+                                {
+                                    link.pages.map(page => (
+                                        <NavLink to={page.path} key={page.title}>
+                                            {page.title}
+                                        </NavLink>
+                                    ))
+                                }
+                            </StyledAccordionDetails>
+                        </StyledAccordion>
+                    ))
+                }
+            </nav>
+            <div style={{display: 'flex', flexDirection: 'column', gap: '8px', paddingTop: '16px', borderTop: '1px solid var(--border)'}}>
+                <SingleLink className={pathname === '/settings' ? 'active' : ''} as="div">
+                    <NavLink to="/settings">
+                        <Link className={`${pathname === '/settings' ? 'active' : ''} h4`}>
+                            <i className="icon icon-sliders"/> Settings
+                        </Link>
+                    </NavLink>
+                </SingleLink>
+                {user && (
+                    <div style={{display: 'flex', flexDirection: 'column', gap: '8px', padding: '8px', borderTop: '1px solid var(--border)', marginTop: '8px'}}>
+                        <div style={{fontSize: '12px', color: 'var(--text-secondary)', padding: '0 8px'}}>
+                            {profile?.full_name ? profile.full_name : user.email}
+                        </div>
+                        <button 
+                            onClick={handleSignOut}
+                            style={{
+                                padding: '8px 12px',
+                                backgroundColor: 'var(--widget)',
+                                border: '1px solid var(--border)',
+                                borderRadius: '4px',
+                                cursor: 'pointer',
+                                fontSize: '14px',
+                                color: 'var(--text)',
+                                transition: 'all 0.3s ease'
+                            }}
+                            onMouseOver={(e) => e.target.style.backgroundColor = 'var(--border)'}
+                            onMouseOut={(e) => e.target.style.backgroundColor = 'var(--widget)'}
+                        >
+                            Sign Out
+                        </button>
+                    </div>
+                )}
+            </div>
+        </StyledDrawer>
+    );
+}
+
+export default Sidebar;

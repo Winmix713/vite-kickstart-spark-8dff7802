@@ -1,5 +1,13 @@
-import React, { createContext, useContext, useState, useEffect, useCallback, useMemo, useRef } from 'react';
-import { buildCssVariables, getThemeVariant, themeVariants } from './tokens';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+  useRef,
+} from "react";
+import { buildCssVariables, getThemeVariant, themeVariants } from "./tokens";
 
 /**
  * CMS Theme Context - separate from the global theme context
@@ -7,7 +15,11 @@ import { buildCssVariables, getThemeVariant, themeVariants } from './tokens';
  */
 const CmsThemeContext = createContext(undefined);
 
-export const CmsThemeProvider = ({ children, defaultVariant = 'default', defaultMode = 'light' }) => {
+export const CmsThemeProvider = ({
+  children,
+  defaultVariant = "default",
+  defaultMode = "light",
+}) => {
   const rootRef = useRef(null);
   const [currentVariant, setCurrentVariant] = useState(defaultVariant);
   const [mode, setMode] = useState(defaultMode);
@@ -38,13 +50,13 @@ export const CmsThemeProvider = ({ children, defaultVariant = 'default', default
     });
 
     // Set data attributes for styling
-    rootRef.current.setAttribute('data-cms-theme', currentVariant);
-    rootRef.current.setAttribute('data-cms-mode', mode);
+    rootRef.current.setAttribute("data-cms-theme", currentVariant);
+    rootRef.current.setAttribute("data-cms-mode", mode);
   }, [currentVariant, mode]);
 
   // Toggle between light and dark mode
   const toggleMode = useCallback(() => {
-    setMode(prev => prev === 'light' ? 'dark' : 'light');
+    setMode((prev) => (prev === "light" ? "dark" : "light"));
   }, []);
 
   // Change theme variant
@@ -59,7 +71,7 @@ export const CmsThemeProvider = ({ children, defaultVariant = 'default', default
   // Set page-level theme overrides
   const setThemeOverrides = useCallback((overrides) => {
     setPageOverrides(overrides);
-    
+
     // Apply overrides to CSS variables
     if (rootRef.current) {
       Object.entries(overrides).forEach(([key, value]) => {
@@ -70,41 +82,47 @@ export const CmsThemeProvider = ({ children, defaultVariant = 'default', default
 
   // Set widget-specific variant
   const setWidgetVariant = useCallback((widgetInstanceId, variantSlug) => {
-    setWidgetVariants(prev => ({
+    setWidgetVariants((prev) => ({
       ...prev,
       [widgetInstanceId]: variantSlug,
     }));
   }, []);
 
   // Get widget variant
-  const getWidgetVariant = useCallback((widgetInstanceId) => {
-    return widgetVariants[widgetInstanceId] || 'default';
-  }, [widgetVariants]);
+  const getWidgetVariant = useCallback(
+    (widgetInstanceId) => {
+      return widgetVariants[widgetInstanceId] || "default";
+    },
+    [widgetVariants],
+  );
 
   // Memoize context value
-  const contextValue = useMemo(() => ({
-    currentVariant,
-    mode,
-    pageOverrides,
-    widgetVariants,
-    toggleMode,
-    changeVariant,
-    setThemeOverrides,
-    setWidgetVariant,
-    getWidgetVariant,
-    isDark: mode === 'dark',
-    isLight: mode === 'light',
-  }), [
-    currentVariant,
-    mode,
-    pageOverrides,
-    widgetVariants,
-    toggleMode,
-    changeVariant,
-    setThemeOverrides,
-    setWidgetVariant,
-    getWidgetVariant,
-  ]);
+  const contextValue = useMemo(
+    () => ({
+      currentVariant,
+      mode,
+      pageOverrides,
+      widgetVariants,
+      toggleMode,
+      changeVariant,
+      setThemeOverrides,
+      setWidgetVariant,
+      getWidgetVariant,
+      isDark: mode === "dark",
+      isLight: mode === "light",
+    }),
+    [
+      currentVariant,
+      mode,
+      pageOverrides,
+      widgetVariants,
+      toggleMode,
+      changeVariant,
+      setThemeOverrides,
+      setWidgetVariant,
+      getWidgetVariant,
+    ],
+  );
 
   return (
     <CmsThemeContext.Provider value={contextValue}>
@@ -113,7 +131,7 @@ export const CmsThemeProvider = ({ children, defaultVariant = 'default', default
   );
 };
 
-CmsThemeProvider.displayName = 'CmsThemeProvider';
+CmsThemeProvider.displayName = "CmsThemeProvider";
 
 /**
  * Hook to access CMS theme context
@@ -121,14 +139,14 @@ CmsThemeProvider.displayName = 'CmsThemeProvider';
  */
 export const useCmsTheme = () => {
   const context = useContext(CmsThemeContext);
-  
+
   if (context === undefined) {
     throw new Error(
-      'useCmsTheme must be used within a CmsThemeProvider. ' +
-      'Wrap your component tree with <CmsThemeProvider>.'
+      "useCmsTheme must be used within a CmsThemeProvider. " +
+        "Wrap your component tree with <CmsThemeProvider>.",
     );
   }
-  
+
   return context;
 };
 
@@ -138,23 +156,23 @@ export const useCmsTheme = () => {
  */
 export const useCmsThemeSafe = () => {
   const context = useContext(CmsThemeContext);
-  
+
   if (context === undefined) {
     return {
-      currentVariant: 'default',
-      mode: 'light',
+      currentVariant: "default",
+      mode: "light",
       pageOverrides: {},
       widgetVariants: {},
       toggleMode: () => {},
       changeVariant: () => {},
       setThemeOverrides: () => {},
       setWidgetVariant: () => {},
-      getWidgetVariant: () => 'default',
+      getWidgetVariant: () => "default",
       isDark: false,
       isLight: true,
     };
   }
-  
+
   return context;
 };
 

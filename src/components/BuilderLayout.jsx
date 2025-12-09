@@ -1,69 +1,72 @@
-import React, { useState, useCallback, useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { usePageLayout } from '@/hooks/cms/usePageLayout'
-import { useSavePageLayout } from '@/hooks/cms/useSavePageLayout'
-import { useAutosaveLayout } from '@/hooks/cms/useAutosaveLayout'
+import React, { useState, useCallback, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { usePageLayout } from "@/hooks/cms/usePageLayout";
+import { useSavePageLayout } from "@/hooks/cms/useSavePageLayout";
+import { useAutosaveLayout } from "@/hooks/cms/useAutosaveLayout";
 import {
   updateLayout,
   setCurrentPageId,
-} from '@/features/cms/pageLayoutsSlice'
-import GridEditor from './GridEditor'
-import { toast } from 'react-toastify'
+} from "@/features/cms/pageLayoutsSlice";
+import GridEditor from "./GridEditor";
+import { toast } from "react-toastify";
 
 /**
  * BuilderLayout Component
  * Manages page layout editing with Supabase persistence and autosave
  */
 function BuilderLayout({ pageId, initialLayout = null, onSave = null }) {
-  const dispatch = useDispatch()
-  const layouts = useSelector((state) => state.pageLayouts.layouts)
-  const isDirty = useSelector((state) => state.pageLayouts.isDirty)
+  const dispatch = useDispatch();
+  const layouts = useSelector((state) => state.pageLayouts.layouts);
+  const isDirty = useSelector((state) => state.pageLayouts.isDirty);
 
   // Load layout from Supabase
-  const { isLoading: isLoadingLayout, error: loadError } = usePageLayout(pageId, {
-    onSuccess: (data) => {
-      if (!data) {
-        // No layout found, initialize with default
-        const defaultLayout = initialLayout || { instances: {}, layout: [] }
-        dispatch(updateLayout({ pageId, layoutData: defaultLayout }))
-      }
+  const { isLoading: isLoadingLayout, error: loadError } = usePageLayout(
+    pageId,
+    {
+      onSuccess: (data) => {
+        if (!data) {
+          // No layout found, initialize with default
+          const defaultLayout = initialLayout || { instances: {}, layout: [] };
+          dispatch(updateLayout({ pageId, layoutData: defaultLayout }));
+        }
+      },
     },
-  })
+  );
 
   // Save layout to Supabase
-  const { save: saveLayout, isPending: isSaving } = useSavePageLayout()
+  const { save: saveLayout, isPending: isSaving } = useSavePageLayout();
 
   // Autosave functionality
   const { isSaving: isAutosaving } = useAutosaveLayout(pageId, {
     debounceMs: 5000,
     enabled: true,
     showToasts: false,
-  })
+  });
 
   // Set current page in Redux
   useEffect(() => {
-    dispatch(setCurrentPageId(pageId))
-  }, [pageId, dispatch])
+    dispatch(setCurrentPageId(pageId));
+  }, [pageId, dispatch]);
 
   // Handle manual save
   const handleSave = useCallback(() => {
-    const currentLayout = layouts[pageId]
+    const currentLayout = layouts[pageId];
     if (!currentLayout) {
-      toast.error('No layout to save')
-      return
+      toast.error("No layout to save");
+      return;
     }
 
     saveLayout({
       pageId,
       layoutPayload: currentLayout,
-    })
+    });
     if (onSave) {
-      onSave(currentLayout)
+      onSave(currentLayout);
     }
-  }, [pageId, layouts, saveLayout, onSave])
+  }, [pageId, layouts, saveLayout, onSave]);
 
   // Get current layout
-  const currentLayout = layouts[pageId] || { instances: {}, layout: [] }
+  const currentLayout = layouts[pageId] || { instances: {}, layout: [] };
 
   // Loading state
   if (isLoadingLayout) {
@@ -74,7 +77,7 @@ function BuilderLayout({ pageId, initialLayout = null, onSave = null }) {
           <p className="text-gray-600">Loading layout...</p>
         </div>
       </div>
-    )
+    );
   }
 
   // Error state
@@ -86,7 +89,7 @@ function BuilderLayout({ pageId, initialLayout = null, onSave = null }) {
           <p className="text-sm text-gray-500">{loadError.message}</p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -114,11 +117,11 @@ function BuilderLayout({ pageId, initialLayout = null, onSave = null }) {
             disabled={!isDirty || isSaving || isAutosaving}
             className={`px-4 py-2 rounded-lg font-medium transition-colors ${
               isDirty && !isSaving && !isAutosaving
-                ? 'bg-blue-600 text-white hover:bg-blue-700'
-                : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                ? "bg-blue-600 text-white hover:bg-blue-700"
+                : "bg-gray-200 text-gray-400 cursor-not-allowed"
             }`}
           >
-            {isSaving ? 'Saving...' : 'Save'}
+            {isSaving ? "Saving..." : "Save"}
           </button>
         </div>
       </div>
@@ -129,12 +132,12 @@ function BuilderLayout({ pageId, initialLayout = null, onSave = null }) {
           pageId={pageId}
           layout={currentLayout}
           onLayoutChange={(newLayout) => {
-            dispatch(updateLayout({ pageId, layoutData: newLayout }))
+            dispatch(updateLayout({ pageId, layoutData: newLayout }));
           }}
         />
       </div>
     </div>
-  )
+  );
 }
 
-export default BuilderLayout
+export default BuilderLayout;

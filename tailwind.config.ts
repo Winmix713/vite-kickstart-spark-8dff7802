@@ -57,6 +57,23 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        // CMS Theme colors
+        "cms": {
+          background: "var(--cms-color-background)",
+          foreground: "var(--cms-color-foreground)",
+          surface: "var(--cms-color-surface)",
+          border: "var(--cms-color-border)",
+          muted: "var(--cms-color-muted)",
+          primary: "var(--cms-color-primary)",
+          "primary-foreground": "var(--cms-color-primary-foreground)",
+          secondary: "var(--cms-color-secondary)",
+          "secondary-foreground": "var(--cms-color-secondary-foreground)",
+          accent: "var(--cms-color-accent)",
+          success: "var(--cms-color-success)",
+          warning: "var(--cms-color-warning)",
+          error: "var(--cms-color-error)",
+          info: "var(--cms-color-info)",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",

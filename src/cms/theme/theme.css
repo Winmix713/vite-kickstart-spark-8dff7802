@@ -1,0 +1,180 @@
+/**
+ * CMS Theme Variables
+ * These are default values that will be overridden by the ThemeProvider
+ */
+
+:root {
+  /* Default Light Mode Colors */
+  --cms-color-background: #ffffff;
+  --cms-color-foreground: #111827;
+  --cms-color-surface: #f9fafb;
+  --cms-color-border: #e5e7eb;
+  --cms-color-muted: #9ca3af;
+  --cms-color-primary: #2563eb;
+  --cms-color-primary-foreground: #ffffff;
+  --cms-color-secondary: #4b5563;
+  --cms-color-secondary-foreground: #ffffff;
+  --cms-color-accent: #3b82f6;
+  --cms-color-success: #16a34a;
+  --cms-color-warning: #f59e0b;
+  --cms-color-error: #dc2626;
+  --cms-color-info: #3b82f6;
+
+  /* Typography */
+  --cms-font-family-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --cms-font-family-serif: Georgia, "Times New Roman", Times, serif;
+  --cms-font-family-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+
+  --cms-font-size-xs: 0.75rem;
+  --cms-font-size-sm: 0.875rem;
+  --cms-font-size-base: 1rem;
+  --cms-font-size-lg: 1.125rem;
+  --cms-font-size-xl: 1.25rem;
+  --cms-font-size-2xl: 1.5rem;
+  --cms-font-size-3xl: 1.875rem;
+  --cms-font-size-4xl: 2.25rem;
+
+  --cms-font-weight-thin: 100;
+  --cms-font-weight-extralight: 200;
+  --cms-font-weight-light: 300;
+  --cms-font-weight-normal: 400;
+  --cms-font-weight-medium: 500;
+  --cms-font-weight-semibold: 600;
+  --cms-font-weight-bold: 700;
+  --cms-font-weight-extrabold: 800;
+  --cms-font-weight-black: 900;
+
+  /* Spacing */
+  --cms-spacing-0: 0;
+  --cms-spacing-1: 0.25rem;
+  --cms-spacing-2: 0.5rem;
+  --cms-spacing-3: 0.75rem;
+  --cms-spacing-4: 1rem;
+  --cms-spacing-5: 1.25rem;
+  --cms-spacing-6: 1.5rem;
+  --cms-spacing-8: 2rem;
+  --cms-spacing-10: 2.5rem;
+  --cms-spacing-12: 3rem;
+  --cms-spacing-16: 4rem;
+  --cms-spacing-20: 5rem;
+  --cms-spacing-24: 6rem;
+
+  /* Border Radius */
+  --cms-radius-none: 0;
+  --cms-radius-sm: 0.125rem;
+  --cms-radius-base: 0.25rem;
+  --cms-radius-md: 0.375rem;
+  --cms-radius-lg: 0.5rem;
+  --cms-radius-xl: 0.75rem;
+  --cms-radius-2xl: 1rem;
+  --cms-radius-3xl: 1.5rem;
+  --cms-radius-full: 9999px;
+
+  /* Shadows */
+  --cms-shadow-none: none;
+  --cms-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --cms-shadow-base: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --cms-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --cms-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --cms-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Dark mode colors */
+[data-cms-mode="dark"] {
+  --cms-color-background: #111827;
+  --cms-color-foreground: #f9fafb;
+  --cms-color-surface: #1f2937;
+  --cms-color-border: #374151;
+  --cms-color-muted: #6b7280;
+  --cms-color-primary: #60a5fa;
+  --cms-color-primary-foreground: #111827;
+  --cms-color-secondary: #9ca3af;
+  --cms-color-secondary-foreground: #111827;
+  --cms-color-accent: #60a5fa;
+  --cms-color-success: #4ade80;
+  --cms-color-warning: #fbbf24;
+  --cms-color-error: #f87171;
+  --cms-color-info: #60a5fa;
+}
+
+/* Glass theme */
+[data-cms-theme="glass"] {
+  --cms-color-background: rgba(255, 255, 255, 0.95);
+  --cms-color-surface: rgba(255, 255, 255, 0.7);
+  --cms-color-border: rgba(0, 0, 0, 0.1);
+  --cms-radius-lg: 1.5rem;
+  --cms-radius-xl: 2rem;
+  --cms-shadow-sm: 0 8px 32px rgba(31, 38, 135, 0.1);
+  --cms-shadow-base: 0 8px 32px rgba(31, 38, 135, 0.15);
+  --cms-shadow-md: 0 8px 32px rgba(31, 38, 135, 0.2);
+  --cms-shadow-lg: 0 8px 32px rgba(31, 38, 135, 0.25);
+  --cms-shadow-xl: 0 8px 32px rgba(31, 38, 135, 0.3);
+}
+
+[data-cms-theme="glass"][data-cms-mode="dark"] {
+  --cms-color-background: rgba(17, 24, 39, 0.95);
+  --cms-color-surface: rgba(31, 41, 55, 0.7);
+  --cms-color-border: rgba(255, 255, 255, 0.1);
+}
+
+/* Emerald theme */
+[data-cms-theme="emerald"] {
+  --cms-color-primary: #059669;
+  --cms-color-secondary: #10b981;
+  --cms-color-accent: #10b981;
+  --cms-color-success: #059669;
+  --cms-color-border: #bbf7d0;
+  --cms-color-surface: #f0fdf4;
+}
+
+[data-cms-theme="emerald"][data-cms-mode="dark"] {
+  --cms-color-primary: #6ee7b7;
+  --cms-color-secondary: #6ee7b7;
+  --cms-color-accent: #6ee7b7;
+  --cms-color-success: #6ee7b7;
+  --cms-color-border: #064e3b;
+  --cms-color-surface: #065f46;
+}
+
+/* Dark theme */
+[data-cms-theme="dark"] {
+  --cms-color-background: #0a0a0a;
+  --cms-color-foreground: #ffffff;
+  --cms-color-surface: #1f2937;
+  --cms-color-border: #374151;
+  --cms-color-primary: #60a5fa;
+  --cms-color-secondary: #d1d5db;
+  --cms-color-accent: #93c5fd;
+}
+
+[data-cms-theme="dark"][data-cms-mode="dark"] {
+  --cms-color-background: #0a0a0a;
+  --cms-color-foreground: #ffffff;
+  --cms-color-surface: #1f2937;
+  --cms-color-border: #374151;
+  --cms-color-primary: #38bdf8;
+  --cms-color-secondary: #e5e7eb;
+  --cms-color-accent: #bfdbfe;
+}
+
+/* Widget variants */
+.cms-widget-outlined {
+  border: 1px solid var(--cms-color-border);
+}
+
+.cms-widget-elevated {
+  box-shadow: var(--cms-shadow-lg);
+}
+
+.cms-widget-minimal {
+  border: none;
+  box-shadow: none;
+}
+
+.cms-widget-compact {
+  padding: var(--cms-spacing-2);
+}
+
+.cms-widget-default {
+  padding: var(--cms-spacing-4);
+}

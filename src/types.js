@@ -1,1 +1,1 @@
-// Type definitions placeholder for TypeScript configuration export(); 
+// Type definitions placeholder for TypeScript configuration export();

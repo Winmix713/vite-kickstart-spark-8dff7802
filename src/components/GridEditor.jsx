@@ -1,17 +1,17 @@
-import React, { useState, useCallback } from 'react'
-import { Responsive, WidthProvider } from 'react-grid-layout'
-import 'react-grid-layout/css/styles.css'
-import 'react-resizable/css/styles.css'
-import './GridEditor.scss'
+import React, { useState, useCallback } from "react";
+import { Responsive, WidthProvider } from "react-grid-layout";
+import "react-grid-layout/css/styles.css";
+import "react-resizable/css/styles.css";
+import "./GridEditor.scss";
 
-const ResponsiveGridLayout = WidthProvider(Responsive)
+const ResponsiveGridLayout = WidthProvider(Responsive);
 
 /**
  * GridEditor Component
  * Editable grid layout for page builder
  */
 function GridEditor({ pageId, layout, onLayoutChange }) {
-  const [isDragging, setIsDragging] = useState(false)
+  const [isDragging, setIsDragging] = useState(false);
 
   const handleLayoutChange = useCallback(
     (newLayout, layouts) => {
@@ -19,30 +19,30 @@ function GridEditor({ pageId, layout, onLayoutChange }) {
         onLayoutChange({
           ...layout,
           layout: newLayout,
-        })
+        });
       }
     },
-    [layout, onLayoutChange]
-  )
+    [layout, onLayoutChange],
+  );
 
   const handleDragStart = useCallback(() => {
-    setIsDragging(true)
-  }, [])
+    setIsDragging(true);
+  }, []);
 
   const handleDragStop = useCallback(() => {
-    setIsDragging(false)
-  }, [])
+    setIsDragging(false);
+  }, []);
 
   if (!layout || !layout.instances) {
     return (
       <div className="p-8 text-center text-gray-500">
         <p>No layout data available</p>
       </div>
-    )
+    );
   }
 
-  const gridLayout = layout.layout || []
-  const instances = layout.instances || {}
+  const gridLayout = layout.layout || [];
+  const instances = layout.instances || {};
 
   return (
     <div className="grid-editor">
@@ -65,7 +65,7 @@ function GridEditor({ pageId, layout, onLayoutChange }) {
         useCSSTransforms={true}
       >
         {gridLayout.map((item) => {
-          const instance = instances[item.i]
+          const instance = instances[item.i];
           return (
             <div
               key={item.i}
@@ -79,15 +79,15 @@ function GridEditor({ pageId, layout, onLayoutChange }) {
                   <div className="text-xs text-gray-500">{instance.title}</div>
                 )}
                 <div className="flex-1 flex items-center justify-center text-gray-400 text-xs">
-                  {instance?.description || 'Widget Preview'}
+                  {instance?.description || "Widget Preview"}
                 </div>
               </div>
             </div>
-          )
+          );
         })}
       </ResponsiveGridLayout>
     </div>
-  )
+  );
 }
 
-export default GridEditor
+export default GridEditor;

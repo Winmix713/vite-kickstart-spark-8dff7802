@@ -1,1 +1,36 @@
-import * as React from 'react'; import {useLocation} from 'react-router-dom'; const ShopContext = React.createContext(undefined); export const ShopProvider = ({children}) => { const[cartOpen, setCartOpen] = React.useState(false); const[filtersOpen, setFiltersOpen] = React.useState(false); const location = useLocation(); // close sidebar when route changes React.useEffect(() => { setFiltersOpen(false); }, [location]); // Handle scroll lock React.useEffect(() => { if (filtersOpen) { document.documentElement.classList.add('no-scroll'); } else { document.documentElement.classList.remove('no-scroll'); } return () => { document.documentElement.classList.remove('no-scroll'); } }, [filtersOpen]); return ( <ShopContext.Provider value={{cartOpen, setCartOpen, filtersOpen, setFiltersOpen}}> {children} </ShopContext.Provider> ) } export const useShopProvider = () => React.useContext(ShopContext);
+import * as React from 'react';
+import {useLocation} from 'react-router-dom';
+
+const ShopContext = React.createContext(undefined);
+
+export const ShopProvider = ({children}) => {
+    const [cartOpen, setCartOpen] = React.useState(false);
+    const [filtersOpen, setFiltersOpen] = React.useState(false);
+    const location = useLocation();
+
+    // close sidebar when route changes
+    React.useEffect(() => {
+        setFiltersOpen(false);
+    }, [location]);
+
+    // Handle scroll lock
+    React.useEffect(() => {
+        if (filtersOpen) {
+            document.documentElement.classList.add('no-scroll');
+        } else {
+            document.documentElement.classList.remove('no-scroll');
+        }
+
+        return () => {
+            document.documentElement.classList.remove('no-scroll');
+        }
+    }, [filtersOpen]);
+
+    return (
+        <ShopContext.Provider value={{cartOpen, setCartOpen, filtersOpen, setFiltersOpen}}>
+            {children}
+        </ShopContext.Provider>
+    )
+}
+
+export const useShopProvider = () => React.useContext(ShopContext);

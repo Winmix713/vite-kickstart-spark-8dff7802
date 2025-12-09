@@ -1,4 +1,4 @@
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from "@/integrations/supabase/client";
 
 /**
  * CMS Page Service
@@ -12,30 +12,37 @@ import { supabase } from '@/integrations/supabase/client';
  * @param {Object} themeOverrides - Theme overrides (themeMode, themeVariant, widgetVariants, colorOverrides, etc.)
  * @returns {Promise<Object>} The saved page data
  */
-export async function savePageLayout(pageId, layoutData = {}, themeOverrides = {}) {
+export async function savePageLayout(
+  pageId,
+  layoutData = {},
+  themeOverrides = {},
+) {
   try {
     const { data, error } = await supabase
-      .from('pages')
-      .upsert({
-        id: pageId,
-        layout: layoutData,
-        theme_overrides: themeOverrides,
-        updated_at: new Date().toISOString(),
-        updated_by: (await supabase.auth.getUser()).data?.user?.id,
-      }, {
-        onConflict: 'id',
-      })
+      .from("pages")
+      .upsert(
+        {
+          id: pageId,
+          layout: layoutData,
+          theme_overrides: themeOverrides,
+          updated_at: new Date().toISOString(),
+          updated_by: (await supabase.auth.getUser()).data?.user?.id,
+        },
+        {
+          onConflict: "id",
+        },
+      )
       .select()
       .single();
 
     if (error) {
-      console.error('Error saving page layout:', error);
+      console.error("Error saving page layout:", error);
       throw error;
     }
 
     return data;
   } catch (error) {
-    console.error('Failed to save page layout:', error);
+    console.error("Failed to save page layout:", error);
     throw error;
   }
 }
@@ -48,13 +55,13 @@ export async function savePageLayout(pageId, layoutData = {}, themeOverrides = {
 export async function loadPageLayout(pageId) {
   try {
     const { data, error } = await supabase
-      .from('pages')
-      .select('*')
-      .eq('id', pageId)
+      .from("pages")
+      .select("*")
+      .eq("id", pageId)
       .single();
 
     if (error) {
-      if (error.code === 'PGRST116') {
+      if (error.code === "PGRST116") {
         // Page not found, return default empty layout
         return {
           id: pageId,
@@ -65,13 +72,15 @@ export async function loadPageLayout(pageId) {
       throw error;
     }
 
-    return data || {
-      id: pageId,
-      layout: {},
-      theme_overrides: {},
-    };
+    return (
+      data || {
+        id: pageId,
+        layout: {},
+        theme_overrides: {},
+      }
+    );
   } catch (error) {
-    console.error('Failed to load page layout:', error);
+    console.error("Failed to load page layout:", error);
     throw error;
   }
 }
@@ -85,24 +94,24 @@ export async function loadPageLayout(pageId) {
 export async function updatePageThemeOverrides(pageId, themeOverrides) {
   try {
     const { data, error } = await supabase
-      .from('pages')
+      .from("pages")
       .update({
         theme_overrides: themeOverrides,
         updated_at: new Date().toISOString(),
         updated_by: (await supabase.auth.getUser()).data?.user?.id,
       })
-      .eq('id', pageId)
+      .eq("id", pageId)
       .select()
       .single();
 
     if (error) {
-      console.error('Error updating page theme overrides:', error);
+      console.error("Error updating page theme overrides:", error);
       throw error;
     }
 
     return data;
   } catch (error) {
-    console.error('Failed to update page theme overrides:', error);
+    console.error("Failed to update page theme overrides:", error);
     throw error;
   }
 }
@@ -114,15 +123,15 @@ export async function updatePageThemeOverrides(pageId, themeOverrides) {
 export async function getAllPages() {
   try {
     const { data, error } = await supabase
-      .from('pages')
-      .select('*')
-      .order('created_at', { ascending: false });
+      .from("pages")
+      .select("*")
+      .order("created_at", { ascending: false });
 
     if (error) throw error;
 
     return data || [];
   } catch (error) {
-    console.error('Failed to fetch pages:', error);
+    console.error("Failed to fetch pages:", error);
     return [];
   }
 }
@@ -134,14 +143,11 @@ export async function getAllPages() {
  */
 export async function deletePage(pageId) {
   try {
-    const { error } = await supabase
-      .from('pages')
-      .delete()
-      .eq('id', pageId);
+    const { error } = await supabase.from("pages").delete().eq("id", pageId);
 
     if (error) throw error;
   } catch (error) {
-    console.error('Failed to delete page:', error);
+    console.error("Failed to delete page:", error);
     throw error;
   }
 }
@@ -155,14 +161,14 @@ export async function deletePage(pageId) {
 export async function getPageThemeOverrideAuditLog(pageId, limit = 50) {
   try {
     const { data, error } = await supabase
-      .from('page_theme_override_audit')
-      .select('*')
-      .eq('page_id', pageId)
-      .order('created_at', { ascending: false })
+      .from("page_theme_override_audit")
+      .select("*")
+      .eq("page_id", pageId)
+      .order("created_at", { ascending: false })
       .limit(limit);
 
     if (error) {
-      if (error.code === 'PGRST116') {
+      if (error.code === "PGRST116") {
         // Table might not exist yet
         return [];
       }
@@ -171,7 +177,7 @@ export async function getPageThemeOverrideAuditLog(pageId, limit = 50) {
 
     return data || [];
   } catch (error) {
-    console.error('Failed to fetch audit log:', error);
+    console.error("Failed to fetch audit log:", error);
     return [];
   }
 }
@@ -186,17 +192,17 @@ export async function mergePageThemeOverrides(pageId, partialOverrides) {
   try {
     // First load the existing page
     const existingPage = await loadPageLayout(pageId);
-    
+
     // Merge the overrides
     const mergedOverrides = {
       ...(existingPage.theme_overrides || {}),
       ...partialOverrides,
     };
-    
+
     // Save the merged overrides
     return await updatePageThemeOverrides(pageId, mergedOverrides);
   } catch (error) {
-    console.error('Failed to merge page theme overrides:', error);
+    console.error("Failed to merge page theme overrides:", error);
     throw error;
   }
 }

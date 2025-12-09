@@ -1,1 +1,51 @@
-import { useMemo } from 'react'; // Layout import PageHeader from '@layout/PageHeader'; import AppGrid from '@layout/AppGrid'; import WidgetGroup from '@components/WidgetGroup'; const FeedbackListWidget = () => { const feedbacks = [ { id: 1, user: 'John Doe', message: 'Great prediction accuracy!', date: '2 hours ago' }, { id: 2, user: 'Jane Smith', message: 'Need better UI for mobile', date: '5 hours ago' }, { id: 3, user: 'Bob Johnson', message: 'Love the real-time updates', date: '1 day ago' }, ]; return ( <WidgetGroup> <div className="rounded-2xl bg-card ring-1 ring-border overflow-hidden p-6"> <h3 className="text-lg font-semibold mb-4">Recent Feedback</h3> <div className="space-y-4"> {feedbacks.map(fb => ( <div key={fb.id} className="p-4 rounded-lg border border-border/60 bg-muted/10"> <div className="flex items-start justify-between mb-2"> <div className="font-semibold text-foreground">{fb.user}</div> <span className="text-xs text-muted-foreground">{fb.date}</span> </div> <p className="text-sm text-muted-foreground">{fb.message}</p> </div> ))} </div> </div> </WidgetGroup> ); }; const FeedbackInboxPageComponent = () => { const widgets = useMemo(() => ({ feedback: <FeedbackListWidget />, }), []); return ( <> <PageHeader title="Feedback Inbox" metaDescription="Review and manage user feedback and suggestions" /> <AppGrid id="feedback_inbox_page" widgets={widgets} /> </> ); }; export default FeedbackInboxPageComponent; 
+import { useMemo } from 'react';
+
+// Layout
+import PageHeader from '@layout/PageHeader';
+import AppGrid from '@layout/AppGrid';
+import WidgetGroup from '@components/WidgetGroup';
+
+const FeedbackListWidget = () => {
+  const feedbacks = [
+    { id: 1, user: 'John Doe', message: 'Great prediction accuracy!', date: '2 hours ago' },
+    { id: 2, user: 'Jane Smith', message: 'Need better UI for mobile', date: '5 hours ago' },
+    { id: 3, user: 'Bob Johnson', message: 'Love the real-time updates', date: '1 day ago' },
+  ];
+
+  return (
+    <WidgetGroup>
+      <div className="rounded-2xl bg-card ring-1 ring-border overflow-hidden p-6">
+        <h3 className="text-lg font-semibold mb-4">Recent Feedback</h3>
+        <div className="space-y-4">
+          {feedbacks.map(fb => (
+            <div key={fb.id} className="p-4 rounded-lg border border-border/60 bg-muted/10">
+              <div className="flex items-start justify-between mb-2">
+                <div className="font-semibold text-foreground">{fb.user}</div>
+                <span className="text-xs text-muted-foreground">{fb.date}</span>
+              </div>
+              <p className="text-sm text-muted-foreground">{fb.message}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </WidgetGroup>
+  );
+};
+
+const FeedbackInboxPageComponent = () => {
+  const widgets = useMemo(() => ({
+    feedback: <FeedbackListWidget />,
+  }), []);
+
+  return (
+    <>
+      <PageHeader 
+        title="Feedback Inbox" 
+        metaDescription="Review and manage user feedback and suggestions"
+      />
+      <AppGrid id="feedback_inbox_page" widgets={widgets} />
+    </>
+  );
+};
+
+export default FeedbackInboxPageComponent;

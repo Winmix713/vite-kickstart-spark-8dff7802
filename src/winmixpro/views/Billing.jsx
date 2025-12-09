@@ -1,1 +1,12 @@
-import React from 'react'; const Billing = () => { return ( <div> <h1>WinMix Pro Billing</h1> {/* Billing content will go here */} </div> ); }; export default Billing; 
+import React from 'react';
+
+const Billing = () => {
+  return (
+    <div>
+      <h1>WinMix Pro Billing</h1>
+      {/* Billing content will go here */}
+    </div>
+  );
+};
+
+export default Billing;

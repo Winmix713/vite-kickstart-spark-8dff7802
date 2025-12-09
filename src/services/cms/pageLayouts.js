@@ -1,4 +1,4 @@
-import { supabase } from '@/integrations/supabase/client'
+import { supabase } from "@/integrations/supabase/client";
 
 /**
  * Load a page layout by page ID
@@ -7,8 +7,9 @@ import { supabase } from '@/integrations/supabase/client'
 export async function loadPageLayout(pageId) {
   try {
     const { data, error } = await supabase
-      .from('page_layouts')
-      .select(`
+      .from("page_layouts")
+      .select(
+        `
         id,
         layout_json,
         updated_at,
@@ -19,23 +20,24 @@ export async function loadPageLayout(pageId) {
           is_published,
           created_at
         )
-      `)
-      .eq('page_id', pageId)
-      .order('updated_at', { ascending: false })
+      `,
+      )
+      .eq("page_id", pageId)
+      .order("updated_at", { ascending: false })
       .limit(1)
-      .single()
+      .single();
 
     if (error) {
-      if (error.code === 'PGRST116') {
-        return null // No layout found
+      if (error.code === "PGRST116") {
+        return null; // No layout found
       }
-      throw error
+      throw error;
     }
 
-    return data
+    return data;
   } catch (error) {
-    console.error('Error loading page layout:', error)
-    throw error
+    console.error("Error loading page layout:", error);
+    throw error;
   }
 }
 
@@ -46,7 +48,7 @@ export async function loadPageLayout(pageId) {
 export async function savePageLayout(pageId, layoutPayload) {
   try {
     const { data, error } = await supabase
-      .from('page_layouts')
+      .from("page_layouts")
       .upsert(
         {
           page_id: pageId,
@@ -54,20 +56,20 @@ export async function savePageLayout(pageId, layoutPayload) {
           updated_at: new Date().toISOString(),
         },
         {
-          onConflict: 'page_id',
-        }
+          onConflict: "page_id",
+        },
       )
       .select()
-      .single()
+      .single();
 
     if (error) {
-      throw error
+      throw error;
     }
 
-    return data
+    return data;
   } catch (error) {
-    console.error('Error saving page layout:', error)
-    throw error
+    console.error("Error saving page layout:", error);
+    throw error;
   }
 }
 
@@ -77,35 +79,35 @@ export async function savePageLayout(pageId, layoutPayload) {
 export async function createPage(slug, title, initialLayout = null) {
   try {
     const { data: pageData, error: pageError } = await supabase
-      .from('pages')
+      .from("pages")
       .insert({
         slug,
         title,
       })
       .select()
-      .single()
+      .single();
 
     if (pageError) {
-      throw pageError
+      throw pageError;
     }
 
     if (initialLayout) {
       const { error: layoutError } = await supabase
-        .from('page_layouts')
+        .from("page_layouts")
         .insert({
           page_id: pageData.id,
           layout_json: initialLayout,
-        })
+        });
 
       if (layoutError) {
-        throw layoutError
+        throw layoutError;
       }
     }
 
-    return pageData
+    return pageData;
   } catch (error) {
-    console.error('Error creating page:', error)
-    throw error
+    console.error("Error creating page:", error);
+    throw error;
   }
 }
 
@@ -115,22 +117,22 @@ export async function createPage(slug, title, initialLayout = null) {
 export async function getPageBySlug(slug) {
   try {
     const { data, error } = await supabase
-      .from('pages')
-      .select('*')
-      .eq('slug', slug)
-      .single()
+      .from("pages")
+      .select("*")
+      .eq("slug", slug)
+      .single();
 
     if (error) {
-      if (error.code === 'PGRST116') {
-        return null // No page found
+      if (error.code === "PGRST116") {
+        return null; // No page found
       }
-      throw error
+      throw error;
     }
 
-    return data
+    return data;
   } catch (error) {
-    console.error('Error getting page by slug:', error)
-    throw error
+    console.error("Error getting page by slug:", error);
+    throw error;
   }
 }
 
@@ -139,17 +141,14 @@ export async function getPageBySlug(slug) {
  */
 export async function deletePage(pageId) {
   try {
-    const { error } = await supabase
-      .from('pages')
-      .delete()
-      .eq('id', pageId)
+    const { error } = await supabase.from("pages").delete().eq("id", pageId);
 
     if (error) {
-      throw error
+      throw error;
     }
   } catch (error) {
-    console.error('Error deleting page:', error)
-    throw error
+    console.error("Error deleting page:", error);
+    throw error;
   }
 }
 
@@ -159,19 +158,19 @@ export async function deletePage(pageId) {
 export async function updatePageMetadata(pageId, updates) {
   try {
     const { data, error } = await supabase
-      .from('pages')
+      .from("pages")
       .update(updates)
-      .eq('id', pageId)
+      .eq("id", pageId)
       .select()
-      .single()
+      .single();
 
     if (error) {
-      throw error
+      throw error;
     }
 
-    return data
+    return data;
   } catch (error) {
-    console.error('Error updating page metadata:', error)
-    throw error
+    console.error("Error updating page metadata:", error);
+    throw error;
   }
 }

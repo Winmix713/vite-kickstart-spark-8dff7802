@@ -1,1 +1,97 @@
-// styling import styles from './styles.module.scss'; // components import Spring from '@components/Spring'; import ClubFullInfo from '@components/ClubFullInfo'; import PlayerRow from '@components/PlayerRow'; import Lineups from '@components/Lineups'; import LoadingScreen from '@components/LoadingScreen'; // utils import PropTypes from 'prop-types'; // constants import CLUBS from '@constants/clubs'; // hooks import { usePlayersByTeam } from '@hooks/usePlayers'; const TeamFullInfo = ({id}) => { const club = CLUBS.find((club) => club.id === id); // Get players from Supabase const { data: players, isLoading, error } = usePlayersByTeam(id); // Transform Supabase data to match expected format const transformPlayer = (player) => ({ name: player.name, number: player.jersey_number, substitutes: player.is_substitute, avatar: player.avatar_url || '/default-avatar.png', isCaptain: player.is_captain }); // Show loading state if (isLoading) { return ( <Spring className={'${styles.container} card'}> <div className="flex items-center justify-center h-32"> <LoadingScreen /> </div> </Spring> ); } // Show error state if (error) { return ( <Spring className={'${styles.container} card'}> <div className="text-center text-red-500 p-4"> Error loading team data </div> </Spring> ); } const dataArr = (players || []).map(transformPlayer).sort((a, b) => { if (a.isCaptain) { return -1; } if (b.isCaptain) { return 1; } return 0; }); return ( <Spring className={'${styles.container} card'}> <div className="d-flex flex-column g-20"> <ClubFullInfo club={club}/> <div className="d-flex flex-column g-1"> { dataArr.length > 0 ? ( dataArr.map((player, index) => ( <PlayerRow key={player.name || index} player={player} index={index}/> )) ) : ( <div className="text-center text-gray-500 py-8"> No player data available for this team </div> ) } </div> </div> <div className="d-flex flex-column g-20"> <h3>Lineups</h3> <Lineups wrapperClass={styles.field} withField/> </div> </Spring> ) } TeamFullInfo.propTypes = { id: PropTypes.string.isRequired, } export default TeamFullInfo
+// styling
+import styles from './styles.module.scss';
+
+// components
+import Spring from '@components/Spring';
+import ClubFullInfo from '@components/ClubFullInfo';
+import PlayerRow from '@components/PlayerRow';
+import Lineups from '@components/Lineups';
+import LoadingScreen from '@components/LoadingScreen';
+
+// utils
+import PropTypes from 'prop-types';
+
+// constants
+import CLUBS from '@constants/clubs';
+
+// hooks
+import { usePlayersByTeam } from '@hooks/usePlayers';
+
+const TeamFullInfo = ({id}) => {
+    const club = CLUBS.find((club) => club.id === id);
+    
+    // Get players from Supabase
+    const { data: players, isLoading, error } = usePlayersByTeam(id);
+
+    // Transform Supabase data to match expected format
+    const transformPlayer = (player) => ({
+        name: player.name,
+        number: player.jersey_number,
+        substitutes: player.is_substitute,
+        avatar: player.avatar_url || '/default-avatar.png',
+        isCaptain: player.is_captain
+    });
+
+    // Show loading state
+    if (isLoading) {
+        return (
+            <Spring className={`${styles.container} card`}>
+                <div className="flex items-center justify-center h-32">
+                    <LoadingScreen />
+                </div>
+            </Spring>
+        );
+    }
+
+    // Show error state
+    if (error) {
+        return (
+            <Spring className={`${styles.container} card`}>
+                <div className="text-center text-red-500 p-4">
+                    Error loading team data: {error.message}
+                </div>
+            </Spring>
+        );
+    }
+
+    const dataArr = (players || []).map(transformPlayer).sort((a, b) => {
+        if (a.isCaptain) {
+            return -1;
+        }
+        if (b.isCaptain) {
+            return 1;
+        }
+        return 0;
+    });
+
+    return (
+        <Spring className={`${styles.container} card`}>
+            <div className="d-flex flex-column g-20">
+                <ClubFullInfo club={club}/>
+                <div className="d-flex flex-column g-1">
+                    {
+                        dataArr.length > 0 ? (
+                            dataArr.map((player, index) => (
+                                <PlayerRow key={player.name || index} player={player} index={index}/>
+                            ))
+                        ) : (
+                            <div className="text-center text-gray-500 py-8">
+                                No player data available for this team
+                            </div>
+                        )
+                    }
+                </div>
+            </div>
+            <div className="d-flex flex-column g-20">
+                <h3>Lineups</h3>
+                <Lineups wrapperClass={styles.field} withField/>
+            </div>
+        </Spring>
+    )
+}
+
+TeamFullInfo.propTypes = {
+    id: PropTypes.string.isRequired,
+}
+
+export default TeamFullInfo

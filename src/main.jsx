@@ -3,12 +3,14 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { ThemeProvider } from '@contexts/themeContext';
+import { ShopProvider } from '@contexts/shopContext';
 import StyledComponentsProvider from '@providers/StyledComponentsProvider';
 import App from './App';
 import store from './app/store';
 
 // Root element megszerzése biztonságosan
 const rootElement = document.getElementById('root');
+
 if (!rootElement) {
   throw new Error(
     'Root element not found. Make sure your HTML file contains a <div id="root"></div> element.'
@@ -31,7 +33,9 @@ const AppProviders = ({ children }) => (
     >
       <ThemeProvider>
         <StyledComponentsProvider>
-          {children}
+          <ShopProvider>
+            {children}
+          </ShopProvider>
         </StyledComponentsProvider>
       </ThemeProvider>
     </BrowserRouter>
@@ -42,10 +46,7 @@ const AppProviders = ({ children }) => (
 class ErrorBoundary extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      hasError: false,
-      error: null,
-    };
+    this.state = { hasError: false, error: null };
   }
 
   static getDerivedStateFromError(error) {

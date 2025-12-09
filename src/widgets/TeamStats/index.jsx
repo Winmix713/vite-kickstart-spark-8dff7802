@@ -1,75 +1,50 @@
-import React from 'react';
+// styling
 import styles from './styles.module.scss';
+
+// components
 import Spring from '@components/Spring';
+import StatsBadge from '@ui/StatsBadge';
 
-const TeamStats = ({ teamId = 'bayern', season = '2024' }) => {
-  const stats = [
-    { label: 'Matches Played', value: 28 },
-    { label: 'Wins', value: 20 },
-    { label: 'Draws', value: 5 },
-    { label: 'Losses', value: 3 },
-    { label: 'Goals For', value: 72 },
-    { label: 'Goals Against', value: 28 },
-  ];
+// hooks
+import {useThemeProvider} from '@contexts/themeContext';
+import {useWindowSize} from 'react-use';
 
-  return (
-    <Spring className="card card-padded h-100">
-      <div className={styles.header}>
-        <h3 className={styles.title}>Team Statistics</h3>
-        <div className={styles.metadata}>
-          <span className={styles.team}>{teamId.toUpperCase()}</span>
-          <span className={styles.season}>Season {season}</span>
-        </div>
-      </div>
-      
-      <div className={styles.statsGrid}>
-        {stats.map((stat, index) => (
-          <div key={index} className={styles.statItem}>
-            <div className={styles.statValue}>{stat.value}</div>
-            <div className={styles.statLabel}>{stat.label}</div>
-          </div>
-        ))}
-      </div>
-      
-      <div className={styles.footer}>
-        <div className={styles.winRate}>
-          <span className={styles.winRateLabel}>Win Rate</span>
-          <span className={styles.winRateValue}>71.4%</span>
-        </div>
-      </div>
-    </Spring>
-  );
-};
+// assets
+import cover from '@assets/team_stats.webp';
+import bvb from '@assets/clubs/bvb.webp';
 
-TeamStats.meta = {
-  id: 'team_stats',
-  name: 'Team Stats',
-  category: 'Football',
-  defaultSize: { w: 2, h: 2 },
-  props: {
-    teamId: { type: 'string', default: 'bayern' },
-    season: { type: 'string', default: '2024' },
-  },
-  styleVariants: [
-    {
-      slug: 'default',
-      label: 'Default',
-      description: 'Standard team stats display',
-      supportedTokens: ['colors', 'spacing', 'radii', 'shadows'],
-    },
-    {
-      slug: 'compact',
-      label: 'Compact',
-      description: 'Reduced padding for space-constrained layouts',
-      supportedTokens: ['colors', 'spacing'],
-    },
-    {
-      slug: 'minimal',
-      label: 'Minimal',
-      description: 'Clean display without borders or shadows',
-      supportedTokens: ['colors'],
-    },
-  ],
-};
+const TeamStats = () => {
+    const {theme} = useThemeProvider();
+    const {width} = useWindowSize();
 
-export default TeamStats;
+    const data = [
+        {label: 'Wins', shortLabel: 'W', value: 17},
+        {label: 'Draws', shortLabel: 'D', value: 29},
+        {label: 'Losses', shortLabel: 'L', value: 74},
+    ]
+
+    return (
+        <Spring
+            className={`${styles.container} ${theme === 'light' ? styles.light : styles.dark} card no-shadow card-padded text-black`}>
+            <img className={`${styles.cover} cover`} src={cover} alt="media"/>
+            <div className={`${styles.content} d-flex flex-column align-items-start justify-content-between h-100`}>
+                <img className="club-logo" src={bvb} alt="BVB"/>
+                <div className={`${styles.content_header} d-flex flex-column g-4 flex-1`}>
+                    <h2 className={`${styles.club} text-20 text-black text-overflow`}>Borussia Dortmund</h2>
+                    <h4 className="text-black text-overflow">Dortmund, Germany</h4>
+                </div>
+                <div className="d-flex flex-wrap g-20">
+                    {
+                        data.map((item, index) => (
+                            <StatsBadge key={index}
+                                        label={width >= 1024 ? (width >= 1500 && width < 1920 ? item.shortLabel : item.label) : item.shortLabel}
+                                        value={item.value}/>
+                        ))
+                    }
+                </div>
+            </div>
+        </Spring>
+    )
+}
+
+export default TeamStats

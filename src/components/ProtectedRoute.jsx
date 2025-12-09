@@ -1,1 +1,0 @@
-import React from 'react' import { useAuth } from '@contexts/AuthContext' import LoadingScreen from '@components/LoadingScreen' export function ProtectedRoute({ children }) { const { user, loading } = useAuth() if (loading) { return <LoadingScreen /> } if (!user) { return <Navigate to="/login" replace /> } return <>{children}</> } export default ProtectedRoute 

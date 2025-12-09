@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
 /**
  * CMS Page Slice - manages theme overrides and widget variants for pages
@@ -11,7 +11,7 @@ const initialState = {
 };
 
 const cmsPageSlice = createSlice({
-  name: 'cmsPage',
+  name: "cmsPage",
   initialState,
   reducers: {
     // Set current page ID
@@ -24,8 +24,8 @@ const cmsPageSlice = createSlice({
       const { pageId, defaults } = action.payload;
       if (!state.pages[pageId]) {
         state.pages[pageId] = {
-          themeMode: defaults?.themeMode || 'light',
-          themeVariant: defaults?.themeVariant || 'default',
+          themeMode: defaults?.themeMode || "light",
+          themeVariant: defaults?.themeVariant || "default",
           widgetVariants: defaults?.widgetVariants || {},
           colorOverrides: defaults?.colorOverrides || {},
           spacingOverrides: defaults?.spacingOverrides || {},
@@ -139,8 +139,8 @@ const cmsPageSlice = createSlice({
       const pageId = action.payload;
       if (state.pages[pageId]) {
         state.pages[pageId] = {
-          themeMode: 'light',
-          themeVariant: 'default',
+          themeMode: "light",
+          themeVariant: "default",
           widgetVariants: {},
           colorOverrides: {},
           spacingOverrides: {},
@@ -158,13 +158,18 @@ const cmsPageSlice = createSlice({
 
 // Selectors
 export const selectCurrentPageId = (state) => state.cmsPage?.currentPageId;
-export const selectPageOverrides = (state, pageId) => state.cmsPage?.pages[pageId] || null;
-export const selectPageThemeMode = (state, pageId) => state.cmsPage?.pages[pageId]?.themeMode || 'light';
-export const selectPageThemeVariant = (state, pageId) => state.cmsPage?.pages[pageId]?.themeVariant || 'default';
-export const selectWidgetVariant = (state, pageId, widgetInstanceId) => 
-  state.cmsPage?.pages[pageId]?.widgetVariants?.[widgetInstanceId] || 'default';
-export const selectColorOverrides = (state, pageId) => state.cmsPage?.pages[pageId]?.colorOverrides || {};
-export const selectSpacingOverrides = (state, pageId) => state.cmsPage?.pages[pageId]?.spacingOverrides || {};
+export const selectPageOverrides = (state, pageId) =>
+  state.cmsPage?.pages[pageId] || null;
+export const selectPageThemeMode = (state, pageId) =>
+  state.cmsPage?.pages[pageId]?.themeMode || "light";
+export const selectPageThemeVariant = (state, pageId) =>
+  state.cmsPage?.pages[pageId]?.themeVariant || "default";
+export const selectWidgetVariant = (state, pageId, widgetInstanceId) =>
+  state.cmsPage?.pages[pageId]?.widgetVariants?.[widgetInstanceId] || "default";
+export const selectColorOverrides = (state, pageId) =>
+  state.cmsPage?.pages[pageId]?.colorOverrides || {};
+export const selectSpacingOverrides = (state, pageId) =>
+  state.cmsPage?.pages[pageId]?.spacingOverrides || {};
 export const selectPageLoading = (state) => state.cmsPage?.loading || false;
 export const selectPageError = (state) => state.cmsPage?.error || null;
 

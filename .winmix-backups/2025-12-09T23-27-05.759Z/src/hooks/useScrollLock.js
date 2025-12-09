@@ -1,0 +1,1 @@
+import * as React from 'react'; const useScrollLock = () => { const[isLocked, setIsLocked] = React.useState(false); React.useEffect(() => { if (isLocked) { document.documentElement.classList.add('no-scroll'); } else { document.documentElement.classList.remove('no-scroll'); } }, [isLocked]); return setIsLocked } export default useScrollLock 

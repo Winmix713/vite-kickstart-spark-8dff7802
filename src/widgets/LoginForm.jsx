@@ -48,7 +48,7 @@ const LoginForm = () => {
     return (
         <>
             <h1>Account login</h1>
-            <form>
+            <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="d-flex flex-column g-10" style={{margin: '20px 0 30px'}}>
                     <div className="d-flex flex-column g-20">
                         <input className={classNames('field', {'field--error': errors.email})}
@@ -82,7 +82,7 @@ const LoginForm = () => {
                     </div>
                 </div>
                 <div className="d-flex justify-content-between align-items-center">
-                    <button className="btn btn--sm" type="submit" onClick={handleSubmit(onSubmit)} disabled={isSubmitting}>
+                    <button className="btn btn--sm" type="submit" disabled={isSubmitting}>
                         {isSubmitting ? 'Logging in...' : 'Submit'}
                     </button>
                     <button className="text-button text-button--sm" onClick={handleResetPassword} disabled={isSubmitting}>

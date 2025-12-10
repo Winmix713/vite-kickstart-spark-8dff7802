@@ -1,13 +1,18 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { User, Session } from '@supabase/supabase-js'
 import { supabase } from '@/integrations/supabase/client'
+import type { Database } from '@/integrations/supabase/types'
+
+type UserProfile = Database['public']['Tables']['user_profiles']['Row']
 
 export type UserRole = 'user' | 'analyst' | 'admin'
 
 interface AuthContextType {
   user: User | null
+  profile: UserProfile | null
   session: Session | null
   loading: boolean
+  error: string | null
   role: UserRole | null
   signUp: (email: string, password: string, fullName?: string) => Promise<any>
   signIn: (email: string, password: string) => Promise<any>
@@ -35,6 +40,42 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [session, setSession] = useState<Session | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [role, setRole] = useState<UserRole | null>(null)
+
+  // Fetch user role from database
+  const fetchUserRole = async (userId: string) => {
+    try {
+      const { data: roleData, error: roleError } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', userId)
+        .single()
+
+      if (roleError) {
+        if (roleError.code === 'PGRST116') {
+          // Role doesn't exist, create default user role
+          const { error: insertError } = await supabase
+            .from('user_roles')
+            .insert([{
+              user_id: userId,
+              role: 'viewer' // Default role
+            }])
+          
+          if (insertError) {
+            console.error('Error creating user role:', insertError)
+          } else {
+            setRole('viewer')
+          }
+        } else {
+          console.error('Error fetching user role:', roleError)
+        }
+      } else {
+        setRole(roleData.role as UserRole)
+      }
+    } catch (err) {
+      console.error('Unexpected error loading user role:', err)
+    }
+  }
 
   // Fetch user profile from database
   const fetchUserProfile = async (userId: string, userEmail?: string) => {
@@ -52,16 +93,18 @@ export function AuthProvider({ children }: AuthProviderProps) {
             id: userId,
             email: userEmail || '',
             full_name: null,
-            role: 'user',
             avatar_url: null,
+            bio: null,
+            is_active: true,
+            last_login_at: new Date().toISOString(),
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString()
           }
-          
+
           const { error: insertError } = await supabase
             .from('user_profiles')
             .insert([newProfile])
-          
+
           if (insertError) {
             console.error('Error creating profile:', insertError)
             setError('Failed to create user profile')
@@ -91,6 +134,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         
         if (session?.user) {
           await fetchUserProfile(session.user.id, session.user.email)
+          await fetchUserRole(session.user.id)
         }
         
         setLoading(false)
@@ -112,8 +156,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
         if (session?.user) {
           await fetchUserProfile(session.user.id, session.user.email)
+          await fetchUserRole(session.user.id)
         } else {
           setProfile(null)
+          setRole(null)
         }
         
         setLoading(false)

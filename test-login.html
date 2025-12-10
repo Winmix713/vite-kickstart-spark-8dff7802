@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Login</title>
+</head>
+<body>
+    <h1>Authentication Test</h1>
+    <button onclick="testAuth()">Test Login</button>
+    <div id="output"></div>
+
+    <script type="module">
+        // Import mock client
+        import { supabase } from './src/integrations/supabase/mock-client.js';
+
+        const output = document.getElementById('output');
+
+        async function testAuth() {
+            try {
+                output.innerHTML += '<p>Testing sign in...</p>';
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email: 'takosadam@gmail.com',
+                    password: 'admin123'
+                });
+
+                if (error) {
+                    output.innerHTML += `<p style="color: red;">❌ Error: ${error.message}</p>`;
+                } else {
+                    output.innerHTML += `<p style="color: green;">✅ Sign in successful!</p>`;
+                    output.innerHTML += `<p>User: ${data.user.email}</p>`;
+                }
+
+                // Test session persistence
+                output.innerHTML += '<p>Testing session persistence...</p>';
+                const sessionResult = await supabase.auth.getSession();
+                if (sessionResult.data.session) {
+                    output.innerHTML += '<p style="color: green;">✅ Session persisted!</p>';
+                } else {
+                    output.innerHTML += '<p style="color: orange;">⚠️ Session not found</p>';
+                }
+
+                // Test wrong credentials
+                output.innerHTML += '<p>Testing wrong credentials...</p>';
+                const wrongResult = await supabase.auth.signInWithPassword({
+                    email: 'wrong@email.com',
+                    password: 'wrong'
+                });
+
+                if (wrongResult.error) {
+                    output.innerHTML += '<p style="color: green;">✅ Wrong credentials properly rejected</p>';
+                } else {
+                    output.innerHTML += '<p style="color: red;">❌ Wrong credentials should have failed</p>';
+                }
+
+            } catch (error) {
+                output.innerHTML += `<p style="color: red;">❌ Test failed: ${error.message}</p>`;
+            }
+        }
+
+        // Make function global
+        window.testAuth = testAuth;
+    </script>
+</body>
+</html>

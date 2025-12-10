@@ -195,6 +195,9 @@ importers:
         specifier: ^0.5.0
         version: 0.5.0(react@18.3.1)
     devDependencies:
+      '@babel/parser':
+        specifier: ^7.28.5
+        version: 7.28.5
       '@playwright/test':
         specifier: ^1.48.2
         version: 1.57.0
@@ -240,6 +243,9 @@ importers:
       msw:
         specifier: ^2.7.0
         version: 2.12.4(@types/node@24.10.2)
+      prettier:
+        specifier: ^3.7.4
+        version: 3.7.4
       rollup-plugin-visualizer:
         specifier: ^6.0.5
         version: 6.0.5(rollup@4.53.3)
@@ -3334,6 +3340,11 @@ packages:
   prelude-ls@1.2.1:
     resolution: {integrity: sha512-vkcDPrRZo1QZLbn5RLGPpg/WmIQ65qoWWhcGKf/b5eplkkarX0m9z8ppCat4mlOqUsWpyNuYgO3VRyrYHSzX5g==}
     engines: {node: '>= 0.8.0'}
+
+  prettier@3.7.4:
+    resolution: {integrity: sha512-v6UNi1+3hSlVvv8fSaoUbggEM5VErKmmpGA7Pl3HF8V6uKY7rvClBOJlH6yNwQtfTueNkGVpOv/mtWL9L4bgRA==}
+    engines: {node: '>=14'}
+    hasBin: true
 
   pretty-format@27.5.1:
     resolution: {integrity: sha512-Qb1gy5OrP5+zDf2Bvnzdl3jsTf1qXVMazbvCoKhtKqVs4/YK4ozX4gKQJJVyNe+cajNPn0KoC0MC3FUmaHWEmQ==}
@@ -7290,6 +7301,8 @@ snapshots:
       source-map-js: 1.2.1
 
   prelude-ls@1.2.1: {}
+
+  prettier@3.7.4: {}
 
   pretty-format@27.5.1:
     dependencies:
